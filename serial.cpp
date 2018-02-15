@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
+#include <set>
 #include "common.h"
 
 //
@@ -11,6 +12,8 @@ int main( int argc, char **argv )
 {    
     int navg,nabsavg=0;
     double davg,dmin, absmin=1.0, absavg=0.0;
+
+    
 
     if( find_option( argc, argv, "-h" ) >= 0 )
     {
@@ -32,8 +35,21 @@ int main( int argc, char **argv )
     FILE *fsum = sumname ? fopen ( sumname, "a" ) : NULL;
 
     particle_t *particles = (particle_t*) malloc( n * sizeof(particle_t) );
+    
+    
     set_size( n );
+    int bin_len = bin_length(n);
+    bin_t *bins = new bin_t[bin_len*bin_len]; 
+
     init_particles( n, particles );
+    init_bins(bins, n, particles);
+    
+    // this initialization is too painful since not all bins will be used
+    // for (int i = 0; i<bin_len ;i++ )
+    //    for (int j = 0;j<bin_len;j++ )
+    //        find_neighbours(bins, i, j, bin_len);
+
+
     
     //
     //  simulate a number of time steps
@@ -42,24 +58,38 @@ int main( int argc, char **argv )
 	
     for( int step = 0; step < NSTEPS; step++ )
     {
-	navg = 0;
+	    navg = 0;
         davg = 0.0;
-	dmin = 1.0;
+        dmin = 1.0;
         //
         //  compute forces
         //
         for( int i = 0; i < n; i++ )
         {
             particles[i].ax = particles[i].ay = 0;
-            for (int j = 0; j < n; j++ )
-				apply_force( particles[i], particles[j],&dmin,&davg,&navg);
+            int cur_bin = particles[i].cur_bin;
+            if (bins[cur_bin].neighbour_idx.size() == 0)
+                find_neighbours(bins, cur_bin, bin_len);
+            std::set<int> neighbour_idx = bins[cur_bin].neighbour_idx;
+            // iterate in 9 neighbourhoods (INCLUDING ITSELF)
+            for (std::set<int>::iterator j = neighbour_idx.begin();j != neighbour_idx.end(); ++j){
+                std::set<int> particle_idx = bins[*j].particle_idx;
+                // 
+                for(std::set<int>::iterator k = particle_idx.begin();k != particle_idx.end(); ++k){
+                    apply_force( particles[i], particles[*k],&dmin,&davg,&navg);
+                }
+            }      
         }
  
         //
         //  move particles
         //
-        for( int i = 0; i < n; i++ ) 
-            move( particles[i] );		
+        for( int i = 0; i < n; i++ ) {
+            move( particles[i] );
+            // update bins after move particles
+            update_bin( particles[i], bins, i );
+        }
+            		
 
         if( find_option( argc, argv, "-no" ) == -1 )
         {

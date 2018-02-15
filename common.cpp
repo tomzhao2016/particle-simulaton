@@ -8,8 +8,9 @@
 #include <sys/time.h>
 #include "common.h"
 
-double size;
 
+
+double size;
 //
 //  tuned constants
 //
@@ -43,6 +44,8 @@ void set_size( int n )
 {
     size = sqrt( density * n );
 }
+
+
 
 //
 //  Initialize the particle positions and velocities
@@ -80,6 +83,86 @@ void init_particles( int n, particle_t *p )
         p[i].vy = drand48()*2-1;
     }
     free( shuffle );
+}
+
+
+int bin_length(int n)
+{
+    return (int)ceil(size/cutoff);
+    //long int num_bin = len_bin * len_bin;
+    //return num_bin;
+}
+//
+// Initialize the bins and assign each particle into bins
+//
+void init_bins(bin_t *bins, int n, particle_t *p )
+{
+    // cutoff should dividable by 1
+    int len_bin = (int)ceil(size/cutoff);
+    long int num_bin = len_bin * len_bin;
+    int sum = 0;
+
+    //bin_t* bins = (bin_t*) malloc( num_bin * sizeof(bin_t) );
+
+    
+    for (int i = 0; i < n; i++ )
+    {
+        int bin_x = (int)floor(p[i].x/cutoff);
+        int bin_y = (int)floor(p[i].y/cutoff);
+
+        bins[bin_x * len_bin + bin_y].particle_idx.insert(i);
+        // 
+        // assign each particle into a bin
+        //
+        p[i].cur_bin = bin_x * len_bin + bin_y;
+    }
+       
+
+
+    
+
+}
+
+//
+// find neighbours of current bin 
+// return the bin idx as a set, including itself
+//
+void find_neighbours(bin_t *bins, int cur_bin, int len_bin)
+{
+    int init_x, init_y, end_x, end_y;
+    int bin_x = cur_bin/len_bin;
+    int bin_y = cur_bin%len_bin;  
+    if (bin_x == 0) {
+        init_x = 0;
+        end_x = 2;
+    }
+    else if(bin_x == len_bin - 1) {
+        init_x = -1;
+        end_x = 1;
+    }
+    else {
+        init_x = -1;
+        end_x = 2;
+    }
+    if (bin_y == 0) {
+        init_y = 0;
+        end_y = 2;
+    }
+    else if(bin_y == len_bin - 1) {
+        end_y = 1;
+        init_y = -1;
+    }
+    else{
+        init_y = -1;
+        end_y = 2;
+    }
+
+    
+    for (int i = init_x; i < end_x; i++)
+        for (int j = init_y; j < end_y; j++)
+            bins[bin_x * len_bin + bin_y].neighbour_idx.insert((bin_x + i)*len_bin + bin_y + j);
+
+    
 }
 
 //
@@ -143,6 +226,20 @@ void move( particle_t &p )
     }
 }
 
+//
+//
+//
+void update_bin(particle_t &p, bin_t *bins, int p_idx)
+{
+    int len_bin = (int)ceil(size/cutoff);
+    int bin_x = (int)floor(p.x/cutoff);
+    int bin_y = (int)floor(p.y/cutoff);
+
+    bins[p.cur_bin].particle_idx.erase(p_idx);
+    bins[bin_x * len_bin + bin_y].particle_idx.insert(p_idx);
+
+    p.cur_bin = bin_x * len_bin + bin_y;
+}
 //
 //  I/O routines
 //
