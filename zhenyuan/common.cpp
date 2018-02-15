@@ -95,6 +95,7 @@ void apply_force( particle_t &particle, particle_t &neighbor , double *dmin, dou
     double dx = neighbor.x - particle.x;
     double dy = neighbor.y - particle.y;
     double r2 = dx * dx + dy * dy;
+    //std::cout<<r2<<std::endl;
     if( r2 > cutoff*cutoff )
         return;
 	if (r2 != 0)
