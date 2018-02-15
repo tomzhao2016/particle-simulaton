@@ -25,8 +25,6 @@ typedef struct
 } particle_t;
 
 
-
-
 //
 //  timing routines
 //

@@ -85,7 +85,6 @@ void init_particles( int n, particle_t *p )
     }
     free( shuffle );
 }
-
 //
 //  interact two particles
 //

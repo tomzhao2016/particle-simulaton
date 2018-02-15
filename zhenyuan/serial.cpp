@@ -53,7 +53,7 @@ int main( int argc, char **argv )
     int row, col;
     int bin_index;
     int particle_count = 0;
-    std::cout<<"the size of the board is "<<mysize<<std::endl;
+    // std::cout<<"the size of the board is "<<mysize<<std::endl;
     for( int i = 0; i < n; i++ )
         {
             xloc = particles[i].x;
@@ -65,14 +65,14 @@ int main( int argc, char **argv )
             particles[i].bin_number = bin_index;
         }
 
-
     //test the size of each bin
-    for( int i = 0; i < n_row*n_col; i++ )
-        {
-            particle_count += (my_bins[i]).size();
-            //std::cout<<(my_bins[i]).size()<<std::endl;
-        }
-    // std::cout<<particle_count<<std::endl;
+    // for( int i = 0; i < n_row*n_col; i++ )
+    //     {
+    //         particle_count += (my_bins[i]).size();
+    //         //std::cout<<(my_bins[i]).size()<<std::endl;
+    //     }
+
+
     // how to use an iterator
     // std::set<int>::iterator it;
     // std::set<int>::iterator it2;
@@ -100,10 +100,8 @@ int main( int argc, char **argv )
         
     */
     std::set<int>  *bin_neighbors = new std::set<int>[n_row*n_col];
-    for( int i = 0; i < n_row; i++ )
-        {
-            for( int j = 0; j < n_col; j++ )
-            {
+    for( int j = 0; j < n_col; j++ ){
+        for( int i = 0; i < n_row; i++ ){
                  // upper left
                 if (i - 1 >= 0 && j - 1 >= 0){
                     bin_neighbors[i+j*n_row].insert((i-1)+(j-1)*n_row);
@@ -139,6 +137,7 @@ int main( int argc, char **argv )
 
             }
         }  
+
     //  check bin_neighbors is correct
     // std::set<int>::iterator it;
     // for (int i = 0; i < n_row; i++){
@@ -156,7 +155,6 @@ int main( int argc, char **argv )
     //
     double simulation_time = read_timer( );
     
-    std::set<int>::iterator it;
     std::set<int>::iterator it2;
     std::set<int>::iterator it3;
     std::set<int>::iterator it4;
@@ -229,7 +227,6 @@ int main( int argc, char **argv )
             }
 
         }
-
 
         //
         //  move particles
