@@ -7,6 +7,9 @@
 #include <time.h>
 #include <sys/time.h>
 #include "common.h"
+#include <map>
+#include <iostream>
+
 
 double size;
 
@@ -39,9 +42,10 @@ double read_timer( )
 //
 //  keep density constant
 //
-void set_size( int n )
+double set_size( int n )
 {
     size = sqrt( density * n );
+    return size;
 }
 
 //
@@ -81,7 +85,6 @@ void init_particles( int n, particle_t *p )
     }
     free( shuffle );
 }
-
 //
 //  interact two particles
 //
@@ -91,6 +94,7 @@ void apply_force( particle_t &particle, particle_t &neighbor , double *dmin, dou
     double dx = neighbor.x - particle.x;
     double dy = neighbor.y - particle.y;
     double r2 = dx * dx + dy * dy;
+    //std::cout<<r2<<std::endl;
     if( r2 > cutoff*cutoff )
         return;
 	if (r2 != 0)

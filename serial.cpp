@@ -3,6 +3,10 @@
 #include <assert.h>
 #include <math.h>
 #include "common.h"
+#include <set>
+#include <iostream>
+
+#define cutoff  0.01
 
 //
 //  benchmarking program
@@ -32,34 +36,135 @@ int main( int argc, char **argv )
     FILE *fsum = sumname ? fopen ( sumname, "a" ) : NULL;
 
     particle_t *particles = (particle_t*) malloc( n * sizeof(particle_t) );
-    set_size( n );
+    double mysize = set_size( n );
     init_particles( n, particles );
-    
+
+    /*
+        assign all the particles to one of the n_row*n_col bins, my_bins is a pointer to the 
+        n_row * n_col array of hash sets, each set contains the indices of particle_t objects in that bin
+    */
+    int n_row = (int) floor(mysize/cutoff);
+    int n_col = n_row;
+    std::set<int>  *my_bins = new std::set<int>[n_row*n_col];
+    double xloc, yloc;
+    int row, col;
+    int bin_index;
+    int particle_count = 0;
+
+    /*
+        The following 2 things need to be done: each particle needs to be given a bin number,
+        and each bin needs to have particles added to it
+    */
+    for( int i = 0; i < n; i++ )
+        {
+            xloc = particles[i].x;
+            yloc = particles[i].y;
+            row = floor(yloc/mysize*n_row);
+            col = floor(xloc/mysize*n_col);
+            bin_index = row + col*n_row;
+            my_bins[bin_index].insert(i);
+            particles[i].bin_number = bin_index;
+        }
+
+    /*
+        create an array of sets, each set contains the indices of the neighboring bins of each bin.
+        Since this computation does not change at each time step, we can just do it once. 
+        
+    */
+    std::set<int>  *bin_neighbors = new std::set<int>[n_row*n_col];
+    for( int j = 0; j < n_col; j++ ){
+        for( int i = 0; i < n_row; i++ ){
+                 // upper left
+                if (i - 1 >= 0 && j - 1 >= 0){
+                    bin_neighbors[i+j*n_row].insert((i-1)+(j-1)*n_row);
+                }
+                // left
+                if (j - 1 >= 0){
+                    bin_neighbors[i+j*n_row].insert(i+(j-1)*n_row);
+                }
+                // lower left
+                if (j - 1 >= 0 && i+1 < n_row){
+                    bin_neighbors[i+j*n_row].insert(i+1+(j-1)*n_row);
+                }
+                // up
+                if (i - 1 >= 0){
+                    bin_neighbors[i+j*n_row].insert(i-1+j*n_row);
+                }
+                // down
+                if (i + 1 < n_row){
+                    bin_neighbors[i+j*n_row].insert(i+1+j*n_row);
+                }
+                // upper right
+                if (i - 1 >= 0 && j + 1 < n_col){
+                    bin_neighbors[i+j*n_row].insert((i-1)+(j+1)*n_row);
+                }
+                // right
+                if (j + 1 < n_col){
+                    bin_neighbors[i+j*n_row].insert(i+(j+1)*n_row);
+                }
+                // lower right
+                if (i + 1 < n_row && j + 1 < n_col){
+                    bin_neighbors[i+j*n_row].insert((i+1)+(j+1)*n_row);
+                }
+
+            }
+        }  
+
+
     //
     //  simulate a number of time steps
     //
     double simulation_time = read_timer( );
-	
+    
+    std::set<int>::iterator it2;
+    std::set<int>::iterator it3;
+    std::set<int>::iterator it4;
+
     for( int step = 0; step < NSTEPS; step++ )
-    {
-	navg = 0;
+    {   
+        navg = 0;
         davg = 0.0;
-	dmin = 1.0;
-        //
-        //  compute forces
-        //
-        for( int i = 0; i < n; i++ )
+        dmin = 1.0;
+        
+        /*
+            an implementation to compute forces, O(N) implementation
+        */
+        for (int i = 0; i < n; i++)
         {
             particles[i].ax = particles[i].ay = 0;
-            for (int j = 0; j < n; j++ )
-				apply_force( particles[i], particles[j],&dmin,&davg,&navg);
+            int current_bin_number = particles[i].bin_number;
+
+            // first deal with particles in the same bin
+            if(my_bins[current_bin_number].size() > 1)
+            {
+                for (it2 = my_bins[current_bin_number].begin(); it2 != my_bins[current_bin_number].end(); ++it2)
+                {   
+                    if(&particles[i] != &particles[*it2])
+                    {   // Do not compute forces on the particle itself.
+                        apply_force( particles[i], particles[*it2], &dmin, &davg, &navg ); 
+                    }
+                }
+            }
+
+            // next deal with particels in the neighboring bins
+            for (it3 = bin_neighbors[current_bin_number].begin(); it3 != bin_neighbors[current_bin_number].end(); ++it3)
+            { 
+                if(my_bins[*it3].size() > 0)
+                {
+                    for (it4 = my_bins[*it3].begin(); it4 != my_bins[*it3].end(); ++it4)
+                    {   
+                        apply_force( particles[i], particles[*it4], &dmin, &davg, &navg);
+                    }
+                } 
+            }
+
         }
- 
+
         //
         //  move particles
         //
         for( int i = 0; i < n; i++ ) 
-            move( particles[i] );		
+            move( particles[i] );       
 
         if( find_option( argc, argv, "-no" ) == -1 )
         {
@@ -71,16 +176,35 @@ int main( int argc, char **argv )
             nabsavg++;
           }
           if (dmin < absmin) absmin = dmin;
-		
+        
           //
           //  save if necessary
           //
           if( fsave && (step%SAVEFREQ) == 0 )
               save( fsave, n, particles );
         }
+    /*
+        clear the bins and reassign particles to bins
+    */
+    // first clear all the bins
+    for (int i = 0; i < n_row*n_col; i++)
+    {
+        my_bins[i].clear();
     }
+    // then reassign the particles
+    for( int i = 0; i < n; i++ )
+        {
+            xloc = particles[i].x;
+            yloc = particles[i].y;
+            row = floor(yloc/mysize*n_row);
+            col = floor(xloc/mysize*n_col);
+            bin_index = row + col*n_row;
+            my_bins[bin_index].insert(i);
+            particles[i].bin_number = bin_index;
+        }
+    }
+
     simulation_time = read_timer( ) - simulation_time;
-    
     printf( "n = %d, simulation time = %g seconds", n, simulation_time);
 
     if( find_option( argc, argv, "-no" ) == -1 )
@@ -113,6 +237,7 @@ int main( int argc, char **argv )
     free( particles );
     if( fsave )
         fclose( fsave );
+    
     
     return 0;
 }
