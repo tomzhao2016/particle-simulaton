@@ -46,38 +46,54 @@ int main( int argc, char **argv )
     FILE *fsave = savename && rank == 0 ? fopen( savename, "w" ) : NULL;
     FILE *fsum = sumname && rank == 0 ? fopen ( sumname, "a" ) : NULL;
 
-
     particle_t *particles = (particle_t*) malloc( n * sizeof(particle_t) );
+
+    mbin_len = bin_length(n);
+    mbin_t *mbins = new mbin_t[mbin_len * mbin_len]；
     
-    MPI_Datatype PARTICLE;
-    MPI_Type_contiguous( 6, MPI_DOUBLE, &PARTICLE );
-    MPI_Type_commit( &PARTICLE );
-    
+    // TO DO HERE
+    // MPI datatype: MBLOCK the same size of processor_t
+    std::cout << "TO DO HERE" << std::endl;
+    MPI_Datatype MBIN;
+
     //
-    //  set up the data partitioning across processors
+    // set up the data partitioning across processors
     //
-    int particle_per_proc = (n + n_proc - 1) / n_proc;
-    int *partition_offsets = (int*) malloc( (n_proc+1) * sizeof(int) );
-    for( int i = 0; i < n_proc+1; i++ )
-        partition_offsets[i] = min( i * particle_per_proc, n );
-    
-    int *partition_sizes = (int*) malloc( n_proc * sizeof(int) );
-    for( int i = 0; i < n_proc; i++ )
-        partition_sizes[i] = partition_offsets[i+1] - partition_offsets[i];
-    
+
+    // TO DO HERE
+    // data partition, into ( ceil(sqrt(n)) by ceil(n/sqrt(n)) ) blocks
+    // reset int partition_offests, int partition_sizes, int bin_per_proc
+    int bin_per_proc;
+    int *partition_offsets;
+    int *partition_sizes;
+    std::cout << "TO DO HERE" << std::endl;
+
     //
     //  allocate storage for local partition
     //
+
+    // TO DO HERE
+    std::cout << "TO DO HERE" << std::endl;
+
     int nlocal = partition_sizes[rank];
-    particle_t *local = (particle_t*) malloc( nlocal * sizeof(particle_t) );
+    processor_t *local = new mbin_t[nlocal];
     
     //
     //  initialize and distribute the particles (that's fine to leave it unoptimized)
     //
+    // TO DO HERE
+    std::cout << "TO DO HERE" << std::endl;
+
+    // fill in init_mbins() in mpi_helper.cpp
+    // fill in init_mblocks() in mpi_helper.cpp
+    // Or we may use MPI_Comm_split???
+
     set_size( n );
-    if( rank == 0 )
+    if( rank == 0 ){
         init_particles( n, particles );
-    MPI_Scatterv( particles, partition_sizes, partition_offsets, PARTICLE, local, nlocal, PARTICLE, 0, MPI_COMM_WORLD );
+        init_mbins(mbins, n, particles); 
+    }
+    MPI_Scatterv( mbins, partition_sizes, partition_offsets, MBIN, local, nlocal, MBIN, 0, MPI_COMM_WORLD );
     
     //
     //  simulate a number of time steps
@@ -88,11 +104,7 @@ int main( int argc, char **argv )
         navg = 0;
         dmin = 1.0;
         davg = 0.0;
-        // 
-        //  collect all global data locally (not good idea to do)
-        //
-        MPI_Allgatherv( local, nlocal, PARTICLE, particles, partition_sizes, partition_offsets, PARTICLE, MPI_COMM_WORLD );
-        
+
         //
         //  save current step if necessary (slightly different semantics than in other codes)
         //
@@ -101,20 +113,20 @@ int main( int argc, char **argv )
             save( fsave, n, particles );
         
         //
-        //  compute all forces
+        //  1.Update forces
         //
-        for( int i = 0; i < nlocal; i++ )
-        {
-            local[i].ax = local[i].ay = 0;
-            for (int j = 0; j < n; j++ )
-                apply_force( local[i], particles[j], &dmin, &davg, &navg );
-        }
-     
+        // for b in native_bins & egde_binsz:
+        //   for p1 in b:
+        //      for p2 in b.neighbors:
+        //          apply_force(p1, p2);
+        //
+
+        // NOT SURE how to change avg and min
         if( find_option( argc, argv, "-no" ) == -1 )
         {
           
           MPI_Reduce(&davg,&rdavg,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
-          MPI_Reduce(&navg,&rnavg,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
+          MPI_Reduce(&navg,&rnavg,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD); 
           MPI_Reduce(&dmin,&rdmin,1,MPI_DOUBLE,MPI_MIN,0,MPI_COMM_WORLD);
 
  
@@ -131,10 +143,39 @@ int main( int argc, char **argv )
         }
 
         //
-        //  move particles
+        // 2.move particles
+        // for b in native_bin & edge_bin:
+        //   for p in b:
+        //      mpi_move(p, M); 
+        // M: map processor_id to particle_t
+        std::map<int, particle_t> M;
+
         //
-        for( int i = 0; i < nlocal; i++ )
-            move( local[i] );
+        // 3.1 send particle to other processor
+        // for processor_id,particle_t in M:
+        //   MPI_send(particle_t to native/edge)
+        //
+
+        //
+        // 3.2receive from other processor
+        // for n in neighbor_processor_id:
+        //   MPI_receive(particle_t into native/edge)
+        //
+
+        //
+        // 4.update_bins
+        // 
+
+        // barrier
+
+        //
+        // 5.1 send edge bins to neighbor processor
+        // 
+
+        //
+        // 5.2 receive from edge processor
+        //
+
     }
     simulation_time = read_timer( ) - simulation_time;
   
