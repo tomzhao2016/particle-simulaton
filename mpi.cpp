@@ -318,7 +318,7 @@ int main( int argc, char **argv )
     // // free( local );
     if (particles)
         free( particles );
-    if (local_particicles)
+    if (local_particles)
         free(local_particles);
     // if( fsave )
         // fclose( fsave );
