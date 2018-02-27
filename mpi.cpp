@@ -92,11 +92,11 @@ int main( int argc, char **argv )
             int *process_ids = (int *) malloc(9 * sizeof(int));
             process_ids = get_procs(particles[i].x, particles[i].y, num_proc_x, num_proc_y);
 
-            for (int i = 0; i < 9; i++)
+            for (int j = 0; j < 9; j++)
             {
-                if (process_ids[i] != -1)
+                if (process_ids[j] != -1)
                 {
-                    partition_sizes[i] += 1;
+                    partition_sizes[j] += 1;
                 }
             }
         }
@@ -164,20 +164,24 @@ int main( int argc, char **argv )
             offsets_copy[i] = partition_offsets[i];
         }
 
-        
-
         if (rank == 0)
         {
             for (int i = 0; i < n; i++)
             {
-                int x_proc = get_proc_x(particles[i].x, num_proc_x);
-                int y_proc = get_proc_y(particles[i].y, num_proc_y);
-                int proc_for_p = (y_proc * num_proc_x) + x_proc;
+                int *process_ids = (int *) malloc(9 * sizeof(int));
+                process_ids = get_procs(particles[i].x, particles[i].y, num_proc_x, num_proc_y);
 
-                particles_to_scatter[offsets_copy[proc_for_p] - 1] = particles[i]; 
-                offsets_copy[proc_for_p]--;
+                for (int j = 0; j < 9; i++)
+                {
+                    if (process_ids[j] != -1)
+                    {
+                        particles_to_scatter[offsets_copy[j]++] = particles[i];
+                    }
+                }
             }
         }
+
+
         std::cout<<"Reached line 180 in rank 0 "<<std::endl;
     }
 
