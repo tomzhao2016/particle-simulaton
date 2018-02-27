@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "common.h"
+#include <math.h>
 
 //
 //  benchmarking program
@@ -27,11 +28,11 @@ int main( int argc, char **argv )
         printf( "-no turns off all correctness checks and particle output\n");
         return 0;
     }
-    
     int n = read_int( argc, argv, "-n", 1000 );
     char *savename = read_string( argc, argv, "-o", NULL );
     char *sumname = read_string( argc, argv, "-s", NULL );
-    
+
+
     //
     //  set up MPI
     //
@@ -45,24 +46,19 @@ int main( int argc, char **argv )
     //
     FILE *fsave = savename && rank == 0 ? fopen( savename, "w" ) : NULL;
     FILE *fsum = sumname && rank == 0 ? fopen ( sumname, "a" ) : NULL;
-
     particle_t *particles = (particle_t*) malloc( n * sizeof(particle_t) );
 
-    mbin_len = bin_length(n);
-    mbin_t *mbins = new mbin_t[mbin_len * mbin_len]；
-    
-    // TO DO HERE
-    // MPI datatype: MBLOCK the same size of processor_t
-    std::cout << "TO DO HERE" << std::endl;
-    MPI_Datatype MBIN;
+    // The total number of processes available to us are n_proc.
+    int num_proc_x = (int) ceil(sqrt(n_proc)); // The number of processors along the x-axis.
+    int num_proc_y = (int) ceil(n / sqrt(n_proc)); // The number of processors along the y-axis. 
+    printf(num_proc_x);
+    fflush(stdout);
 
-    //
-    // set up the data partitioning across processors
-    //
 
-    // TO DO HERE
-    // data partition, into ( ceil(sqrt(n)) by ceil(n/sqrt(n)) ) blocks
-    // reset int partition_offests, int partition_sizes, int bin_per_proc
+
+
+
+
     int bin_per_proc;
     int *partition_offsets;
     int *partition_sizes;
@@ -115,11 +111,14 @@ int main( int argc, char **argv )
         //
         //  1.Update forces
         //
-        // for b in native_bins & egde_binsz:
+        // for b in native_bins & egde_bins:
         //   for p1 in b:
         //      for p2 in b.neighbors:
         //          apply_force(p1, p2);
-        //
+        // 
+        
+
+
 
         // NOT SURE how to change avg and min
         if( find_option( argc, argv, "-no" ) == -1 )
