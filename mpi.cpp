@@ -87,7 +87,20 @@ int main( int argc, char **argv )
     }
 
     // Send an array of sizes (array of ints) to each processor first. 
-    int local_size = 0; // This is where we will recieve the size. 
+    int *local_size; // This is where we will recieve the size. 
+    MPI_Scatter(sizes, 1, MPI_INT, local_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+    // Debugging
+    if (rank == 1)
+    {
+        std::cout<<"I am processor 1 \n";
+        std::cout<<(*local_size)<<std::endl;
+    }
+    else if (rank == 2)
+    {
+        std::cout<<"I am processor 2 \n";
+        std::cout<<(*local_size)<<std::endl;
+    }
 
     // Each processor allocates space.
     particle_t *local_particles = (particle_t*) malloc( local_size * sizeof(particle_t) );
