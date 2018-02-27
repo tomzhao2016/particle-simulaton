@@ -91,25 +91,35 @@ int main( int argc, char **argv )
         {
             // Iterate through all the particles. 
             int x_proc = get_proc_x(particles[i].x, num_proc_x);
-            std::cout<<x_proc<<std::endl; 
+            // std::cout<<x_proc<<std::endl; 
             int y_proc = get_proc_y(particles[i].y, num_proc_y);
-            std::cout<<y_proc<<std::endl;
+            // std::cout<<y_proc<<std::endl;
             int proc_for_p = (y_proc * num_proc_x) + x_proc;
-            
             // Populate the sizes array.
             partition_sizes[proc_for_p] += 1;
-            std::cout<<partition_sizes[proc_for_p]<<std::endl;
+            // std::cout<<partition_sizes[proc_for_p]<<std::endl;
         }
         std::cout<<"Reached line 103 in rank 0";
+    }
+
+
+
+    // Debugging
+    if (rank == 0)
+    {
+        for (int i = 0; i < n_proc; i++)
+        {
+            std::cout<<"Partition size "<<i<<"is equal to "<<partition_sizes[i]<<std::endl;
+        }
     }
 
     
     MPI_Barrier(MPI_COMM_WORLD);
     // Send an array of sizes (array of ints) to each processor first. 
     int *local_size = (int *)malloc(sizeof(int)); // This is where we will recieve the size. 
-    std::cout<<"Reached line 104"<<std::endl;
+    std::cout<<"Reached line 104 in rank "<<rank<<std::endl;
     MPI_Scatter(partition_sizes, 1, MPI_INT, local_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    std::cout
+    std::cout<<"Reached line 111 in rank "<<rank<<std::endl;
 
     // Debugging
     if (rank == 1)
@@ -121,47 +131,57 @@ int main( int argc, char **argv )
     {
         std::cout<<"I am processor 2 \n";
         std::cout<<(*local_size)<<std::endl;
-    }
+    } 
+
+
 
     // Each processor allocates space.
     particle_t *local_particles = (particle_t*) malloc( *local_size * sizeof(particle_t) );
-
+    std::cout<<"Rank "<<rank<<" allocated space for local particles"<<std::endl;
 
     int *partition_offsets = (int*) malloc( n_proc * sizeof(int) );
-
-    partition_offsets[0] = partition_sizes[0];
-
-    for (int i = 1; i < n_proc; i ++)
-    {
-        partition_offsets[i] = partition_offsets[i-1] + partition_sizes[i];
-    }
-
-
-
-    // Recieve the particles for this processor into local_partices
     int *offsets_copy = (int*) malloc (n_proc * sizeof(int));
-    for (int i = 0; i < n_proc; i++)
-    {
-        offsets_copy[i] = partition_offsets[i];
-    }
-
     particle_t *particles_to_scatter = (particle_t*) malloc (n * sizeof(particle_t));
+
 
     if (rank == 0)
     {
-        for (int i = 0; i < n; i++)
-        {
-            int x_proc = get_proc_x(particles[i].x, num_proc_x);
-            int y_proc = get_proc_y(particles[i].y, num_proc_y);
-            int proc_for_p = (y_proc * num_proc_x) + x_proc;
+        std::cout<<"Reached line 149 in rank 0 "<<std::endl;
+        partition_offsets[0] = partition_sizes[0];
 
-            particles_to_scatter[offsets_copy[proc_for_p] - 1] = particles[i]; 
-            offsets_copy[proc_for_p]--;
+        for (int i = 1; i < n_proc; i ++)
+        {
+            partition_offsets[i] = partition_offsets[i-1] + partition_sizes[i];
         }
+    
+
+
+        // Recieve the particles for this processor into local_partices
+        
+        for (int i = 0; i < n_proc; i++)
+        {
+            offsets_copy[i] = partition_offsets[i];
+        }
+
+        
+
+        if (rank == 0)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                int x_proc = get_proc_x(particles[i].x, num_proc_x);
+                int y_proc = get_proc_y(particles[i].y, num_proc_y);
+                int proc_for_p = (y_proc * num_proc_x) + x_proc;
+
+                particles_to_scatter[offsets_copy[proc_for_p] - 1] = particles[i]; 
+                offsets_copy[proc_for_p]--;
+            }
+        }
+        std::cout<<"Reached line 180 in rank 0 "<<std::endl;
     }
 
     
-
+    MPI_Barrier(MPI_COMM_WORLD); //TODO: Possibly remove this.
     MPI_Scatterv( particles_to_scatter, partition_sizes, partition_offsets, PARTICLE,
              local_particles, *local_size, PARTICLE, 0, MPI_COMM_WORLD );
 
