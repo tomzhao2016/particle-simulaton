@@ -76,12 +76,16 @@ int main( int argc, char **argv )
     }
 
     printf("Allocating space for the sizes array : \n");
+
+    // sizes array stores the number of particles that each processor is to be sent in the beginning.
+    // NOTE: This sizes array will change.  
     int *sizes = (int*) malloc (n_proc * sizeof(int));
     if (rank == 0)
     {
-        
+        // Initialize the sizes array to be empty. 
         for (int i = 0; i < n_proc; i++)
             sizes[i] = 0;
+
 
         for (int i = 0; i < n; i++)
         {
@@ -89,6 +93,7 @@ int main( int argc, char **argv )
             int x_proc = get_proc_x(particles[i].x, num_proc_x);
             int y_proc = get_proc_y(particles[i].y, num_proc_y);
             int proc_for_p = (y_proc * num_proc_x) + x_proc;
+            // Populate the sizes array.
             sizes[proc_for_p] += 1;
         }
     }
@@ -113,6 +118,29 @@ int main( int argc, char **argv )
     particle_t *local_particles = (particle_t*) malloc( *local_size * sizeof(particle_t) );
 
     // Recieve the particles for this processor into local_partices
+    int *sizes_copy = (int*) malloc (n_proc * sizeof(int));
+    for (int i = 0; i < n_proc; i++)
+    {
+        sizes_copy[i] = sizes[i];
+    }
+
+    particle_t *particles_to_scatter = (particle_t*) malloc (n * sizeof(particle_t));
+
+    if (rank == 0)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            int x_proc = get_proc_x(particles[i].x, num_proc_x);
+            int y_proc = get_proc_y(particles[i].y, num_proc_y);
+            int proc_for_p = (y_proc * num_proc_x) + x_proc;
+
+            particles_to_scatter[sizes_copy[proc_for_p] - 1] = particles[i]; 
+            sizes_copy[proc_for_p]--;
+        }
+    }
+
+    
+
 
 
     
