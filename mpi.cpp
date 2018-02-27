@@ -71,9 +71,10 @@ int main( int argc, char **argv )
         init_particles( n, particles );
     }
 
+    int *sizes = (int*) malloc (n_proc * sizeof(int));
     if (rank == 0)
     {
-        int *sizes = (int*) malloc (n_proc * sizeof(int));
+        
         for (int i = 0; i < n_proc; i++)
             sizes[i] = 0;
 
