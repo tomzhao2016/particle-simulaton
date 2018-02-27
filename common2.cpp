@@ -55,6 +55,7 @@ void init_particles( int n, particle_t *p )
     printf("I am in line 1 of init particles.... \n");
     srand48( time( NULL ) );
     printf("I am trying to init particles.... \n");
+    fflush(stdout);
         
     int sx = (int)ceil(sqrt((double)n));
     int sy = (n+sx-1)/sx;
