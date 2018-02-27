@@ -76,9 +76,14 @@ void init_particles( int n, particle_t *p )
         //
         //  distribute particles evenly to ensure proper spacing
         //
+
+        printf("I am before the first reference to p\n");
+        fflush(stdout);
         p[i].x = size*(1.+(k%sx))/(1+sx);
         p[i].y = size*(1.+(k/sx))/(1+sy);
 
+
+        std::cout<<"I am after the first reference to p\n"<<std::endl;
         //
         //  assign random velocities within a bound
         //
