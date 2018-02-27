@@ -93,9 +93,10 @@ void init_particles( int n, particle_t *p )
     }
     printf("I am before free shuffle \n");
     fflush(stdout);
-    free( shuffle );
+    // free( shuffle );
     printf("Now I have freed shuffle \n");
     fflush(stdout);
+    // TODO: FREE THIS LATER. 
 
 }
 

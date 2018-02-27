@@ -309,14 +309,19 @@ int main( int argc, char **argv )
     //
     //  release resources
     //
-    // if ( fsum )
-    //     fclose( fsum );
-    // free( partition_offsets );
-    // free( partition_sizes );
+    if ( fsum )
+        fclose( fsum );
+    if (partition_offsets)
+        free( partition_offsets );
+    if (partition_sizes)
+        free( partition_sizes );
     // // free( local );
-    // free( particles );
+    if (particles)
+        free( particles );
+    if (local_partices)
+        free(local_partices);
     // if( fsave )
-    //     fclose( fsave );
+        // fclose( fsave );
     
     MPI_Finalize( );
     
