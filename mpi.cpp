@@ -175,6 +175,7 @@ int main( int argc, char **argv )
                 {
                     if (process_ids[j] != -1)
                     {
+                        std::cout<<"In line 178, i and j are "<<i<<" "<<j<<std::endl;
                         particles_to_scatter[offsets_copy[j]++] = particles[i];
                     }
                 }
