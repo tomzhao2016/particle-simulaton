@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include "common.h"
+#include "common2.h"
 #include <math.h>
 
 //
@@ -60,7 +60,17 @@ int main( int argc, char **argv )
 
 
 
+    set_size( n );
+    if( rank == 0 ){
+        init_particles( n, particles );
+    }
 
+
+    for (int i = 0; i < n; i++)
+    {
+        // Iterate through all the particles. 
+
+    }
 
 
 

@@ -1,6 +1,6 @@
 #include <set>
 #include <map>
-#include "common.h"
+#include "common2.h"
 
 #ifndef __CS267_MPI_HELPER_H__
 #define __CS267_MPI_HELPER_H__
