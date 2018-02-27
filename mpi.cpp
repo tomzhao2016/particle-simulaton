@@ -97,7 +97,9 @@ int main( int argc, char **argv )
                 if (process_ids[j] != -1)
                 {
                     partition_sizes[process_ids[j]] += 1;
+                    std::cout<<"Particle "<<i<<" goes to processor "<<" "<<process_ids[j];
                 }
+
             }
             free(process_ids);
         }
