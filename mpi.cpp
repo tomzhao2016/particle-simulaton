@@ -84,12 +84,12 @@ int main( int argc, char **argv )
     // fill in init_mblocks() in mpi_helper.cpp
     // Or we may use MPI_Comm_split???
 
-    set_size( n );
-    if( rank == 0 ){
-        init_particles( n, particles );
-        init_mbins(mbins, n, particles); 
-    }
-    MPI_Scatterv( mbins, partition_sizes, partition_offsets, MBIN, local, nlocal, MBIN, 0, MPI_COMM_WORLD );
+    // set_size( n );
+    // if( rank == 0 ){
+        // init_particles( n, particles );
+        // init_mbins(mbins, n, particles); 
+    // }
+    // MPI_Scatterv( mbins, partition_sizes, partition_offsets, MBIN, local, nlocal, MBIN, 0, MPI_COMM_WORLD );
     
     //
     //  simulate a number of time steps
@@ -147,7 +147,7 @@ int main( int argc, char **argv )
         //   for p in b:
         //      mpi_move(p, M); 
         // M: map processor_id to particle_t
-        std::map<int, particle_t> M;
+        // std::map<int, particle_t> M;
 
         //
         // 3.1 send particle to other processor
