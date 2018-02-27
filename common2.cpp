@@ -78,8 +78,8 @@ void init_particles( int n, particle_t *p )
         //  distribute particles evenly to ensure proper spacing
         //
 
-        printf("I am before, %d\n", i);
-        fflush(stdout);
+        // printf("I am before, %d\n", i);
+        // fflush(stdout);
         p[i].x = size*(1.+(k%sx))/(1+sx);
         p[i].y = size*(1.+(k/sx))/(1+sy);
 
@@ -91,11 +91,11 @@ void init_particles( int n, particle_t *p )
         p[i].vx = drand48()*2-1;
         p[i].vy = drand48()*2-1;
     }
-    printf("I am before free shuffle \n");
-    fflush(stdout);
-    // free( shuffle );
-    printf("Now I have freed shuffle \n");
-    fflush(stdout);
+    // printf("I am before free shuffle \n");
+    // fflush(stdout);
+    free( shuffle );
+    // printf("Now I have freed shuffle \n");
+    // fflush(stdout);
     // TODO: FREE THIS LATER. 
 
 }
