@@ -163,14 +163,14 @@ int main( int argc, char **argv )
         {
             offsets_copy[i] = partition_offsets[i];
         }
-
+        std::cout<<"Reached line 166 in rank 0"<<std::endl;
         if (rank == 0)
         {
             for (int i = 0; i < n; i++)
             {
                 int *process_ids = (int *) malloc(9 * sizeof(int));
                 process_ids = get_procs(particles[i].x, particles[i].y, num_proc_x, num_proc_y);
-
+                // std::cout<<"Working on line 173."
                 for (int j = 0; j < 9; i++)
                 {
                     if (process_ids[j] != -1)
