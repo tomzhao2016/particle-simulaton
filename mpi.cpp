@@ -71,6 +71,8 @@ int main( int argc, char **argv )
         printf("Trying to init the particles in rank 0 : \n");
         fflush(stdout);
         init_particles( n, particles );
+        printf("Finished init-ing particles in rank 0: \n");
+        fflush(stdout);
     }
 
     printf("Allocating space for the sizes array : \n");
