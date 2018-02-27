@@ -89,15 +89,16 @@ int main( int argc, char **argv )
         std::cout<<"Reached line 89 in rank 0"<<std::endl;
         for (int i = 0; i < n; i++)
         {
-            // Iterate through all the particles. 
-            int x_proc = get_proc_x(particles[i].x, num_proc_x);
-            // std::cout<<x_proc<<std::endl; 
-            int y_proc = get_proc_y(particles[i].y, num_proc_y);
-            // std::cout<<y_proc<<std::endl;
-            int proc_for_p = (y_proc * num_proc_x) + x_proc;
-            // Populate the sizes array.
-            partition_sizes[proc_for_p] += 1;
-            // std::cout<<partition_sizes[proc_for_p]<<std::endl;
+            int *process_ids = (int *) malloc(9 * sizeof(int));
+            process_ids = get_procs(particles[i].x, particles[i].y, num_proc_x, num_proc_y)
+
+            for (int i = 0; i < 9; i++)
+            {
+                if (process_ids[i] != -1)
+                {
+                    partition_sizes[i] += 1;
+                }
+            }
         }
         std::cout<<"Reached line 103 in rank 0";
     }
@@ -109,7 +110,7 @@ int main( int argc, char **argv )
     {
         for (int i = 0; i < n_proc; i++)
         {
-            std::cout<<"Partition size "<<i<<"is equal to "<<partition_sizes[i]<<std::endl;
+            std::cout<<"Partition size "<<i<<" is equal to "<<partition_sizes[i]<<std::endl;
         }
     }
 
@@ -198,7 +199,7 @@ int main( int argc, char **argv )
     // and the right most particles belongs to the right most bins
     init_local_bins(local_bins, local_particles, *local_size, local_bin_size ,rank, bin_len);
 
-    int bin_per_proc;
+    // int bin_per_proc;
     // std::cout << "TO DO HERE" << std::endl;
 
     //

@@ -25,6 +25,92 @@ int get_proc_y(double pos_y, int num_proc_y)
 	return (int) floor(pos_y / len);
 }
 
+int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
+{
+	// This functions takes in the positions of a particle
+	// and the total number of processes along each direction
+	// It returns an array of length 9, with all the processes ID
+	// that might potentially contain this particle.
+
+	// Note: The returned array might contain elements that are -1,
+	// and those elements are just empty. 
+
+	int *process_ids = (int *) malloc(9 * sizeof(int));
+	for (int i = 0; i < 9; i++)
+	{
+		// Initialize the array with all -1s. 
+		process_ids[i] = -1;
+	}
+
+	int index = 0;
+
+	int proc_x = get_proc_x(pos_x, num_proc_x);
+	int proc_y = get_proc_x(pos_y, num_proc_y);
+	int native_proc = (y_proc * num_proc_x) + x_proc;
+
+	process_ids[index++] = native_proc;
+
+	int bin_len = bin_length(0);
+
+	// Up?
+	int up_proc = get_proc_y(pos_y - bin_len, num_proc_y);
+	if ((pos_y - bin_len > 0) && (up_proc != proc_y))
+	{
+		process_ids[index++] = (up_proc * num_proc_x) + x_proc;
+	}
+
+	// Down?
+	int down_proc = get_proc_y(pos_y + bin_len, num_proc_y);
+	if ((pos_y + bin_len < get_size()) && (down_proc != proc_y))
+	{
+		process_ids[index++] = (down_proc * num_proc_x) + x_proc;
+	}
+
+	// Left?
+	int left_proc = get_proc_x(pos_x - bin_len, num_proc_x);
+	if ((pos_x - bin_len > 0) && (left_proc != proc_x))
+	{
+		process_ids[index++] = (proc_y * num_proc_x) + left_proc;
+	}
+
+	// Right?
+	int right_proc = get_proc_x(pos_x + bin_len, num_proc_x);
+	if ((pos_x + bin_len < get_size()) && (right_proc != proc_x))
+	{
+		process_ids[index++] = (proc_y * num_proc_x) + right_proc;
+	}
+
+	// Top Right?
+	if ((right_proc != proc_x) && (up_proc != proc_y))
+	{
+		process_ids[index++] = up_proc + 1;
+	}
+
+	// Top Left?
+	if ((left_proc != proc_x) && (up_proc != proc_y))
+	{
+		process_ids[index++] = up_proc - 1;
+	}
+
+	// Bottom Left?
+	if ((left_proc != proc_x) && (down_proc != proc_y))
+	{
+		process_ids[index++] = down_proc - 1;
+	}
+
+	// Top Right?
+	if ((right_proc != proc_x) && (down_proc != proc_y))
+	{
+		process_ids[index++] = down_proc + 1;
+	}
+
+	return process_ids;
+
+
+
+
+}
+
 int* get_bin_size(int num_proc_x, int num_proc_y, int rank, int bin_len){
 	int idx_col = rank/num_proc_x;
 	int idx_row = rank%num_proc_y;
