@@ -143,7 +143,10 @@ int main( int argc, char **argv )
 
     int *partition_offsets = (int*) malloc( n_proc * sizeof(int) );
     int *offsets_copy = (int*) malloc (n_proc * sizeof(int));
-    particle_t *particles_to_scatter = (particle_t*) malloc (n * sizeof(particle_t));
+
+
+
+    particle_t *particles_to_scatter;
 
 
     if (rank == 0)
@@ -157,6 +160,7 @@ int main( int argc, char **argv )
         }
     
 
+        particles_to_scatter = (particle_t*) malloc ((partition_offsets[n_proc-1] + partition_sizes[n_proc-1] + 1) * sizeof(particle_t));
 
         // Recieve the particles for this processor into local_partices
         
