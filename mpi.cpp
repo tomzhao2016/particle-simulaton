@@ -177,16 +177,34 @@ int main( int argc, char **argv )
             int *process_ids = (int *) malloc(9 * sizeof(int));
             process_ids = get_procs(particles[i].x, particles[i].y, num_proc_x, num_proc_y);
             // std::cout<<"Working on line 173."
-            for (int j = 0; j < 9; i++) 
+
+
+            for (int j = 0; j < 9; j++)
             {
                 if (process_ids[j] != -1)
                 {
-                    std::cout<<"In line 178, i and j are "<<i<<" "<<j<<std::endl;
-                    std::cout<<"In like 179, process_ids[j] and offsets_copy[process_ids[j]] are "<<process_ids[j]<<" "<<offsets_copy[process_ids[j]]<<std::endl;
-                    particles_to_scatter[offsets_copy[process_ids[j]]++] = particles[i];
+                    // partition_sizes[process_ids[j]] += 1;
+                    std::cout<<"Particle "<<i<<" goes to processor "<<" "<<process_ids[j];
+                    
                 }
+
             }
             free(process_ids);
+
+
+
+
+
+            // for (int j = 0; j < 9; i++) 
+            // {
+            //     if (process_ids[j] != -1)
+            //     {
+            //         std::cout<<"In line 178, i and j are "<<i<<" "<<j<<std::endl;
+            //         std::cout<<"In like 179, process_ids[j] and offsets_copy[process_ids[j]] are "<<process_ids[j]<<" "<<offsets_copy[process_ids[j]]<<std::endl;
+            //         particles_to_scatter[offsets_copy[process_ids[j]]++] = particles[i];
+            //     }
+            // }
+            // free(process_ids);
         }
         
 
