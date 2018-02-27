@@ -96,7 +96,7 @@ int main( int argc, char **argv )
             {
                 if (process_ids[j] != -1)
                 {
-                    partition_sizes[j] += 1;
+                    partition_sizes[process_ids[j]] += 1;
                 }
             }
             free(process_ids);

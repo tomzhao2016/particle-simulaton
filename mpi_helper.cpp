@@ -110,14 +110,14 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 
 
 	// Debugging
-	std::cout<<"My pos x is "<< pos_x<<" and pos y is "<<pos_y<<std::endl;
-	std::cout<<"The processors I belong to are :::: \n\n\n";
-	for(int i = 0; i < 9; i++)
-	{
-		if (process_ids[i] != -1)
-			std::cout<<" "<<process_ids[i];
-	}
-	std::cout<<"\n\n\n";
+	// std::cout<<"My pos x is "<< pos_x<<" and pos y is "<<pos_y<<std::endl;
+	// std::cout<<"The processors I belong to are :::: \n\n\n";
+	// for(int i = 0; i < 9; i++)
+	// {
+	// 	if (process_ids[i] != -1)
+	// 		std::cout<<" "<<process_ids[i];
+	// }
+	// std::cout<<"\n\n\n";
 	return process_ids;
 
 
