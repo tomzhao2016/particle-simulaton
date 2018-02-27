@@ -2,7 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include "common.h"
+#include "common2.h"
+#include <math.h>
+#include "mpi_helper.cpp"
+#include <iostream>
 
 //
 //  benchmarking program
@@ -27,11 +30,11 @@ int main( int argc, char **argv )
         printf( "-no turns off all correctness checks and particle output\n");
         return 0;
     }
-    
     int n = read_int( argc, argv, "-n", 1000 );
     char *savename = read_string( argc, argv, "-o", NULL );
     char *sumname = read_string( argc, argv, "-s", NULL );
-    
+
+
     //
     //  set up MPI
     //
@@ -45,55 +48,104 @@ int main( int argc, char **argv )
     //
     FILE *fsave = savename && rank == 0 ? fopen( savename, "w" ) : NULL;
     FILE *fsum = sumname && rank == 0 ? fopen ( sumname, "a" ) : NULL;
-
     particle_t *particles = (particle_t*) malloc( n * sizeof(particle_t) );
 
-    mbin_len = bin_length(n);
-    mbin_t *mbins = new mbin_t[mbin_len * mbin_len]；
+    // The total number of processes available to us are n_proc.
+    int num_proc_x = (int) floor(sqrt(n_proc)); // The number of processors along the x-axis.
+    int num_proc_y = (int) ceil(n / sqrt(n_proc)); // The number of processors along the y-axis. 
+    printf("Number of total processes %d", n_proc);
+    fflush(stdout);
+    printf("Number of processes_x %d\n", num_proc_x);
+    fflush(stdout);
+    printf("Number of processes_y %d\n", num_proc_x);
+    fflush(stdout);
+
+
+    // Create MPI Datatype for particle. 
+    MPI_Datatype PARTICLE;
+    MPI_Type_contiguous( 6, MPI_DOUBLE, &PARTICLE );
+    MPI_Type_commit( &PARTICLE );
+
+    set_size( n );
+    if( rank == 0 ){
+        init_particles( n, particles );
+    }
+
+    int *sizes = (int*) malloc (n_proc * sizeof(int));
+    if (rank == 0)
+    {
+        
+        for (int i = 0; i < n_proc; i++)
+            sizes[i] = 0;
+
+        for (int i = 0; i < n; i++)
+        {
+            // Iterate through all the particles. 
+            int x_proc = get_proc_x(particles[i].x, num_proc_x);
+            int y_proc = get_proc_y(particles[i].y, num_proc_y);
+            int proc_for_p = (y_proc * num_proc_x) + x_proc;
+            sizes[proc_for_p] += 1;
+        }
+    }
+
+    // Send an array of sizes (array of ints) to each processor first. 
+    int *local_size; // This is where we will recieve the size. 
+    MPI_Scatter(sizes, 1, MPI_INT, local_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+    // Debugging
+    if (rank == 1)
+    {
+        std::cout<<"I am processor 1 \n";
+        std::cout<<(*local_size)<<std::endl;
+    }
+    else if (rank == 2)
+    {
+        std::cout<<"I am processor 2 \n";
+        std::cout<<(*local_size)<<std::endl;
+    }
+
+    // Each processor allocates space.
+    particle_t *local_particles = (particle_t*) malloc( *local_size * sizeof(particle_t) );
+
+    // Recieve the particles for this processor into local_partices
+
+
     
-    // TO DO HERE
-    // MPI datatype: MBLOCK the same size of processor_t
-    std::cout << "TO DO HERE" << std::endl;
-    MPI_Datatype MBIN;
 
-    //
-    // set up the data partitioning across processors
-    //
 
-    // TO DO HERE
-    // data partition, into ( ceil(sqrt(n)) by ceil(n/sqrt(n)) ) blocks
-    // reset int partition_offests, int partition_sizes, int bin_per_proc
+
+
     int bin_per_proc;
     int *partition_offsets;
     int *partition_sizes;
-    std::cout << "TO DO HERE" << std::endl;
+    // std::cout << "TO DO HERE" << std::endl;
 
     //
     //  allocate storage for local partition
     //
 
     // TO DO HERE
-    std::cout << "TO DO HERE" << std::endl;
+    // std::cout << "TO DO HERE" << std::endl;
 
-    int nlocal = partition_sizes[rank];
-    processor_t *local = new mbin_t[nlocal];
+    // int nlocal = partition_sizes[rank];
+    // processor_t *local = new mbin_t[nlocal];
     
     //
     //  initialize and distribute the particles (that's fine to leave it unoptimized)
     //
     // TO DO HERE
-    std::cout << "TO DO HERE" << std::endl;
+    // std::cout << "TO DO HERE" << std::endl;
 
     // fill in init_mbins() in mpi_helper.cpp
     // fill in init_mblocks() in mpi_helper.cpp
     // Or we may use MPI_Comm_split???
 
-    set_size( n );
-    if( rank == 0 ){
-        init_particles( n, particles );
-        init_mbins(mbins, n, particles); 
-    }
-    MPI_Scatterv( mbins, partition_sizes, partition_offsets, MBIN, local, nlocal, MBIN, 0, MPI_COMM_WORLD );
+    // set_size( n );
+    // if( rank == 0 ){
+        // init_particles( n, particles );
+        // init_mbins(mbins, n, particles); 
+    // }
+    // MPI_Scatterv( mbins, partition_sizes, partition_offsets, MBIN, local, nlocal, MBIN, 0, MPI_COMM_WORLD );
     
     //
     //  simulate a number of time steps
@@ -115,11 +167,14 @@ int main( int argc, char **argv )
         //
         //  1.Update forces
         //
-        // for b in native_bins & egde_binsz:
+        // for b in native_bins & egde_bins:
         //   for p1 in b:
         //      for p2 in b.neighbors:
         //          apply_force(p1, p2);
-        //
+        // 
+        
+
+
 
         // NOT SURE how to change avg and min
         if( find_option( argc, argv, "-no" ) == -1 )
@@ -148,7 +203,7 @@ int main( int argc, char **argv )
         //   for p in b:
         //      mpi_move(p, M); 
         // M: map processor_id to particle_t
-        std::map<int, particle_t> M;
+        // std::map<int, particle_t> M;
 
         //
         // 3.1 send particle to other processor
@@ -208,14 +263,14 @@ int main( int argc, char **argv )
     //
     //  release resources
     //
-    if ( fsum )
-        fclose( fsum );
-    free( partition_offsets );
-    free( partition_sizes );
-    free( local );
-    free( particles );
-    if( fsave )
-        fclose( fsave );
+    // if ( fsum )
+    //     fclose( fsum );
+    // free( partition_offsets );
+    // free( partition_sizes );
+    // // free( local );
+    // free( particles );
+    // if( fsave )
+    //     fclose( fsave );
     
     MPI_Finalize( );
     
