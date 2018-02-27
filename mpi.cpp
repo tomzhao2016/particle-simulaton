@@ -4,6 +4,7 @@
 #include <assert.h>
 #include "common2.h"
 #include <math.h>
+#include "mpi_helper.h"
 
 //
 //  benchmarking program
