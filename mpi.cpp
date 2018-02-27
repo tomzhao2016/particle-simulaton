@@ -4,7 +4,7 @@
 #include <assert.h>
 #include "common2.h"
 #include <math.h>
-#include "mpi_helper.cpp"
+#include "mpi_helper.h"
 #include <iostream>
 
 //
@@ -76,12 +76,16 @@ int main( int argc, char **argv )
     }
 
     printf("Allocating space for the sizes array : \n");
-    int *sizes = (int*) malloc (n_proc * sizeof(int));
+
+    // sizes array stores the number of particles that each processor is to be sent in the beginning.
+    // NOTE: This sizes array will change.  
+    int *partition_sizes = (int*) malloc (n_proc * sizeof(int));
     if (rank == 0)
     {
-        
+        // Initialize the sizes array to be empty. 
         for (int i = 0; i < n_proc; i++)
-            sizes[i] = 0;
+            partition_sizes[i] = 0;
+
 
         for (int i = 0; i < n; i++)
         {
@@ -89,13 +93,14 @@ int main( int argc, char **argv )
             int x_proc = get_proc_x(particles[i].x, num_proc_x);
             int y_proc = get_proc_y(particles[i].y, num_proc_y);
             int proc_for_p = (y_proc * num_proc_x) + x_proc;
-            sizes[proc_for_p] += 1;
+            // Populate the sizes array.
+            partition_sizes[proc_for_p] += 1;
         }
     }
 
     // Send an array of sizes (array of ints) to each processor first. 
     int *local_size; // This is where we will recieve the size. 
-    MPI_Scatter(sizes, 1, MPI_INT, local_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Scatter(partition_sizes, 1, MPI_INT, local_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     // Debugging
     if (rank == 1)
@@ -113,6 +118,39 @@ int main( int argc, char **argv )
     particle_t *local_particles = (particle_t*) malloc( *local_size * sizeof(particle_t) );
 
     // Recieve the particles for this processor into local_partices
+    int *sizes_copy = (int*) malloc (n_proc * sizeof(int));
+    for (int i = 0; i < n_proc; i++)
+    {
+        sizes_copy[i] = partition_sizes[i];
+    }
+
+    particle_t *particles_to_scatter = (particle_t*) malloc (n * sizeof(particle_t));
+
+    if (rank == 0)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            int x_proc = get_proc_x(particles[i].x, num_proc_x);
+            int y_proc = get_proc_y(particles[i].y, num_proc_y);
+            int proc_for_p = (y_proc * num_proc_x) + x_proc;
+
+            particles_to_scatter[sizes_copy[proc_for_p] - 1] = particles[i]; 
+            sizes_copy[proc_for_p]--;
+        }
+    }
+
+    int *partition_offsets = (int*) malloc( n_proc * sizeof(int) );
+
+    partition_offsets[0] = partition_sizes[0];
+
+    for (int i = 1; i < n_proc; i ++)
+    {
+        partition_offsets[i] = partition_offsets[i-1] + partition_sizes[i];
+    }
+
+    MPI_Scatterv( particles_to_scatter, partition_sizes, partition_offsets, PARTICLE,
+             local_particles, *local_size, PARTICLE, 0, MPI_COMM_WORLD );
+
 
 
     
@@ -121,8 +159,6 @@ int main( int argc, char **argv )
 
 
     int bin_per_proc;
-    int *partition_offsets;
-    int *partition_sizes;
     // std::cout << "TO DO HERE" << std::endl;
 
     //
