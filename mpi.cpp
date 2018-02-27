@@ -165,23 +165,22 @@ int main( int argc, char **argv )
             offsets_copy[i] = partition_offsets[i];
         }
         std::cout<<"Reached line 166 in rank 0"<<std::endl;
-        if (rank == 0)
+        
+        for (int i = 0; i < n; i++)
         {
-            for (int i = 0; i < n; i++)
+            int *process_ids = (int *) malloc(9 * sizeof(int));
+            process_ids = get_procs(particles[i].x, particles[i].y, num_proc_x, num_proc_y);
+            // std::cout<<"Working on line 173."
+            for (int j = 0; j < 9; i++)
             {
-                int *process_ids = (int *) malloc(9 * sizeof(int));
-                process_ids = get_procs(particles[i].x, particles[i].y, num_proc_x, num_proc_y);
-                // std::cout<<"Working on line 173."
-                for (int j = 0; j < 9; i++)
+                if (process_ids[j] != -1)
                 {
-                    if (process_ids[j] != -1)
-                    {
-                        // std::cout<<"In line 178, i and j are "<<i<<" "<<j<<std::endl;
-                        particles_to_scatter[offsets_copy[process_ids[j]]++] = particles[i];
-                    }
+                    std::cout<<"In line 178, i and j are "<<i<<" "<<j<<std::endl;
+                    particles_to_scatter[offsets_copy[process_ids[j]]++] = particles[i];
                 }
             }
         }
+        
 
 
         std::cout<<"Reached line 180 in rank 0 "<<std::endl;
