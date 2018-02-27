@@ -52,6 +52,7 @@ void set_size( int n )
 //
 void init_particles( int n, particle_t *p )
 {
+    printf("I am in line 1 of init particles.... \n");
     srand48( time( NULL ) );
     printf("I am trying to init particles.... \n");
         
