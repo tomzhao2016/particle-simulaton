@@ -149,7 +149,7 @@ int main( int argc, char **argv )
     }
 
     MPI_Scatterv( particles_to_scatter, partition_sizes, partition_offsets, PARTICLE,
-             local_particles, local_size, PARTICLE, 0, MPI_COMM_WORLD );
+             local_particles, *local_size, PARTICLE, 0, MPI_COMM_WORLD );
 
 
 
