@@ -2,11 +2,11 @@
 #include <map>
 #include "common2.h"
 
-#ifndef __CS267_MPI_HELPER_H__
-#define __CS267_MPI_HELPER_H__
+// #ifndef __CS267_MPI_HELPER_H__
+// #define __CS267_MPI_HELPER_H__
 
-inline int min( int a, int b ) { return a < b ? a : b; }
-inline int max( int a, int b ) { return a > b ? a : b; }
+// inline int min( int a, int b ) { return a < b ? a : b; }
+// inline int max( int a, int b ) { return a > b ? a : b; }
 
 typedef struct{
 	std::map<int, particle_t> native_particle;
