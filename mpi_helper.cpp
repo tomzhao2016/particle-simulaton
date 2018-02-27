@@ -52,7 +52,7 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 
 	process_ids[index++] = native_proc;
 
-	int bin_len = get_cut_off();
+	double bin_len = get_cut_off();
 
 	// Up?
 	int up_proc = get_proc_y(pos_y - bin_len, num_proc_y);
