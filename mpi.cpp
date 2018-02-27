@@ -219,8 +219,14 @@ int main( int argc, char **argv )
     MPI_Scatterv( particles_to_scatter, partition_sizes, partition_offsets, PARTICLE,
              local_particles, *local_size, PARTICLE, 0, MPI_COMM_WORLD );
 
-
-
+    // Debugging
+    if (rank == 3)
+    {
+        for (int i = 0; i < *local_size; i++)
+        {
+            std::cout<<"\n\n i, and the x pos is "<<i<<" "<<local_particles[i].x;
+        }
+    }
     
     // int bin_len = bin_length(n);
     // int *local_bin_size = get_bin_size(num_proc_x, num_proc_y, rank, bin_len);
