@@ -53,6 +53,7 @@ void set_size( int n )
 void init_particles( int n, particle_t *p )
 {
     srand48( time( NULL ) );
+    printf("I am trying to init particles.... \n")
         
     int sx = (int)ceil(sqrt((double)n));
     int sy = (n+sx-1)/sx;
