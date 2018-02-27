@@ -110,33 +110,33 @@ int bin_length(int n)
 //
 // Initialize the bins and assign each particle into bins
 //
-void init_bins(bin_t *bins, int n, particle_t *p )
-{
-    // cutoff should dividable by 1
-    int len_bin = (int)ceil(size/cutoff);
-    long int num_bin = len_bin * len_bin;
-    int sum = 0;
+// void init_bins(bin_t *bins, int n, particle_t *p )
+// {
+//     // cutoff should dividable by 1
+//     int len_bin = (int)ceil(size/cutoff);
+//     long int num_bin = len_bin * len_bin;
+//     int sum = 0;
 
-    //bin_t* bins = (bin_t*) malloc( num_bin * sizeof(bin_t) );
+//     //bin_t* bins = (bin_t*) malloc( num_bin * sizeof(bin_t) );
 
     
-    for (int i = 0; i < n; i++ )
-    {
-        int bin_x = (int)floor(p[i].x/cutoff);
-        int bin_y = (int)floor(p[i].y/cutoff);
+//     for (int i = 0; i < n; i++ )
+//     {
+//         int bin_x = (int)floor(p[i].x/cutoff);
+//         int bin_y = (int)floor(p[i].y/cutoff);
 
-        bins[bin_x * len_bin + bin_y].particle_idx.insert(i);
-        // 
-        // assign each particle into a bin
-        //
-        p[i].cur_bin = bin_x * len_bin + bin_y;
-    }
+//         bins[bin_x * len_bin + bin_y].particle_idx.insert(i);
+//         // 
+//         // assign each particle into a bin
+//         //
+//         p[i].cur_bin = bin_x * len_bin + bin_y;
+//     }
        
 
 
     
 
-}
+// }
 
 //
 // find neighbours of current bin 
@@ -244,17 +244,17 @@ void move( particle_t &p )
 //
 //
 //
-void update_bin(particle_t &p, bin_t *bins, int p_idx)
-{
-    int len_bin = (int)ceil(size/cutoff);
-    int bin_x = (int)floor(p.x/cutoff);
-    int bin_y = (int)floor(p.y/cutoff);
+// void update_bin(particle_t &p, bin_t *bins, int p_idx)
+// {
+//     int len_bin = (int)ceil(size/cutoff);
+//     int bin_x = (int)floor(p.x/cutoff);
+//     int bin_y = (int)floor(p.y/cutoff);
 
-    bins[p.cur_bin].particle_idx.erase(p_idx);
-    bins[bin_x * len_bin + bin_y].particle_idx.insert(p_idx);
+//     bins[p.cur_bin].particle_idx.erase(p_idx);
+//     bins[bin_x * len_bin + bin_y].particle_idx.insert(p_idx);
 
-    p.cur_bin = bin_x * len_bin + bin_y;
-}
+//     p.cur_bin = bin_x * len_bin + bin_y;
+// }
 //
 //  I/O routines
 //
