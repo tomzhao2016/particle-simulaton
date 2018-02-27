@@ -35,6 +35,8 @@ common.o: common.cpp common.h
 	$(CC) -c $(CFLAGS) common.cpp
 common2.o: common2.cpp common2.h
 	$(CC) -c $(CFLAGS) common2.cpp
+mpi_helper.o: mpi_helper.cpp mpi_helper.h
+	$(MPCC) -c $(CFLAGS) mpi_helper.cpp.cpp
 
 clean:
 	rm -f *.o $(TARGETS) *.stdout *.txt
