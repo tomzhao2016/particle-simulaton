@@ -100,9 +100,10 @@ int main( int argc, char **argv )
     }
 
     // Send an array of sizes (array of ints) to each processor first. 
-    int *local_size; // This is where we will recieve the size. 
+    int *local_size = (int *)malloc(sizeof(int)); // This is where we will recieve the size. 
     std::cout<<"Reached line 104"<<std::endl;
     MPI_Scatter(partition_sizes, 1, MPI_INT, local_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
 
     // Debugging
     if (rank == 1)
