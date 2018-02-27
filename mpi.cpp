@@ -318,8 +318,8 @@ int main( int argc, char **argv )
     // // free( local );
     if (particles)
         free( particles );
-    if (local_partices)
-        free(local_partices);
+    if (local_particicles)
+        free(local_particles);
     // if( fsave )
         // fclose( fsave );
     
