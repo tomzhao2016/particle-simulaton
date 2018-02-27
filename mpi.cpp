@@ -59,18 +59,39 @@ int main( int argc, char **argv )
     fflush(stdout);
 
 
+    // Create MPI Datatype for particle. 
+    MPI_Datatype PARTICLE;
+    MPI_Type_contiguous( 6, MPI_DOUBLE, &PARTICLE );
+    MPI_Type_commit( &PARTICLE );
 
     set_size( n );
     if( rank == 0 ){
         init_particles( n, particles );
     }
 
-
-    for (int i = 0; i < n; i++)
+    if (rank == 0)
     {
-        // Iterate through all the particles. 
+        int *sizes = (int*) malloc (n_proc * sizeof(int));
+        for (int i = 0; i < n_proc; i++)
+            sizes[i] = 0;
 
+        for (int i = 0; i < n; i++)
+        {
+            // Iterate through all the particles. 
+            int x_proc = get_proc_x(particles[i].x, num_proc_x);
+            int y_proc = get_proc_y(particles[i].y, num_proc_y);
+            int proc_for_p = (y_proc * num_proc_x) + x_proc;
+            sizes[proc_for_p] += 1;
+        }
     }
+
+    // Send an array of sizes (array of ints) to each processor first. 
+
+
+    // Each processor allocates space.
+
+
+    
 
 
 
