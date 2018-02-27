@@ -10,7 +10,7 @@ CFLAGS = -O3
 LIBS =
 
 
-TARGETS = serial openmp mpi autograder
+TARGETS = serial openmp mpi autograder mpi_helper common2
 
 all:	$(TARGETS)
 
@@ -20,8 +20,8 @@ autograder: autograder.o common.o
 	$(CC) -o $@ $(LIBS) autograder.o common.o
 openmp: openmp.o common.o
 	$(CC) -o $@ $(LIBS) $(OPENMP) openmp.o common.o
-mpi: mpi.o common.o
-	$(MPCC) -o $@ $(LIBS) $(MPILIBS) mpi.o common.o
+mpi: mpi.o common2.o mpi_helper.o
+	$(MPCC) -o $@ $(LIBS) $(MPILIBS) mpi.o common2.o mpi_helper.o
 
 autograder.o: autograder.cpp common.h
 	$(CC) -c $(CFLAGS) autograder.cpp
@@ -29,10 +29,12 @@ openmp.o: openmp.cpp common.h
 	$(CC) -c $(OPENMP) $(CFLAGS) openmp.cpp
 serial.o: serial.cpp common.h
 	$(CC) -c $(CFLAGS) serial.cpp
-mpi.o: mpi.cpp common.h
+mpi.o: mpi.cpp common2.h mpi_helper.h
 	$(MPCC) -c $(CFLAGS) mpi.cpp
 common.o: common.cpp common.h
 	$(CC) -c $(CFLAGS) common.cpp
+common2.o: common2.cpp common2.h
+	$(CC) -c $(CFLAGS) common2.cpp
 
 clean:
 	rm -f *.o $(TARGETS) *.stdout *.txt
