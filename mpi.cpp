@@ -51,7 +51,7 @@ int main( int argc, char **argv )
     particle_t *particles = (particle_t*) malloc( n * sizeof(particle_t) );
 
     // The total number of processes available to us are n_proc.
-    int num_proc_x = (int) ceil(sqrt(n_proc)); // The number of processors along the x-axis.
+    int num_proc_x = (int) floor(sqrt(n_proc)); // The number of processors along the x-axis.
     int num_proc_y = (int) ceil(n / sqrt(n_proc)); // The number of processors along the y-axis. 
     printf("Number of total processes %d", n_proc);
     fflush(stdout);
