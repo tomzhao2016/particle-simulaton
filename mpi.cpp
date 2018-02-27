@@ -100,15 +100,16 @@ int main( int argc, char **argv )
             partition_sizes[proc_for_p] += 1;
             std::cout<<partition_sizes[proc_for_p]<<std::endl;
         }
+        std::cout<<"Reached line 103 in rank 0";
     }
 
     
-
+    MPI_Barrier(MPI_COMM_WORLD);
     // Send an array of sizes (array of ints) to each processor first. 
     int *local_size = (int *)malloc(sizeof(int)); // This is where we will recieve the size. 
     std::cout<<"Reached line 104"<<std::endl;
     MPI_Scatter(partition_sizes, 1, MPI_INT, local_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
+    std::cout
 
     // Debugging
     if (rank == 1)
