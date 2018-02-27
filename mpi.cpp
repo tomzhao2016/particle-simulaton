@@ -62,23 +62,23 @@ int main( int argc, char **argv )
     int bin_per_proc;
     int *partition_offsets;
     int *partition_sizes;
-    std::cout << "TO DO HERE" << std::endl;
+    // std::cout << "TO DO HERE" << std::endl;
 
     //
     //  allocate storage for local partition
     //
 
     // TO DO HERE
-    std::cout << "TO DO HERE" << std::endl;
+    // std::cout << "TO DO HERE" << std::endl;
 
-    int nlocal = partition_sizes[rank];
-    processor_t *local = new mbin_t[nlocal];
+    // int nlocal = partition_sizes[rank];
+    // processor_t *local = new mbin_t[nlocal];
     
     //
     //  initialize and distribute the particles (that's fine to leave it unoptimized)
     //
     // TO DO HERE
-    std::cout << "TO DO HERE" << std::endl;
+    // std::cout << "TO DO HERE" << std::endl;
 
     // fill in init_mbins() in mpi_helper.cpp
     // fill in init_mblocks() in mpi_helper.cpp
