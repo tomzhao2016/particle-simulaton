@@ -5,7 +5,7 @@
 #include "common2.h"
 #include <math.h>
 #include "mpi_helper.cpp"
-#include <iostring.h>
+#include <iostream.h>
 
 //
 //  benchmarking program
