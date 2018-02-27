@@ -186,6 +186,8 @@ int main( int argc, char **argv )
                     // partition_sizes[process_ids[j]] += 1;
                     std::cout<<"\n\nParticle "<<i<<" goes to processor "<<" "<<process_ids[j];
 
+                    particles_to_scatter[offsets_copy[process_ids[j]]++] = particles[i];
+
                 }
 
             }
