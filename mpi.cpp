@@ -87,17 +87,21 @@ int main( int argc, char **argv )
             partition_sizes[i] = 0;
 
         std::cout<<"Reached line 89 in rank 0"<<std::endl;
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) // for each particle
         {
-            // Iterate through all the particles. 
-            int x_proc = get_proc_x(particles[i].x, num_proc_x);
-            // std::cout<<x_proc<<std::endl; 
-            int y_proc = get_proc_y(particles[i].y, num_proc_y);
-            // std::cout<<y_proc<<std::endl;
-            int proc_for_p = (y_proc * num_proc_x) + x_proc;
-            // Populate the sizes array.
-            partition_sizes[proc_for_p] += 1;
-            // std::cout<<partition_sizes[proc_for_p]<<std::endl;
+            int *process_ids = (int *) malloc(9 * sizeof(int));
+            process_ids = get_procs(particles[i].x, particles[i].y, num_proc_x, num_proc_y);
+
+            for (int j = 0; j < 9; j++)
+            {
+                if (process_ids[j] != -1)
+                {
+                    partition_sizes[process_ids[j]] += 1;
+                    std::cout<<"\n\nParticle "<<i<<" goes to processor "<<" "<<process_ids[j];
+                }
+
+            }
+            free(process_ids);
         }
         std::cout<<"Reached line 103 in rank 0";
     }
@@ -109,7 +113,7 @@ int main( int argc, char **argv )
     {
         for (int i = 0; i < n_proc; i++)
         {
-            std::cout<<"Partition size "<<i<<"is equal to "<<partition_sizes[i]<<std::endl;
+            std::cout<<"Partition size "<<i<<" is equal to "<<partition_sizes[i]<<std::endl;
         }
     }
 
@@ -141,20 +145,24 @@ int main( int argc, char **argv )
 
     int *partition_offsets = (int*) malloc( n_proc * sizeof(int) );
     int *offsets_copy = (int*) malloc (n_proc * sizeof(int));
-    particle_t *particles_to_scatter = (particle_t*) malloc (n * sizeof(particle_t));
+
+
+
+    particle_t *particles_to_scatter;
 
 
     if (rank == 0)
     {
         std::cout<<"Reached line 149 in rank 0 "<<std::endl;
-        partition_offsets[0] = partition_sizes[0];
+        partition_offsets[0] = 0;
 
         for (int i = 1; i < n_proc; i ++)
         {
-            partition_offsets[i] = partition_offsets[i-1] + partition_sizes[i];
+            partition_offsets[i] = partition_offsets[i-1] + partition_sizes[i-1];
         }
     
 
+        particles_to_scatter = (particle_t*) malloc ((partition_offsets[n_proc-1] + partition_sizes[n_proc-1] + 1) * sizeof(particle_t));
 
         // Recieve the particles for this processor into local_partices
         
@@ -162,21 +170,47 @@ int main( int argc, char **argv )
         {
             offsets_copy[i] = partition_offsets[i];
         }
+        std::cout<<"Reached line 166 in rank 0"<<std::endl;
+        
+        for (int i = 0; i < n; i++)
+        {
+            int *process_ids = (int *) malloc(9 * sizeof(int));
+            process_ids = get_procs(particles[i].x, particles[i].y, num_proc_x, num_proc_y);
+            // std::cout<<"Working on line 173."
 
+
+            for (int j = 0; j < 9; j++)
+            {
+                if (process_ids[j] != -1)
+                {
+                    // partition_sizes[process_ids[j]] += 1;
+                    std::cout<<"\n\nParticle "<<i<<" goes to processor "<<" "<<process_ids[j];
+
+                    particles_to_scatter[offsets_copy[process_ids[j]]++] = particles[i];
+
+                }
+
+            }
+            free(process_ids);
+
+
+
+
+
+            // for (int j = 0; j < 9; i++) 
+            // {
+            //     if (process_ids[j] != -1)
+            //     {
+            //         std::cout<<"In line 178, i and j are "<<i<<" "<<j<<std::endl;
+            //         std::cout<<"In like 179, process_ids[j] and offsets_copy[process_ids[j]] are "<<process_ids[j]<<" "<<offsets_copy[process_ids[j]]<<std::endl;
+            //         particles_to_scatter[offsets_copy[process_ids[j]]++] = particles[i];
+            //     }
+            // }
+            // free(process_ids);
+        }
         
 
-        if (rank == 0)
-        {
-            for (int i = 0; i < n; i++)
-            {
-                int x_proc = get_proc_x(particles[i].x, num_proc_x);
-                int y_proc = get_proc_y(particles[i].y, num_proc_y);
-                int proc_for_p = (y_proc * num_proc_x) + x_proc;
 
-                particles_to_scatter[offsets_copy[proc_for_p] - 1] = particles[i]; 
-                offsets_copy[proc_for_p]--;
-            }
-        }
         std::cout<<"Reached line 180 in rank 0 "<<std::endl;
     }
 
@@ -185,20 +219,26 @@ int main( int argc, char **argv )
     MPI_Scatterv( particles_to_scatter, partition_sizes, partition_offsets, PARTICLE,
              local_particles, *local_size, PARTICLE, 0, MPI_COMM_WORLD );
 
-
-
+    // Debugging
+    if (rank == 3)
+    {
+        for (int i = 0; i < *local_size; i++)
+        {
+            std::cout<<"\n\n i, and the x pos is "<<i<<" "<<local_particles[i].x;
+        }
+    }
     
-    int bin_len = bin_length(n);
-    int *local_bin_size = get_bin_size(num_proc_x, num_proc_y, rank, bin_len);
-    int local_bin_row = local_bin_size[0];
-    int local_bin_col = local_bin_size[1];
-    bin_t *local_bins = new bin_t[local_bin_row*local_bin_col];
+    // int bin_len = bin_length(n);
+    // int *local_bin_size = get_bin_size(num_proc_x, num_proc_y, rank, bin_len);
+    // int local_bin_row = local_bin_size[0];
+    // int local_bin_col = local_bin_size[1];
+    // bin_t *local_bins = new bin_t[local_bin_row*local_bin_col];
 
-    // each bins include particles on left and up edges 
-    // and the right most particles belongs to the right most bins
-    init_local_bins(local_bins, local_particles, *local_size, local_bin_size ,rank, bin_len);
+    // // each bins include particles on left and up edges 
+    // // and the right most particles belongs to the right most bins
+    // init_local_bins(local_bins, local_particles, *local_size, local_bin_size ,rank, bin_len);
 
-    int bin_per_proc;
+    // int bin_per_proc;
     // std::cout << "TO DO HERE" << std::endl;
 
     //
