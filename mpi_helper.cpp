@@ -45,14 +45,14 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 	int index = 0;
 
 	int x_proc = get_proc_x(pos_x, num_proc_x);
-	int y_proc = get_proc_x(pos_y, num_proc_y);
+	int y_proc = get_proc_y(pos_y, num_proc_y);
 	int proc_x = x_proc;
 	int proc_y = y_proc;
 	int native_proc = (y_proc * num_proc_x) + x_proc;
 
 	process_ids[index++] = native_proc;
 
-	int bin_len = bin_length(0);
+	int bin_len = cutoff;
 
 	// Up?
 	int up_proc = get_proc_y(pos_y - bin_len, num_proc_y);

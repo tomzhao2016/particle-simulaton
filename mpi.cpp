@@ -87,7 +87,7 @@ int main( int argc, char **argv )
             partition_sizes[i] = 0;
 
         std::cout<<"Reached line 89 in rank 0"<<std::endl;
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) // for each particle
         {
             int *process_ids = (int *) malloc(9 * sizeof(int));
             process_ids = get_procs(particles[i].x, particles[i].y, num_proc_x, num_proc_y);
@@ -99,6 +99,7 @@ int main( int argc, char **argv )
                     partition_sizes[j] += 1;
                 }
             }
+            free(process_ids);
         }
         std::cout<<"Reached line 103 in rank 0";
     }
