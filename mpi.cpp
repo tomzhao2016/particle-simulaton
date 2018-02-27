@@ -117,11 +117,23 @@ int main( int argc, char **argv )
     // Each processor allocates space.
     particle_t *local_particles = (particle_t*) malloc( *local_size * sizeof(particle_t) );
 
+
+    int *partition_offsets = (int*) malloc( n_proc * sizeof(int) );
+
+    partition_offsets[0] = partition_sizes[0];
+
+    for (int i = 1; i < n_proc; i ++)
+    {
+        partition_offsets[i] = partition_offsets[i-1] + partition_sizes[i];
+    }
+
+
+
     // Recieve the particles for this processor into local_partices
-    int *sizes_copy = (int*) malloc (n_proc * sizeof(int));
+    int *offsets_copy = (int*) malloc (n_proc * sizeof(int));
     for (int i = 0; i < n_proc; i++)
     {
-        sizes_copy[i] = partition_sizes[i];
+        offsets_copy[i] = partition_offsets[i];
     }
 
     particle_t *particles_to_scatter = (particle_t*) malloc (n * sizeof(particle_t));
@@ -134,19 +146,12 @@ int main( int argc, char **argv )
             int y_proc = get_proc_y(particles[i].y, num_proc_y);
             int proc_for_p = (y_proc * num_proc_x) + x_proc;
 
-            particles_to_scatter[sizes_copy[proc_for_p] - 1] = particles[i]; 
-            sizes_copy[proc_for_p]--;
+            particles_to_scatter[offsets_copy[proc_for_p] - 1] = particles[i]; 
+            offsets_copy[proc_for_p]--;
         }
     }
 
-    int *partition_offsets = (int*) malloc( n_proc * sizeof(int) );
-
-    partition_offsets[0] = partition_sizes[0];
-
-    for (int i = 1; i < n_proc; i ++)
-    {
-        partition_offsets[i] = partition_offsets[i-1] + partition_sizes[i];
-    }
+    
 
     MPI_Scatterv( particles_to_scatter, partition_sizes, partition_offsets, PARTICLE,
              local_particles, *local_size, PARTICLE, 0, MPI_COMM_WORLD );
