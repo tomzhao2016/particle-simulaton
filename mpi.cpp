@@ -51,7 +51,7 @@ int main( int argc, char **argv )
     // The total number of processes available to us are n_proc.
     int num_proc_x = (int) ceil(sqrt(n_proc)); // The number of processors along the x-axis.
     int num_proc_y = (int) ceil(n / sqrt(n_proc)); // The number of processors along the y-axis. 
-    printf(num_proc_x);
+    printf("%f", num_proc_x);
     fflush(stdout);
 
 
