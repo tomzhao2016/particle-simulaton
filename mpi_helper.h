@@ -29,5 +29,6 @@ typedef struct{
 
 int get_proc_x(double pos_x, int num_proc_x);
 int get_proc_y(double pos_y, int num_proc_y);
+int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y);
 
 
