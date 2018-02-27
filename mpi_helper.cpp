@@ -46,6 +46,8 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 
 	int x_proc = get_proc_x(pos_x, num_proc_x);
 	int y_proc = get_proc_x(pos_y, num_proc_y);
+	int proc_x = x_proc;
+	int proc_y = y_proc;
 	int native_proc = (y_proc * num_proc_x) + x_proc;
 
 	process_ids[index++] = native_proc;
@@ -140,9 +142,9 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 // bin range: 
 // - - - - -
 //
-init_local_bins(bin_t* local_bins, particle_t* local_particles, int *local_bin_size ,int rank, int bin_len){
-	for (int idx = 0; idx < sizeof(local_particles)/sizeof(particle_t); idx++){
-		(int)floor(local_particle[idx].x/cutoff)
-		local_particle[idx].y
-	}
-}
+// init_local_bins(bin_t* local_bins, particle_t* local_particles, int *local_bin_size ,int rank, int bin_len){
+// 	for (int idx = 0; idx < sizeof(local_particles)/sizeof(particle_t); idx++){
+// 		(int)floor(local_particle[idx].x/cutoff)
+// 		local_particle[idx].y
+// 	}
+// }
