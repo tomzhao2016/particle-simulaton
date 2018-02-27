@@ -141,7 +141,7 @@ int main( int argc, char **argv )
 
     int *partition_offsets = (int*) malloc( n_proc * sizeof(int) );
 
-    partition_offsets[0] = partition_sizes[0]
+    partition_offsets[0] = partition_sizes[0];
 
     for (int i = 1; i < n_proc; i ++)
     {
