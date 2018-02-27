@@ -51,9 +51,13 @@ int main( int argc, char **argv )
     // The total number of processes available to us are n_proc.
     int num_proc_x = (int) ceil(sqrt(n_proc)); // The number of processors along the x-axis.
     int num_proc_y = (int) ceil(n / sqrt(n_proc)); // The number of processors along the y-axis. 
-    printf("%f", num_proc_x);
+    printf("Number of processes_x %f\n", num_proc_x);
+    fflush(stdout);
+    printf("Number of processes_y %f\n", num_proc_x);
     fflush(stdout);
 
+
+    
 
 
 
@@ -207,14 +211,14 @@ int main( int argc, char **argv )
     //
     //  release resources
     //
-    if ( fsum )
-        fclose( fsum );
-    free( partition_offsets );
-    free( partition_sizes );
-    // free( local );
-    free( particles );
-    if( fsave )
-        fclose( fsave );
+    // if ( fsum )
+    //     fclose( fsum );
+    // free( partition_offsets );
+    // free( partition_sizes );
+    // // free( local );
+    // free( particles );
+    // if( fsave )
+    //     fclose( fsave );
     
     MPI_Finalize( );
     

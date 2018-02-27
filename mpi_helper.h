@@ -23,5 +23,7 @@ void get_dest_bin(int curpos, int newpos);
 
 void init_mbins(mbin_t mbins, int n, particle_t* particles);
 
+int get_proc_x(double pos_x, int num_proc_x);
+int get_proc_y(double pos_y, int num_proc_y);
 
 
