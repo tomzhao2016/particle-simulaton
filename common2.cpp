@@ -91,7 +91,12 @@ void init_particles( int n, particle_t *p )
         p[i].vx = drand48()*2-1;
         p[i].vy = drand48()*2-1;
     }
+    printf("I am before free shuffle \n");
+    fflush(stdout);
     free( shuffle );
+    printf("Now I have freed shuffle \n");
+    fflush(stdout);
+
 }
 
 
