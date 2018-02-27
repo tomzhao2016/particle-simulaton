@@ -211,7 +211,7 @@ int main( int argc, char **argv )
         fclose( fsum );
     free( partition_offsets );
     free( partition_sizes );
-    free( local );
+    // free( local );
     free( particles );
     if( fsave )
         fclose( fsave );
