@@ -6,7 +6,8 @@
 #include <math.h>
 #include <time.h>
 #include <sys/time.h>
-#include "common.h"
+#include "common2.h"
+#include <iostream>
 
 
 
@@ -45,14 +46,20 @@ void set_size( int n )
     size = sqrt( density * n );
 }
 
-
+double get_size ()
+{
+    return size;
+}
 
 //
 //  Initialize the particle positions and velocities
 //
 void init_particles( int n, particle_t *p )
 {
+    printf("I am in line 1 of init particles.... \n");
     srand48( time( NULL ) );
+    printf("I am trying to init particles.... \n");
+    fflush(stdout);
         
     int sx = (int)ceil(sqrt((double)n));
     int sy = (n+sx-1)/sx;
@@ -73,16 +80,27 @@ void init_particles( int n, particle_t *p )
         //
         //  distribute particles evenly to ensure proper spacing
         //
+
+        // printf("I am before, %d\n", i);
+        // fflush(stdout);
         p[i].x = size*(1.+(k%sx))/(1+sx);
         p[i].y = size*(1.+(k/sx))/(1+sy);
 
+
+        // std::cout<<"I am after the first reference to p\n"<<std::endl;
         //
         //  assign random velocities within a bound
         //
         p[i].vx = drand48()*2-1;
         p[i].vy = drand48()*2-1;
     }
+    // printf("I am before free shuffle \n");
+    // fflush(stdout);
     free( shuffle );
+    // printf("Now I have freed shuffle \n");
+    // fflush(stdout);
+    // TODO: FREE THIS LATER. 
+
 }
 
 
@@ -95,33 +113,33 @@ int bin_length(int n)
 //
 // Initialize the bins and assign each particle into bins
 //
-void init_bins(bin_t *bins, int n, particle_t *p )
-{
-    // cutoff should dividable by 1
-    int len_bin = (int)ceil(size/cutoff);
-    long int num_bin = len_bin * len_bin;
-    int sum = 0;
+// void init_bins(bin_t *bins, int n, particle_t *p )
+// {
+//     // cutoff should dividable by 1
+//     int len_bin = (int)ceil(size/cutoff);
+//     long int num_bin = len_bin * len_bin;
+//     int sum = 0;
 
-    //bin_t* bins = (bin_t*) malloc( num_bin * sizeof(bin_t) );
+//     //bin_t* bins = (bin_t*) malloc( num_bin * sizeof(bin_t) );
 
     
-    for (int i = 0; i < n; i++ )
-    {
-        int bin_x = (int)floor(p[i].x/cutoff);
-        int bin_y = (int)floor(p[i].y/cutoff);
+//     for (int i = 0; i < n; i++ )
+//     {
+//         int bin_x = (int)floor(p[i].x/cutoff);
+//         int bin_y = (int)floor(p[i].y/cutoff);
 
-        bins[bin_x * len_bin + bin_y].particle_idx.insert(i);
-        // 
-        // assign each particle into a bin
-        //
-        p[i].cur_bin = bin_x * len_bin + bin_y;
-    }
+//         bins[bin_x * len_bin + bin_y].particle_idx.insert(i);
+//         // 
+//         // assign each particle into a bin
+//         //
+//         p[i].cur_bin = bin_x * len_bin + bin_y;
+//     }
        
 
 
     
 
-}
+// }
 
 //
 // find neighbours of current bin 
@@ -229,17 +247,17 @@ void move( particle_t &p )
 //
 //
 //
-void update_bin(particle_t &p, bin_t *bins, int p_idx)
-{
-    int len_bin = (int)ceil(size/cutoff);
-    int bin_x = (int)floor(p.x/cutoff);
-    int bin_y = (int)floor(p.y/cutoff);
+// void update_bin(particle_t &p, bin_t *bins, int p_idx)
+// {
+//     int len_bin = (int)ceil(size/cutoff);
+//     int bin_x = (int)floor(p.x/cutoff);
+//     int bin_y = (int)floor(p.y/cutoff);
 
-    bins[p.cur_bin].particle_idx.erase(p_idx);
-    bins[bin_x * len_bin + bin_y].particle_idx.insert(p_idx);
+//     bins[p.cur_bin].particle_idx.erase(p_idx);
+//     bins[bin_x * len_bin + bin_y].particle_idx.insert(p_idx);
 
-    p.cur_bin = bin_x * len_bin + bin_y;
-}
+//     p.cur_bin = bin_x * len_bin + bin_y;
+// }
 //
 //  I/O routines
 //

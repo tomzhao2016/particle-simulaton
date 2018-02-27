@@ -13,11 +13,14 @@
 int get_proc_x(double pos_x, int num_proc_x)
 {
 	// Returns the position of the particle processor along the x-direction
-	return (int) floor(pos_x / num_proc_x);
+	double len = get_size() / num_proc_x;
+
+	return (int) floor(pos_x / len);
 }
 
 int get_proc_y(double pos_y, int num_proc_y)
 {
 	// Returns the position of the particle processor along the y-direction
-	return (int) floor(pos_y / num_proc_y);
+	double len = get_size() / num_proc_y;
+	return (int) floor(pos_y / len);
 }

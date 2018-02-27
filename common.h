@@ -44,6 +44,7 @@ typedef struct
 //  timing routines
 //
 double read_timer( );
+double get_size ();
 
 //
 //  simulation routines
