@@ -75,7 +75,7 @@ int main( int argc, char **argv )
         fflush(stdout);
     }
 
-    printf("Allocating space for the sizes array : \n");
+    std::cout<<"Afer initialization"<<std::endl;
 
     // sizes array stores the number of particles that each processor is to be sent in the beginning.
     // NOTE: This sizes array will change.  
