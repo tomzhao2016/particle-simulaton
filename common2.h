@@ -18,8 +18,10 @@ const int SAVEFREQ = 10;
 //
 typedef struct
 {
-  std::set<int> particle_idx;
+  std::set<particle_t> particle_idx;
   std::set<int> neighbour_idx;
+  // 0 = native, 1 = edge, 2 = neighbor
+  int flag;
 } bin_t;
 
 
@@ -42,6 +44,7 @@ typedef struct
 //
 double read_timer( );
 double get_size ();
+double get_cut_off ();
 //
 //  simulation routines
 //
@@ -52,7 +55,7 @@ void move( particle_t &p );
 
 int bin_length(int n);
 
-void init_bins(bin_t *b, int n, particle_t *p );
+//void init_bins(bin_t *b, int n, particle_t *p );
 void find_neighbours(bin_t *bins, int cur_bin, int len_bin);
 void update_bin(particle_t &p, bin_t *bins, int p_idx);
 //

@@ -51,6 +51,11 @@ double get_size ()
     return size;
 }
 
+double get_cut_off ()
+{
+    return cutoff;
+}
+
 //
 //  Initialize the particle positions and velocities
 //
