@@ -18,7 +18,7 @@ const int SAVEFREQ = 10;
 //
 typedef struct
 {
-  std::set<particle_t> particle_idx;
+  // std::set<particle_t> particle_idx;
   std::set<int> neighbour_idx;
   // 0 = native, 1 = edge, 2 = neighbor
   int flag;
