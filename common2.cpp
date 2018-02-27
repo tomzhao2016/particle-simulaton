@@ -150,7 +150,7 @@ int bin_length(int n)
 // find neighbours of current bin 
 // return the bin idx as a set, including itself
 //
-void find_neighbours(bin_t *bins, int cur_bin, int len_bin)
+void find_neighbors(bin_t *bins, int cur_bin, int len_bin)
 {
     int init_x, init_y, end_x, end_y;
     int bin_x = cur_bin/len_bin;
