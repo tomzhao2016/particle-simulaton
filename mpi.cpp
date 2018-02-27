@@ -148,11 +148,11 @@ int main( int argc, char **argv )
     if (rank == 0)
     {
         std::cout<<"Reached line 149 in rank 0 "<<std::endl;
-        partition_offsets[0] = partition_sizes[0];
+        partition_offsets[0] = 0;
 
         for (int i = 1; i < n_proc; i ++)
         {
-            partition_offsets[i] = partition_offsets[i-1] + partition_sizes[i];
+            partition_offsets[i] = partition_offsets[i-1] + partition_sizes[i-1];
         }
     
 
