@@ -86,13 +86,14 @@ int main( int argc, char **argv )
         for (int i = 0; i < n_proc; i++)
             partition_sizes[i] = 0;
 
-
+        std::cout<<"Reached line 89 in rank 0"<<std::endl;
         for (int i = 0; i < n; i++)
         {
             // Iterate through all the particles. 
             int x_proc = get_proc_x(particles[i].x, num_proc_x);
             int y_proc = get_proc_y(particles[i].y, num_proc_y);
             int proc_for_p = (y_proc * num_proc_x) + x_proc;
+            
             // Populate the sizes array.
             partition_sizes[proc_for_p] += 1;
         }
@@ -100,6 +101,7 @@ int main( int argc, char **argv )
 
     // Send an array of sizes (array of ints) to each processor first. 
     int *local_size; // This is where we will recieve the size. 
+    std::cout<<"Reached line 104"<<std::endl;
     MPI_Scatter(partition_sizes, 1, MPI_INT, local_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     // Debugging
