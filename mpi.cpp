@@ -86,9 +86,12 @@ int main( int argc, char **argv )
     }
 
     // Send an array of sizes (array of ints) to each processor first. 
-
+    int local_size = 0; // This is where we will recieve the size. 
 
     // Each processor allocates space.
+    particle_t *local_particles = (particle_t*) malloc( local_size * sizeof(particle_t) );
+
+    // Recieve the particles for this processor into local_partices
 
 
     
