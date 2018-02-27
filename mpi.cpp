@@ -91,13 +91,18 @@ int main( int argc, char **argv )
         {
             // Iterate through all the particles. 
             int x_proc = get_proc_x(particles[i].x, num_proc_x);
+            std::cout<<x_proc<<std::endl; 
             int y_proc = get_proc_y(particles[i].y, num_proc_y);
+            std::cout<<y_proc<<std::endl;
             int proc_for_p = (y_proc * num_proc_x) + x_proc;
             
             // Populate the sizes array.
             partition_sizes[proc_for_p] += 1;
+            std::cout<<partition_sizes[proc_for_p]<<std::endl;
         }
     }
+
+    
 
     // Send an array of sizes (array of ints) to each processor first. 
     int *local_size = (int *)malloc(sizeof(int)); // This is where we will recieve the size. 
