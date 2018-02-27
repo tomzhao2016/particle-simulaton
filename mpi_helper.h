@@ -9,8 +9,12 @@
 // inline int max( int a, int b ) { return a > b ? a : b; }
 
 typedef struct{
-	std::map<int, particle_t> native_particle;
+	std::set<particle_t> native_particle;
 	std::set<int> neighbor_idx;
+	// flag == 0 native
+	// flag == 1 edge
+	// flag == 2 neighbor
+	int flag;
 } mbin_t;
 
 typedef struct{
@@ -19,9 +23,9 @@ typedef struct{
 	std::map<int, mbin_t> edge_bins;
 } processor_t;
 
-void get_dest_bin(int curpos, int newpos);
+//void get_dest_bin(int curpos, int newpos);
 
-void init_mbins(mbin_t mbins, int n, particle_t* particles);
+//void init_mbins(mbin_t mbins, int n, particle_t* particles);
 
 int get_proc_x(double pos_x, int num_proc_x);
 int get_proc_y(double pos_y, int num_proc_y);
