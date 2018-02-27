@@ -57,7 +57,7 @@ int main( int argc, char **argv )
     fflush(stdout);
     printf("Number of processes_x %d\n", num_proc_x);
     fflush(stdout);
-    printf("Number of processes_y %d\n", num_proc_x);
+    printf("Number of processes_y %d\n", num_proc_y);
     fflush(stdout);
 
 
@@ -68,9 +68,12 @@ int main( int argc, char **argv )
 
     set_size( n );
     if( rank == 0 ){
+        printf("Trying to init the particles in rank 0 : \n");
+        fflush(stdout);
         init_particles( n, particles );
     }
 
+    printf("Allocating space for the sizes array : \n");
     int *sizes = (int*) malloc (n_proc * sizeof(int));
     if (rank == 0)
     {
