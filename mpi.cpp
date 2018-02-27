@@ -105,7 +105,7 @@ int main( int argc, char **argv )
     }
 
     // Each processor allocates space.
-    particle_t *local_particles = (particle_t*) malloc( local_size * sizeof(particle_t) );
+    particle_t *local_particles = (particle_t*) malloc( *local_size * sizeof(particle_t) );
 
     // Recieve the particles for this processor into local_partices
 
