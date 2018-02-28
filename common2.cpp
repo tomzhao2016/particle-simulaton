@@ -8,7 +8,7 @@
 #include <sys/time.h>
 #include "common2.h"
 #include <iostream>
-#include <algorithm>
+#include <numeric>
 
 
 double size;
