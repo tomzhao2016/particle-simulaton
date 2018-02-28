@@ -43,7 +43,7 @@ typedef struct
 
 
 typedef struct{
-	std::map<int, particle_t> native_particle;
+	std::map<double, particle_t> native_particle;
 	std::set<int> neighbor_idx;
 	// flag == 0 native
 	// flag == 1 edge

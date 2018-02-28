@@ -269,7 +269,9 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		//std::cout<<"I am processor "<<rank<<" "<<" I am particle "<<offsets[rank] + idx<<" with local_row and local_col"<<local_row<<" "<<local_col<<std::endl;
 		int cur_bin = local_col * local_bin_size[0] + local_row;
 
-
+		//
+		// insert particle into bins
+		//
 		// harrd code since in 2 some particles are wrong
 		if (local_row >0 && local_col>0 && cur_bin < num_bin[0]*num_bin[1] && rank ==2){
 			local_bins[cur_bin].native_particle.insert({ local_particles[idx].id,local_particles[idx]});
@@ -291,18 +293,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		// 	std::cout<<"This bin_len is "<<bin_len<<std::endl;
 		// }
 
-		// 
-		// insert particle into bins
-		//
-		
-		//
-		// bin idx in 1D array
-		//
-		
-
 	}
-	std::cout<<"finished particle inserting :"<<rank<<" "<<std::endl;
-	
 
 	//
 	// local col size and row size thsi was redundant, the same as num_bin[0]/[1]
@@ -314,6 +305,13 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	for (int i = 0; i<local_col_size*local_row_size; i++){
 		local_bins[i].flag = 0;
 		find_local_neighbors(local_bins, i, local_row_size, local_col_size);
+
+	}
+	if (rank == 0){
+		for (int i = 0; i<local_col_size*local_row_size; i++){
+			std::cout<<"I am "<<rank<<" particle size for bins is "<<local_bins[i].native_particle.size()<<endl;
+		}
+		
 	}
 
 	// most down, only up set as 2 and 1
@@ -406,12 +404,6 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 				}
 			}
 	}
-	// Debug
-	if (rank == 2)
-		for (int i = 0; i<local_col_size*local_row_size; i++){
-			std::cout<<"all flags :"<<local_bins[i].flag<<" "<<std::endl;
-		}
-	
 	
 }
 

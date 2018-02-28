@@ -291,8 +291,19 @@ int main( int argc, char **argv )
             save( fsave, n, particles );
         
         //
-        //  1.Update forces
+        //  1.Update forces 
+        // in each native bins
         //
+        /*
+        for(int idx = 0; idx < local_bin_size ; idx++){
+            if (local_bins[idx].flag == 0){
+                for(std::map<double,particle_t>::iterator it=mymap.begin(); it!=mymap.end(); ++it){
+
+                }   
+            }
+            
+        }
+        */
         // for b in native_bins & egde_bins:
         //   for p1 in b:
         //      for p2 in b.neighbors:
