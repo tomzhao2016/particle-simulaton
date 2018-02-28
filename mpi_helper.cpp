@@ -344,6 +344,12 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 			local_bins[local_row_size*i+local_row_size-2].flag = 1;
 			local_bins[1+local_row_size*i].flag = 1;
 		}
+	// Debug
+	if (rank == 0)
+		for (int i = 0; i<local_col_size*local_row_size; i++){
+			std::cout<<"all flags :"<<local_bins[i].flag<<" "<<std::endl;
+		}
+	
 	
 }
 
