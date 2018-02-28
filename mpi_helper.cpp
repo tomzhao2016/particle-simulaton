@@ -254,7 +254,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		int local_col = glob2loc_col(global_col, idx_col,  num_proc_y, num_bin[1]);
 		//std::cout<<"I am processor "<<rank<<" "<<" I am particle "<<offsets[rank] + idx<<" with local_row and local_col"<<local_row<<" "<<local_col<<std::endl;
 		if(local_row < 0 || local_col<0){
-			int *proc_temp = get_procs(particles[i].x, particles[i].y, num_proc_x, num_proc_y);
+			int *proc_temp = get_procs(local_particles[idx].x, local_particles[idx].y, num_proc_x, num_proc_y);
 			std::cout<<"It should not be -1"<<proc_temp[rank]<<std::endl;
 		}
 
