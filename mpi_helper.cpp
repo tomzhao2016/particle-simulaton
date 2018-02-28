@@ -308,7 +308,6 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	for (int i = 0; i<local_col_size*local_row_size; i++){
 		local_bins[i].flag = 0;
 		find_local_neighbors(local_bins, i, local_row_size, local_col_size);
-
 	}
 	//DEBUG
 	// if (rank == 0){
