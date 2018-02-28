@@ -210,102 +210,102 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
 //
 // edge cases: when 2 processors
 
-// void init_local_bins(bin_t* local_bins, particle_t* local_particles, int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len){
+void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_size, int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len){
 	
-// 	//
-// 	// col and row index of processor
-// 	//
-// 	int idx_col = rank/num_proc_x;
-// 	int idx_row = rank%num_proc_x;
+	//
+	// col and row index of processor
+	//
+	int idx_col = rank/num_proc_x;
+	int idx_row = rank%num_proc_x;
 	
-// 	//
-// 	// num of bins in each proc which has not added neighbors yet
-// 	//
-// 	int *num_bin = new int[2];
-// 	num_bin[0] = (bin_len + num_proc_x - 1) /num_proc_x;
-// 	num_bin[1] = (bin_len + num_proc_y - 1)/num_proc_y;
-// 	double cutoff = get_cut_off();
-// 	//
-// 	// assign each particle to bins
-// 	//
-// 	//for (int idx = 0; idx < ( sizeof(local_particles) / sizeof(*local_particles)); idx++){
-// 	for (int idx = 0; idx < 10; idx++){
+	//
+	// num of bins in each proc which has not added neighbors yet
+	//
+	int *num_bin = new int[2];
+	num_bin[0] = (bin_len + num_proc_x - 1) /num_proc_x;
+	num_bin[1] = (bin_len + num_proc_y - 1)/num_proc_y;
+	double cutoff = get_cut_off();
+	//
+	// assign each particle to bins
+	//
+	for (int idx = 0; idx < local_size; idx++){
+	//for (int idx = 0; idx < 10; idx++){
 		
-// 		//
-// 		// global bin index in row and col
-// 		//
-// 		int global_row = (int)floor(local_particles[idx].x/cutoff);
-// 		int global_col = (int)floor(local_particles[idx].y/cutoff);
-// 		//
-// 		// Edge case: if particle is in the left/down most edges then it belongs to the last bin
-// 		//
-// 		if (global_row == bin_len)
-// 			global_row--;
-// 		if (global_col == bin_len)
-// 			global_col--;
+		//
+		// global bin index in row and col
+		//
+		int global_row = (int)floor(local_particles[idx].x/cutoff);
+		int global_col = (int)floor(local_particles[idx].y/cutoff);
+		//
+		// Edge case: if particle is in the left/down most edges then it belongs to the last bin
+		//
+		if (global_row == bin_len)
+			global_row--;
+		if (global_col == bin_len)
+			global_col--;
 
-// 		//
-// 		// map into local bin index in row and col
-// 		//
-// 		int local_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin[0]);
-// 		int local_col = glob2loc_col(global_col, idx_col,  num_proc_y, num_bin[1]);
+		//
+		// map into local bin index in row and col
+		//
+		int local_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin[0]);
+		int local_col = glob2loc_col(global_col, idx_col,  num_proc_y, num_bin[1]);
 
-// 		//
-// 		// bin idx in 1D array
-// 		//
-// 		int cur_bin = local_row * local_bin_size[0] + local_col;
+		//
+		// bin idx in 1D array
+		//
+		int cur_bin = local_row * local_bin_size[0] + local_col;
 
-// 		// 
-// 		// insert particle into bins, set flag.
-// 		//
-// 		local_bins[cur_bin].native_particle.insert(local_particles[idx]);
-// 	}
+		// 
+		// insert particle into bins
+		//
+		//local_bins[cur_bin].native_particle.insert(local_particles[idx]);
+	}
 
-// 	int local_col_size = local_bin_size[1];
-// 	int local_row_size = local_bin_size[0];
-// 	for (int i = 0; i<local_col_size*local_row_size; i++){
-// 		local_bins[i].flag = 0;
-// 		find_local_neighbors(local_bins, i, local_row_size, local_col_size);
-// 	}
-// 	if (idx_col == num_proc_y - 1){
-// 		for (int i= 0 ; i< local_row_size;i++){
-// 			local_bins[i].flag = 2;
-// 			local_bins[i + local_row_size].flag = 1;
-// 		}
-// 	}
-// 	else if (idx_col == 0)
-// 		for (int i= 0 ; i < local_row_size;i++){
-// 			local_bins[i + (local_col_size-1)*local_row_size].flag = 2;
-// 			local_bins[i + (local_col_size-2)*local_row_size].flag = 1;
-// 		}
-// 	else
-// 		for (int i= 0 ; i < local_row_size;i++){
-// 			local_bins[i + (local_col_size-1)*local_row_size].flag = 2;
-// 			local_bins[i].flag = 2;
-// 			local_bins[i + local_row_size].flag = 1;
-// 			local_bins[i + (local_col_size-2)*local_row_size].flag = 1;
-// 		}
+	int local_col_size = local_bin_size[1];
+	int local_row_size = local_bin_size[0];
+	for (int i = 0; i<local_col_size*local_row_size; i++){
+		local_bins[i].flag = 0;
+		find_local_neighbors(local_bins, i, local_row_size, local_col_size);
+	}
+	if (idx_col == num_proc_y - 1){
+		for (int i= 0 ; i< local_row_size;i++){
+			local_bins[i].flag = 2;
+			local_bins[i + local_row_size].flag = 1;
+		}
+	}
+	else if (idx_col == 0)
+		for (int i= 0 ; i < local_row_size;i++){
+			local_bins[i + (local_col_size-1)*local_row_size].flag = 2;
+			local_bins[i + (local_col_size-2)*local_row_size].flag = 1;
+		}
+	else
+		for (int i= 0 ; i < local_row_size;i++){
+			local_bins[i + (local_col_size-1)*local_row_size].flag = 2;
+			local_bins[i].flag = 2;
+			local_bins[i + local_row_size].flag = 1;
+			local_bins[i + (local_col_size-2)*local_row_size].flag = 1;
+		}
 	
 
 
-// 	if (idx_row == num_proc_x - 1)
-// 		for (int i= 0 ; i< local_col_size;i++){
-// 			local_bins[local_row_size*i].flag = 2;
-// 			local_bins[1+local_row_size*i].flag = 1;
-// 		}
-// 	else if (idx_row == 0)
-// 		for (int i= 0 ; i< local_col_size;i++){
-// 			local_bins[local_row_size*i+local_row_size-1].flag = 2;
-// 			local_bins[local_row_size*i+local_row_size-2].flag = 1;
-// 		}
-// 	else
-// 		for (int i = 0 ; i< local_col_size;i++){
-// 			local_bins[local_row_size*i+local_row_size-1].flag = 2;
-// 			local_bins[local_row_size*i].flag = 2;
-// 			local_bins[local_row_size*i+local_row_size-2].flag = 1;
-// 			local_bins[1+local_row_size*i].flag = 1;
-// 		}
+	if (idx_row == num_proc_x - 1)
+		for (int i= 0 ; i< local_col_size;i++){
+			local_bins[local_row_size*i].flag = 2;
+			local_bins[1+local_row_size*i].flag = 1;
+		}
+	else if (idx_row == 0)
+		for (int i= 0 ; i< local_col_size;i++){
+			local_bins[local_row_size*i+local_row_size-1].flag = 2;
+			local_bins[local_row_size*i+local_row_size-2].flag = 1;
+		}
+	else
+		for (int i = 0 ; i< local_col_size;i++){
+			local_bins[local_row_size*i+local_row_size-1].flag = 2;
+			local_bins[local_row_size*i].flag = 2;
+			local_bins[local_row_size*i+local_row_size-2].flag = 1;
+			local_bins[1+local_row_size*i].flag = 1;
+		}
 	
-// }
+}
 
 
