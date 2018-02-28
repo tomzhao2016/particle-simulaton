@@ -331,26 +331,31 @@ int main( int argc, char **argv )
                         //  
                         // store map of particles in this neighbor bin
                         //
+                        if (step == 0 && rank ==0){
+                            std::cout<<"I am "<<rank<<" bin "<<idx<<std::endl;
+                            std::cout<<"I am "<<rank<<" My neighbors are "<<*j<<std::endl;
+                        }
+
                         std::map<double,particle_t> p2_map = local_bins[*j].native_particle;
                         //
                         // iterate over particles in this bin
                         //
-
                         for(std::map<double,particle_t>::iterator p2 = p2_map.begin();p2 != p2_map.end(); ++p2){
                             if (p1->first != p2->first){
-                                if (step == 0 && rank ==0){
-                                    std::cout<<"I am "<<rank<<" before p1 acceleration x "<<p1->second.ax<<std::endl;
-                                    std::cout<<"I am "<<rank<<" before p1 acceleration y "<<p1->second.ay<<std::endl;
-                                    std::cout<<"I am "<<rank<<" My x is"<<p1->second.x<<std::endl;
-                                    std::cout<<"I am "<<rank<<" My y is"<<p1->second.y<<std::endl;
-                                    std::cout<<"I am "<<rank<<" My neighbour x is "<<p2->second.x<<std::endl;
-                                    std::cout<<"I am "<<rank<<" My neighbour y is "<<p2->second.y<<std::endl;
-                                }
+
+                                // if (step == 0 && rank ==0){
+                                //     std::cout<<"I am "<<rank<<" before p1 acceleration x "<<p1->second.ax<<std::endl;
+                                //     std::cout<<"I am "<<rank<<" before p1 acceleration y "<<p1->second.ay<<std::endl;
+                                //     std::cout<<"I am "<<rank<<" My x is"<<p1->second.x<<std::endl;
+                                //     std::cout<<"I am "<<rank<<" My y is"<<p1->second.y<<std::endl;
+                                //     std::cout<<"I am "<<rank<<" My neighbour x is "<<p2->second.x<<std::endl;
+                                //     std::cout<<"I am "<<rank<<" My neighbour y is "<<p2->second.y<<std::endl;
+                                // }
                                 apply_force( p1->second, p2->second,&dmin,&davg,&navg);
-                                if (step == 0 && rank == 0){
-                                    std::cout<<"I am "<<rank<<" after p1 acceleration x "<<p1->second.ax<<std::endl;
-                                    std::cout<<"I am "<<rank<<" after p1 acceleration y "<<p1->second.ay<<std::endl;
-                                }
+                                // if (step == 0 && rank == 0){
+                                //     std::cout<<"I am "<<rank<<" after p1 acceleration x "<<p1->second.ax<<std::endl;
+                                //     std::cout<<"I am "<<rank<<" after p1 acceleration y "<<p1->second.ay<<std::endl;
+                                // }
                             }
                             
                         }
