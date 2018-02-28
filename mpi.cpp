@@ -301,7 +301,7 @@ int main( int argc, char **argv )
             // if flag ==0 it is a native bin
             //
             if (rank == 0 && step < 3){
-                std::cout<<"this bin's particle num is : "<<local_bins[idx].native_particle.size()<<std::endl;
+                std::cout<<"this "<<idx<<" bin's particle num is : "<<local_bins[idx].native_particle.size()<<std::endl;
             }
             if (local_bins[idx].flag != 2){
                 //  
