@@ -157,6 +157,7 @@ int glob2loc_row(int global_row, int idx_row, int num_proc_x, int num_bin_row){
 	local_row = global_row - idx_row*num_bin_row;
 	if (idx_row > 0)
 		local_row++;
+	//std::cout<<"idx_row:"<<idx_row<<std::endl;
 	return local_row;
 }
 
@@ -165,6 +166,7 @@ int glob2loc_col(int global_col, int idx_col, int num_proc_y, int num_bin_col){
 	local_col = global_col - idx_col*num_bin_col;
 	if (idx_col > 0)
 		local_col++;
+	//std::cout<<"idx_row:"<<idx_col<<std::endl;
 	return local_col;
 }
 
@@ -244,19 +246,23 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		if (global_col == bin_len)
 			global_col--;
 
+
 		//
 		// map into local bin index in row and col
 		//
 		int local_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin[0]);
 		int local_col = glob2loc_col(global_col, idx_col,  num_proc_y, num_bin[1]);
 		//std::cout<<"I am processor "<<rank<<" "<<" I am particle "<<offsets[rank] + idx<<" with local_row and local_col"<<local_row<<" "<<local_col<<std::endl;
-		
+		if(local_row < 0 || local_col<0){
+			int *proc_temp = get_procs(particles[i].x, particles[i].y, num_proc_x, num_proc_y);
+			std::cout<<"It should not be -1"<<proc_temp[rank]<<std::endl;
+		}
 
 		//
 		// bin idx in 1D array
 		//
 		int cur_bin = local_col * local_bin_size[0] + local_row;
-		std::cout<<"I am processor "<<rank<<" "<<"cur_bin "<<cur_bin<<" My local_bins_size is "<<local_bin_size[0]*local_bin_size[1]<<std::endl;
+		// std::cout<<"I am processor "<<rank<<" "<<"cur_bin "<<cur_bin<<" My local_bins_size is "<<local_bin_size[0]*local_bin_size[1]<<std::endl;
 		// 
 		// insert particle into bins
 		//
