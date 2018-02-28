@@ -33,16 +33,16 @@ int* get_bin_size(int num_proc_x, int num_proc_y, int rank, int bin_len){
 	num_bin[0] = (bin_len + num_proc_x - 1)/num_proc_x;
 	num_bin[1] = (bin_len + num_proc_y - 1)/num_proc_y;
 	if (idx_col == num_proc_y - 1)
-		num_bin[1] = bin_len - idx_col*num_bin[1] + 1；
+		num_bin[1] = bin_len - idx_col*num_bin[1] + 1;
 	else if (idx_col == 0)
-		num_bin[1] += 1；
+		num_bin[1] += 1;
 	else
 		num_bin[1] += 2;
 
 	if (idx_row == num_proc_x - 1)
-		num_bin[0] = bin_len - idx_row*num_bin[0] + 1；
+		num_bin[0] = bin_len - idx_row*num_bin[0] + 1;
 	else if (idx_row == 0)
-		num_bin[0] += 1；
+		num_bin[0] += 1;
 	else
 		num_bin[0] += 2;
 	return num_bin;
@@ -186,7 +186,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles, int *local_
 	int *num_bin = new int[2];
 	num_bin[0] = (bin_len + num_proc_x - 1) /num_proc_x;
 	num_bin[1] = (bin_len + num_proc_y - 1)/num_proc_y;
-
+	cutoff = get_cut_off();
 	//
 	// assign each particle to bins
 	//
@@ -195,8 +195,8 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles, int *local_
 		//
 		// global bin index in row and col
 		//
-		int global_row = (int)floor(local_particle[idx].x/cutoff);
-		int global_col = (int)floor(local_particle[idx].y/cutoff);
+		int global_row = (int)floor(local_particles[idx].x/cutoff);
+		int global_col = (int)floor(local_particles[idx].y/cutoff);
 		//
 		// Edge case: if particle is in the left/down most edges then it belongs to the last bin
 		//
@@ -219,13 +219,14 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles, int *local_
 		// 
 		// insert particle into bins, set flag.
 		//
-		local_bins[cur_bin].particle.insert(local_particles[idx]);
+		local_bins[cur_bin].native_particle.insert(local_particles[idx]);
 	}
 
 	int local_col_size = local_bin_size[1];
 	int local_row_size = local_bin_size[0];
 	for (int i = 0; i<local_col_size*local_row_size; i++){
 		local_bins[i].flag = 0;
+		find_neighbors(local_bins, i, len_bin);
 	}
 	if (idx_col == num_proc_y - 1){
 		for (int i= 0 ; i< local_row_size;i++){
@@ -263,9 +264,9 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles, int *local_
 			local_bins[local_row_size*i+local_row_size-1].flag = 2;
 			local_bins[local_row_size*i].flag = 2;
 			local_bins[local_row_size*i+local_row_size-2].flag = 1;
-			ocal_bins[1+local_row_size*i].flag = 1;
+			local_bins[1+local_row_size*i].flag = 1;
 		}
-	find_neighbors(local_bins, idx, len_bin);
+	
 }
 
 
