@@ -318,6 +318,7 @@ int main( int argc, char **argv )
                     //  
                     // store set of neighbor index of this bin
                     //
+                    p1->second.ax = p1->second.ay = 0;
                     std::set<int> neighbor_idx = local_bins[idx].neighbor_idx;
                     if (rank == 0){
                         //std::cout<<"before p1 acceleration x"<<p1->second.ax<<std::endl;
@@ -339,13 +340,13 @@ int main( int argc, char **argv )
                         //
                         for(std::map<double,particle_t>::iterator p2 = p2_map.begin();p2 != p2_map.end(); ++p2){
                             if (step == 0){
-                                std::cout<<"I am "<<rank<<" before p1 acceleration x"<<p1->second.ax<<std::endl;
-                                std::cout<<"I am "<<rank<<" before p1 acceleration y"<<p1->second.ay<<std::endl;
+                                std::cout<<"I am "<<rank<<" before p1 acceleration x "<<p1->second.ax<<std::endl;
+                                std::cout<<"I am "<<rank<<" before p1 acceleration y "<<p1->second.ay<<std::endl;
                             }
                             apply_force( p1->second, p2->second,&dmin,&davg,&navg);
                             if (step == 0){
-                                std::cout<<"I am "<<rank<<" after p1 acceleration x"<<p1->second.ax<<std::endl;
-                                std::cout<<"I am "<<rank<<" after p1 acceleration y"<<p1->second.ay<<std::endl;
+                                std::cout<<"I am "<<rank<<" after p1 acceleration x "<<p1->second.ax<<std::endl;
+                                std::cout<<"I am "<<rank<<" after p1 acceleration y "<<p1->second.ay<<std::endl;
                             }
                         }
                     }
