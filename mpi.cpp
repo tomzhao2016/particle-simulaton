@@ -75,7 +75,7 @@ int main( int argc, char **argv )
         fflush(stdout);
     }
 
-    std::cout<<"Afer initialization"<<std::endl;
+    //std::cout<<"Afer initialization"<<std::endl;
 
     // sizes array stores the number of particles that each processor is to be sent in the beginning.
     // NOTE: This sizes array will change.  
@@ -86,7 +86,7 @@ int main( int argc, char **argv )
         for (int i = 0; i < n_proc; i++)
             partition_sizes[i] = 0;
 
-        std::cout<<"Reached line 89 in rank 0"<<std::endl;
+        //std::cout<<"Reached line 89 in rank 0"<<std::endl;
         for (int i = 0; i < n; i++) // for each particle
         {
             int *process_ids = (int *) malloc(9 * sizeof(int));
@@ -97,13 +97,13 @@ int main( int argc, char **argv )
                 if (process_ids[j] != -1)
                 {
                     partition_sizes[process_ids[j]] += 1;
-                    std::cout<<"\n\nParticle "<<i<<" goes to processor "<<" "<<process_ids[j];
+                    //std::cout<<"\n\nParticle "<<i<<" goes to processor "<<" "<<process_ids[j];
                 }
 
             }
             free(process_ids);
         }
-        std::cout<<"Reached line 103 in rank 0";
+        //std::cout<<"Reached line 103 in rank 0";
     }
 
 
@@ -113,7 +113,7 @@ int main( int argc, char **argv )
     {
         for (int i = 0; i < n_proc; i++)
         {
-            std::cout<<"Partition size "<<i<<" is equal to "<<partition_sizes[i]<<std::endl;
+            //std::cout<<"Partition size "<<i<<" is equal to "<<partition_sizes[i]<<std::endl;
         }
     }
 
@@ -121,27 +121,27 @@ int main( int argc, char **argv )
     MPI_Barrier(MPI_COMM_WORLD);
     // Send an array of sizes (array of ints) to each processor first. 
     int *local_size = (int *)malloc(sizeof(int)); // This is where we will recieve the size. 
-    std::cout<<"Reached line 104 in rank "<<rank<<std::endl;
+    //std::cout<<"Reached line 104 in rank "<<rank<<std::endl;
     MPI_Scatter(partition_sizes, 1, MPI_INT, local_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    std::cout<<"Reached line 111 in rank "<<rank<<std::endl;
+    //std::cout<<"Reached line 111 in rank "<<rank<<std::endl;
 
     // Debugging
     if (rank == 1)
     {
-        std::cout<<"I am processor 1 \n";
-        std::cout<<(*local_size)<<std::endl;
+        //std::cout<<"I am processor 1 \n";
+        //std::cout<<(*local_size)<<std::endl;
     }
     else if (rank == 2)
     {
-        std::cout<<"I am processor 2 \n";
-        std::cout<<(*local_size)<<std::endl;
+        //std::cout<<"I am processor 2 \n";
+        //std::cout<<(*local_size)<<std::endl;
     } 
 
 
 
     // Each processor allocates space.
     particle_t *local_particles = (particle_t*) malloc( *local_size * sizeof(particle_t) );
-    std::cout<<"Rank "<<rank<<" allocated space for local particles"<<std::endl;
+    //std::cout<<"Rank "<<rank<<" allocated space for local particles"<<std::endl;
 
     int *partition_offsets = (int*) malloc( n_proc * sizeof(int) );
     int *offsets_copy = (int*) malloc (n_proc * sizeof(int));
@@ -153,7 +153,7 @@ int main( int argc, char **argv )
 
     if (rank == 0)
     {
-        std::cout<<"Reached line 149 in rank 0 "<<std::endl;
+        //std::cout<<"Reached line 149 in rank 0 "<<std::endl;
         partition_offsets[0] = 0;
 
         for (int i = 1; i < n_proc; i ++)
@@ -170,7 +170,7 @@ int main( int argc, char **argv )
         {
             offsets_copy[i] = partition_offsets[i];
         }
-        std::cout<<"Reached line 166 in rank 0"<<std::endl;
+        //std::cout<<"Reached line 166 in rank 0"<<std::endl;
         
         for (int i = 0; i < n; i++)
         {
@@ -184,7 +184,7 @@ int main( int argc, char **argv )
                 if (process_ids[j] != -1)
                 {
                     // partition_sizes[process_ids[j]] += 1;
-                    std::cout<<"\n\nParticle "<<i<<" goes to processor "<<" "<<process_ids[j];
+                    //std::cout<<"\n\nParticle "<<i<<" goes to processor "<<" "<<process_ids[j];
 
                     particles_to_scatter[offsets_copy[process_ids[j]]++] = particles[i];
 
@@ -211,7 +211,7 @@ int main( int argc, char **argv )
         
 
 
-        std::cout<<"Reached line 180 in rank 0 "<<std::endl;
+        //std::cout<<"Reached line 180 in rank 0 "<<std::endl;
     }
 
     
@@ -224,7 +224,7 @@ int main( int argc, char **argv )
     {
         for (int i = 0; i < *local_size; i++)
         {
-            std::cout<<"\n\n i, and the x pos is "<<i<<" "<<local_particles[i].x;
+            //std::cout<<"\n\n i, and the x pos is "<<i<<" "<<local_particles[i].x;
         }
     }
     
