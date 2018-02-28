@@ -308,6 +308,10 @@ int main( int argc, char **argv )
                 //
                 // iterate over all the particles in this bin
                 //
+                if (rank == 0){
+                                std::cout<<"before p1 acceleration x"<<p1->second.ax<<std::endl;
+                                std::cout<<"before p1 acceleration y"<<p1->second.ay<<std::endl;
+                }
                 for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
                     //  
                     // store set of neighbor index of this bin
