@@ -326,25 +326,21 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		if (idx_row == num_proc_x - 1)
 			for (int i= 1 ; i< local_col_size;i++){
 				local_bins[local_row_size*i].flag = 2;
-
 				local_bins[1+local_row_size*i].flag = 1;
 			}
 		// most left, from 1 to end
 		else if (idx_row == 0)
 			for (int i= 1 ; i< local_col_size;i++){
 				local_bins[local_row_size*i+local_row_size-1].flag = 2;
-				if(i < local_col_size-1)
-					local_bins[local_row_size*i+local_row_size-2].flag = 1;
+				local_bins[local_row_size*i+local_row_size-2].flag = 1;
 			}
 		// if in the middle from 1 to end 
 		else
 			for (int i = 1 ; i< local_col_size;i++){
 				local_bins[local_row_size*i+local_row_size-1].flag = 2;
 				local_bins[local_row_size*i].flag = 2;
-				if(i > 0&&i < local_col_size-1){
-					local_bins[local_row_size*i+local_row_size-2].flag = 1;
-					local_bins[1+local_row_size*i].flag = 1;
-				}
+				local_bins[local_row_size*i+local_row_size-2].flag = 1;
+				local_bins[1+local_row_size*i].flag = 1;
 			}
 	}
 	// most up, only bottom
@@ -357,25 +353,21 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		if (idx_row == num_proc_x - 1)
 			for (int i= 0 ; i< local_col_size-1;i++){
 				local_bins[local_row_size*i].flag = 2;
-
 				local_bins[1+local_row_size*i].flag = 1;
 			}
 		// most left, from 0 to end-1
 		else if (idx_row == 0)
 			for (int i= 0 ; i< local_col_size-1;i++){
 				local_bins[local_row_size*i+local_row_size-1].flag = 2;
-				if(i < local_col_size-1)
-					local_bins[local_row_size*i+local_row_size-2].flag = 1;
+				local_bins[local_row_size*i+local_row_size-2].flag = 1;
 			}
 		// if in the middle from 0 to end -1
 		else
 			for (int i = 0 ; i< local_col_size-1;i++){
 				local_bins[local_row_size*i+local_row_size-1].flag = 2;
 				local_bins[local_row_size*i].flag = 2;
-				if(i > 0&&i < local_col_size-1){
-					local_bins[local_row_size*i+local_row_size-2].flag = 1;
-					local_bins[1+local_row_size*i].flag = 1;
-				}
+				local_bins[local_row_size*i+local_row_size-2].flag = 1;
+				local_bins[1+local_row_size*i].flag = 1;
 			}
 
 	}
