@@ -238,7 +238,8 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	int *num_bin = new int[2];
 	num_bin[0] = bin_len /num_proc_x;
 	num_bin[1] = bin_len /num_proc_y;
-	double cutoff = get_size()/bin_len;
+	double cutoff = (double)get_size()/bin_len;
+
 	//
 	// assign each particle to bins
 	//
@@ -259,11 +260,13 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 			global_col--;
 
 
+
 		//
 		// map into local bin index in row and col
 		//
 		int local_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin[0]);
 		int local_col = glob2loc_col(global_col, idx_col,  num_proc_y, num_bin[1]);
+		std::cout<<rank<<" finished glob2loc local_row:"<< local_row<<<<std::endl;
 		//std::cout<<"I am processor "<<rank<<" "<<" I am particle "<<offsets[rank] + idx<<" with local_row and local_col"<<local_row<<" "<<local_col<<std::endl;
 		// Debug
 		// if(local_row < 0 || local_col < 0 && rank == 9){
