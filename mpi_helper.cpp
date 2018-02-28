@@ -278,6 +278,10 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 			std::cout<<"This particle local_row is "<<local_row<<std::endl;
 			std::cout<<"This particle local_col is "<<local_col<<std::endl;
 			std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
+			std::cout<<"This idx_row  is "<<idx_row<<std::endl;
+			std::cout<<"This idx_col is "<<idx_col<<std::endl;
+			std::cout<<"This global_col is "<<global_col<<std::endl;
+			std::cout<<"This cutoff is "<<cutoff<<std::endl;
 		}
 		// 
 		// insert particle into bins
