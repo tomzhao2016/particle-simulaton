@@ -300,49 +300,73 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	}
 	std::cout<<"finished particle inserting :"<<rank<<" "<<std::endl;
 	
+
+	//
+	// local col size and row size thsi was redundant, the same as num_bin[0]/[1]
+	//
 	int local_col_size = local_bin_size[1];
 	int local_row_size = local_bin_size[0];
+
+	// find neighbors and set all flags as 0
 	for (int i = 0; i<local_col_size*local_row_size; i++){
 		local_bins[i].flag = 0;
 		find_local_neighbors(local_bins, i, local_row_size, local_col_size);
 	}
+
+	// most down, only up set as 2 and 1
 	if (idx_col == num_proc_y - 1){
 		for (int i= 0 ; i< local_row_size;i++){
 			local_bins[i].flag = 2;
-			local_bins[i + local_row_size].flag = 1;
+			//
+			// if i == 0 it should be 2
+			//
+			if (i != 0)
+				local_bins[i + local_row_size].flag = 1;
 		}
 	}
+	// most up, only bottom
 	else if (idx_col == 0)
 		for (int i= 0 ; i < local_row_size;i++){
 			local_bins[i + (local_col_size-1)*local_row_size].flag = 2;
-			local_bins[i + (local_col_size-2)*local_row_size].flag = 1;
+			if (i!= 0)
+				local_bins[i + (local_col_size-2)*local_row_size].flag = 1;
 		}
+	// if in the middle it should set all the surroundings
 	else
 		for (int i= 0 ; i < local_row_size;i++){
 			local_bins[i + (local_col_size-1)*local_row_size].flag = 2;
 			local_bins[i].flag = 2;
-			local_bins[i + local_row_size].flag = 1;
-			local_bins[i + (local_col_size-2)*local_row_size].flag = 1;
+			if(i ! = 0){
+				local_bins[i + local_row_size].flag = 1;
+				local_bins[i + (local_col_size-2)*local_row_size].flag = 1;
+			}
+			
 		}
 	
 
-
+	// most down, only up set as 2 and 1
 	if (idx_row == num_proc_x - 1)
 		for (int i= 0 ; i< local_col_size;i++){
 			local_bins[local_row_size*i].flag = 2;
-			local_bins[1+local_row_size*i].flag = 1;
+			if (i!=0)
+				local_bins[1+local_row_size*i].flag = 1;
 		}
+	// most up, only bottom
 	else if (idx_row == 0)
 		for (int i= 0 ; i< local_col_size;i++){
 			local_bins[local_row_size*i+local_row_size-1].flag = 2;
-			local_bins[local_row_size*i+local_row_size-2].flag = 1;
+			if(i!=0)
+				local_bins[local_row_size*i+local_row_size-2].flag = 1;
 		}
+	// if in the middle it should set all the surroundings
 	else
 		for (int i = 0 ; i< local_col_size;i++){
 			local_bins[local_row_size*i+local_row_size-1].flag = 2;
 			local_bins[local_row_size*i].flag = 2;
-			local_bins[local_row_size*i+local_row_size-2].flag = 1;
-			local_bins[1+local_row_size*i].flag = 1;
+			if(i!=0){
+				local_bins[local_row_size*i+local_row_size-2].flag = 1;
+				local_bins[1+local_row_size*i].flag = 1;
+			}
 		}
 	// Debug
 	if (rank == 0)
