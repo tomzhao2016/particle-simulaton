@@ -56,6 +56,7 @@ typedef struct{
 double read_timer( );
 double get_size ();
 double get_cut_off ();
+
 //
 //  simulation routines
 //
