@@ -294,6 +294,7 @@ int main( int argc, char **argv )
         //  1.Update forces 
         //  iterate over each native bins
         //
+
         
         for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
             //
@@ -323,8 +324,17 @@ int main( int argc, char **argv )
                         //
                         // iterate over particles in this bin
                         //
-                        for(std::map<double,particle_t>::iterator p2 = p2_map.begin();p2 != p2_map.end(); ++p2)
+                        for(std::map<double,particle_t>::iterator p2 = p2_map.begin();p2 != p2_map.end(); ++p2){
+                            if (rank == 0){
+                                std::cout<<"before p1 acceleration x"<<p1->second.ax<<std::endl;
+                                std::cout<<"before p1 acceleration y"<<p1->second.ay<<std::endl;
+                            }
                             apply_force( p1->second, p2->second,&dmin,&davg,&navg);
+                            if (rank == 0){
+                                std::cout<<"after p1 acceleration x"<<p1->second.ax<<std::endl;
+                                std::cout<<"after p1 acceleration y"<<p1->second.ay<<std::endl;
+                            }
+                        }
                     }
                         
                 }   

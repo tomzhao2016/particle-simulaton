@@ -274,7 +274,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		//
 		// harrd code since in 2 some particles are wrong
 
-		if (rank != 2){
+		if (cur_bin >= 0 && cur_bin <=local_row*local_col){
 			local_bins[cur_bin].native_particle.insert({ local_particles[idx].id,local_particles[idx]});
 		}
 		
@@ -308,12 +308,13 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		find_local_neighbors(local_bins, i, local_row_size, local_col_size);
 
 	}
-	if (rank == 0){
-		for (int i = 0; i<local_col_size*local_row_size; i++){
-			std::cout<<"I am "<<rank<<" particle size for bins is "<<local_bins[i].native_particle.size()<<std::endl;
-		}
+	//DEBUG
+	// if (rank == 0){
+	// 	for (int i = 0; i<local_col_size*local_row_size; i++){
+	// 		std::cout<<"I am "<<rank<<" particle size for bins is "<<local_bins[i].native_particle.size()<<std::endl;
+	// 	}
 		
-	}
+	// }
 
 	// most down, only up set as 2 and 1
 	if (idx_col == num_proc_y - 1){
