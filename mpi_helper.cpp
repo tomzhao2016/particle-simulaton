@@ -271,11 +271,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		if (local_row >0 && local_col>0){
 			int cur_bin = local_col * local_bin_size[0] + local_row;
 			local_bins[cur_bin].native_particle.insert({idx ,local_particles[idx]});
-		}
-		
-
-		// Debug
-		if( rank == 2){
+			if( rank == 2){
 			std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
 			std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
 			std::cout<<"This particle local_row is "<<local_row<<std::endl;
@@ -286,7 +282,12 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 			std::cout<<"This global_col is "<<global_row<<std::endl;
 			std::cout<<"This bin_width is "<<bin_width<<std::endl;
 			std::cout<<"This bin_len is "<<bin_len<<std::endl;
+			}
 		}
+		
+
+		// Debug
+		
 
 		// 
 		// insert particle into bins
