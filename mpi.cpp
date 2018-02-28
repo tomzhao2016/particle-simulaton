@@ -232,7 +232,7 @@ int main( int argc, char **argv )
     int *local_bin_size = get_bin_size(num_proc_x, num_proc_y, rank, bin_len);
     int local_bin_row = local_bin_size[0];
     int local_bin_col = local_bin_size[1];
-    std::cout<<"local bin number"<<local_bin_row<<" "<<local_bin_col<<std::endl;
+    std::cout<<"I am"<<rank<<" "<<"local bin number"<<local_bin_row<<" "<<local_bin_col<<std::endl;
     bin_t *local_bins = new bin_t[local_bin_row*local_bin_col];
 
     // each bins include particles on left and up edges 
