@@ -8,7 +8,7 @@
 #include <sys/time.h>
 #include "common2.h"
 #include <iostream>
-#include <algorithm>
+#include <boost/math/common_factor.hpp>
 
 
 double size;
@@ -114,17 +114,17 @@ int bin_length(int num_proc_x, int num_proc_y)
     //
     // smallest gcd
     //
-    int s_gcd = std::__gcd(num_proc_x, num_proc_y);
-    std::cout<<"s_gcd "<<s_gcd<<std::endl;
+    int s_lcm = std::boost::math::lcm(num_proc_x, num_proc_y);
+    std::cout<<"s_lcm "<<s_lcm<<std::endl;
     //
     // original bin size, which may not divided by num_pro_x and num_proc_y
     //
     int bin_len = (int)ceil(size/cutoff);
-    int temp = (int)floor(bin_len/s_gcd);
-    bin_len = temp * s_gcd;
-     std::cout<<" temp "<<(int)floor(bin_len/s_gcd)<<std::endl;
-     std::cout<<" bin_len "<<bin_len<<std::endl;
-     return bin_len;
+    int temp = (int)floor(bin_len/s_lcm);
+    bin_len = temp * s_lcm;
+    std::cout<<" temp "<<(int)floor(bin_len/s_lcm)<<std::endl;
+    std::cout<<" bin_len "<<bin_len<<std::endl;
+    return bin_len;
 }
 
 //
