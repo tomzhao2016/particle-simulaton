@@ -39,6 +39,16 @@ typedef struct
   double ay;
 } particle_t;
 
+
+typedef struct{
+	std::set<particle_t> native_particle;
+	std::set<int> neighbor_idx;
+	// flag == 0 native
+	// flag == 1 edge
+	// flag == 2 neighbor
+	int flag;
+} bin_t;
+
 //
 //  timing routines
 //
@@ -57,7 +67,7 @@ int bin_length(int n);
 
 //void init_bins(bin_t *b, int n, particle_t *p );
 void find_neighbors(bin_t *bins, int cur_bin, int len_bin);
-void update_bin(particle_t &p, bin_t *bins, int p_idx);
+// void update_bin(particle_t &p, bin_t *bins, int p_idx);
 //
 //  I/O routines
 //

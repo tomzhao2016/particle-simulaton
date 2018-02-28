@@ -8,14 +8,7 @@
 // inline int min( int a, int b ) { return a < b ? a : b; }
 // inline int max( int a, int b ) { return a > b ? a : b; }
 
-typedef struct{
-	std::set<particle_t> native_particle;
-	std::set<int> neighbor_idx;
-	// flag == 0 native
-	// flag == 1 edge
-	// flag == 2 neighbor
-	int flag;
-} bin_t;
+
 
 // typedef struct{
 // 	std::map<int, mbin_t> native_bins;
