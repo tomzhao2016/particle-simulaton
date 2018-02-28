@@ -233,7 +233,7 @@ int main( int argc, char **argv )
     {
         for (int i = 0; i < *local_size+1; i++)
         {
-            std::cout<<"\n\n i, and the offset is "<<i<<" "<<partition_offsets[i].x;
+            std::cout<<"\n\n i, and the offset is "<<i<<" "<<partition_offsets[i].x<<std::endl;
         }
     }
 
@@ -248,7 +248,7 @@ int main( int argc, char **argv )
     // and the right most particles belongs to the right most bins
     init_local_bins(local_bins, local_particles, *local_size, partition_offsets ,
         local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
-    std::cout<<"I am processor "<<rank<<" "<<" I finish initializing local bins"<<std::endl;
+    //std::cout<<"I am processor "<<rank<<" "<<" I finish initializing local bins"<<std::endl;
 
     // int bin_per_proc;
     // std::cout << "TO DO HERE" << std::endl;
