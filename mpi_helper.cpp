@@ -275,6 +275,8 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		if( rank == 1){
 			std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
 			std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
+			std::cout<<"This particle local_row is "<<local_row<<std::endl;
+			std::cout<<"This particle local_col is "<<local_col<<std::endl;
 			std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
 		}
 		// 
