@@ -337,7 +337,7 @@ int main( int argc, char **argv )
                         //
 
                         for(std::map<double,particle_t>::iterator p2 = p2_map.begin();p2 != p2_map.end(); ++p2){
-                            if (p1->first ! = p2->first){
+                            if (p1->first != p2->first){
                                 if (step == 0 && rank ==0){
                                     std::cout<<"I am "<<rank<<" before p1 acceleration x "<<p1->second.ax<<std::endl;
                                     std::cout<<"I am "<<rank<<" before p1 acceleration y "<<p1->second.ay<<std::endl;
