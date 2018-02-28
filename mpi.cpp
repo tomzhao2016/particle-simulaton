@@ -300,7 +300,11 @@ int main( int argc, char **argv )
             //
             // if flag ==0 it is a native bin
             //
-            if (local_bins[idx].flag == 0){
+            if (rank == 0){
+                std::cout<<"begin apply force"<<std::endl;
+                std::cout<<"bin size is : "<<local_bin_row*local_bin_col<<std::endl;
+            }
+            if (local_bins[idx].flag != 2){
                 //  
                 // store map of particles in this bin
                 //
