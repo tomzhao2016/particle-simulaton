@@ -253,7 +253,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		int local_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin[0]);
 		int local_col = glob2loc_col(global_col, idx_col,  num_proc_y, num_bin[1]);
 		//std::cout<<"I am processor "<<rank<<" "<<" I am particle "<<offsets[rank] + idx<<" with local_row and local_col"<<local_row<<" "<<local_col<<std::endl;
-		if(local_row < 0 || local_col<0){
+		if(local_row < 0 || local_col<0 && rank == 9){
 			int *proc_temp = get_procs(local_particles[idx].x, local_particles[idx].y, num_proc_x, num_proc_y);
 			std::cout<<"I am "<<rank<<" "<<std::endl;
 			for (int temp = 0; temp < 9 ;temp++){
