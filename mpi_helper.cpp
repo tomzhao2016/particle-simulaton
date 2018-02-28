@@ -261,9 +261,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 			}
 			std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
 			std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
-			int temp_proc_x = get_proc_x(local_particles[idx].x, num_proc_x);
-			int temp_proc_y = get_proc_y(local_particles[idx].y, num_proc_y);
-			std::cout<<"This particle should be in "<<num_proc_x*temp_proc_y+temp_proc_x<<std::endl;
+			std::cout<<"This size is "<<get_size()<<std::endl;
 		}
 
 		//
