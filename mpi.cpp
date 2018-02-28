@@ -239,6 +239,7 @@ int main( int argc, char **argv )
     // and the right most particles belongs to the right most bins
     init_local_bins(local_bins, local_particles, *local_size, partition_offsets ,
         local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+    std::cout<<"I am"<<rank<<" "<<"local bin number"<<local_bins[0].native_particle.size()<<" "<<local_bin_col<<std::endl;
 
     // int bin_per_proc;
     // std::cout << "TO DO HERE" << std::endl;
