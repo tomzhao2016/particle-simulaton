@@ -255,7 +255,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		//
 		// bin idx in 1D array
 		//
-		int cur_bin = local_row * local_bin_size[0] + local_col;
+		int cur_bin = local_col * local_bin_size[0] + local_row;
 
 		// 
 		// insert particle into bins

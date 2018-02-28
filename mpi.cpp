@@ -228,14 +228,6 @@ int main( int argc, char **argv )
         }
     }
     
-    // Debugging
-    if (rank == 3)
-    {
-        for (int i = 0; i < *local_size+1; i++)
-        {
-            std::cout<<"\n\n i, and the offset is "<<i<<" "<<partition_offsets[i]<<std::endl;
-        }
-    }
 
     int bin_len = bin_length(n);
     int *local_bin_size = get_bin_size(num_proc_x, num_proc_y, rank, bin_len);
