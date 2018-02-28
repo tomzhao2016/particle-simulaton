@@ -268,6 +268,9 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		int local_col = glob2loc_col(global_col, idx_col,  num_proc_y, num_bin[1]);
 		//std::cout<<"I am processor "<<rank<<" "<<" I am particle "<<offsets[rank] + idx<<" with local_row and local_col"<<local_row<<" "<<local_col<<std::endl;
 		int cur_bin = local_col * local_bin_size[0] + local_row;
+
+
+		// harrd code since in 2 some particles are wrong
 		if (local_row >0 && local_col>0 && cur_bin < num_bin[0]*num_bin[1] && rank ==2){
 			local_bins[cur_bin].native_particle.insert({idx ,local_particles[idx]});
 		}
@@ -326,16 +329,16 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 
 				local_bins[1+local_row_size*i].flag = 1;
 			}
-		// most left, from 0 to end-1
+		// most left, from 1 to end
 		else if (idx_row == 0)
-			for (int i= 0 ; i< local_col_size-1;i++){
+			for (int i= 1 ; i< local_col_size;i++){
 				local_bins[local_row_size*i+local_row_size-1].flag = 2;
 				if(i < local_col_size-1)
 					local_bins[local_row_size*i+local_row_size-2].flag = 1;
 			}
-		// if in the middle from 1 to end -1
+		// if in the middle from 1 to end 
 		else
-			for (int i = 1 ; i< local_col_size-1;i++){
+			for (int i = 1 ; i< local_col_size;i++){
 				local_bins[local_row_size*i+local_row_size-1].flag = 2;
 				local_bins[local_row_size*i].flag = 2;
 				if(i > 0&&i < local_col_size-1){
@@ -350,9 +353,9 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 			local_bins[i + (local_col_size-1)*local_row_size].flag = 2;
 			local_bins[i + (local_col_size-2)*local_row_size].flag = 1;
 		}
-		// most right, from 1 to end
+		// most right, from 0 to end-1
 		if (idx_row == num_proc_x - 1)
-			for (int i= 1 ; i< local_col_size;i++){
+			for (int i= 0 ; i< local_col_size-1;i++){
 				local_bins[local_row_size*i].flag = 2;
 
 				local_bins[1+local_row_size*i].flag = 1;
@@ -364,9 +367,9 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 				if(i < local_col_size-1)
 					local_bins[local_row_size*i+local_row_size-2].flag = 1;
 			}
-		// if in the middle from 1 to end -1
+		// if in the middle from 0 to end -1
 		else
-			for (int i = 1 ; i< local_col_size-1;i++){
+			for (int i = 0 ; i< local_col_size-1;i++){
 				local_bins[local_row_size*i+local_row_size-1].flag = 2;
 				local_bins[local_row_size*i].flag = 2;
 				if(i > 0&&i < local_col_size-1){
@@ -386,16 +389,16 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 			local_bins[i + (local_col_size-2)*local_row_size].flag = 1;
 			
 		}
-		// most right, from 1 to end
+		// most right, from 1 to end-1
 		if (idx_row == num_proc_x - 1)
-			for (int i= 1 ; i< local_col_size;i++){
+			for (int i= 1 ; i< local_col_size-1;i++){
 				local_bins[local_row_size*i].flag = 2;
 
 				local_bins[1+local_row_size*i].flag = 1;
 			}
-		// most left, from 0 to end-1
+		// most left, from 1 to end-1
 		else if (idx_row == 0)
-			for (int i= 0 ; i< local_col_size-1;i++){
+			for (int i= 1 ; i< local_col_size-1;i++){
 				local_bins[local_row_size*i+local_row_size-1].flag = 2;
 				if(i < local_col_size-1)
 					local_bins[local_row_size*i+local_row_size-2].flag = 1;
