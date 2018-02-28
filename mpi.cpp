@@ -315,7 +315,7 @@ int main( int argc, char **argv )
                     //
                     // iterate over all the neighbor bins
                     //
-                    for(std::set<int>::iterator j = neighbor_idx.begin();j != neighbor_idx.end(); ++j)
+                    for(std::set<int>::iterator j = neighbor_idx.begin();j != neighbor_idx.end(); ++j){
                         //  
                         // store map of particles in this neighbor bin
                         //
@@ -325,6 +325,8 @@ int main( int argc, char **argv )
                         //
                         for(std::map<double,particle_t>::iterator p2 = p2_map.begin();p2 != p2_map.end(); ++p2)
                             apply_force( p1->second, p2->second,&dmin,&davg,&navg);
+                    }
+                        
                 }   
             }
             
