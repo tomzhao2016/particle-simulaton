@@ -258,7 +258,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		// 
 		// insert particle into bins
 		//
-		local_bins[cur_bin].native_particle.insert(*local_particles[idx]);
+		local_bins[cur_bin].native_particle.insert(*local_particles+idx);
 	}
 
 	int local_col_size = local_bin_size[1];
