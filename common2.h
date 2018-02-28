@@ -37,6 +37,7 @@ typedef struct
   double vy;
   double ax;
   double ay;
+  double bin_index;
 } particle_t;
 
 //
