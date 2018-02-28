@@ -295,7 +295,7 @@ int main( int argc, char **argv )
         //  iterate over each native bins
         //
         
-        for(int idx = 0; idx < local_bin_row*local_row_col ; idx++){
+        for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
             //
             // if flag ==0 it is a native bin
             //
