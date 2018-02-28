@@ -292,18 +292,44 @@ int main( int argc, char **argv )
         
         //
         //  1.Update forces 
-        // in each native bins
+        //  iterate over each native bins
         //
-        /*
+        
         for(int idx = 0; idx < local_bin_size ; idx++){
+            //
+            // if flag ==0 it is a native bin
+            //
             if (local_bins[idx].flag == 0){
-                for(std::map<double,particle_t>::iterator it=mymap.begin(); it!=mymap.end(); ++it){
-
+                //  
+                // store map of particles in this bin
+                //
+                std::map<double,particle_t> p1_map = local_bins[idx].native_particle;
+                //
+                // iterate over all the particles in this bin
+                //
+                for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); it!=p1_map.end(); ++p1){
+                    //  
+                    // store set of neighbor index of this bin
+                    //
+                    std::set<int> neighbor_idx = local_bins[idx].neighbor_idx;
+                    //
+                    // iterate over all the neighbor bins
+                    //
+                    for(std::set<int>::iterator j = neighbor_idx.begin();j != neighbor_idx.end(); ++j)
+                        //  
+                        // store map of particles in this neighbor bin
+                        //
+                        std::map<double,particle_t> p2_map = local_bins[j].native_particle;
+                        //
+                        // iterate over particles in this bin
+                        //
+                        for(std::map<double,particle_t>::iterator p2 = p2_map.begin();p2 != p2_map.end(); ++p2){
+                            apply_force( p1->second, p2->second,&dmin,&davg,&navg);
                 }   
             }
             
         }
-        */
+
         // for b in native_bins & egde_bins:
         //   for p1 in b:
         //      for p2 in b.neighbors:
