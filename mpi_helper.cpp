@@ -407,7 +407,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 			}
 	}
 	// Debug
-	if (rank == 1)
+	if (rank == 2)
 		for (int i = 0; i<local_col_size*local_row_size; i++){
 			std::cout<<"all flags :"<<local_bins[i].flag<<" "<<std::endl;
 		}
