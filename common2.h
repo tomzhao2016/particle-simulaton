@@ -64,7 +64,7 @@ void init_particles( int n, particle_t *p );
 void apply_force( particle_t &particle, particle_t &neighbor , double *dmin, double *davg, int *navg);
 void move( particle_t &p );
 
-int bin_length(int n);
+int bin_length(int num_proc_x, int num_proc_y);
 
 //void init_bins(bin_t *b, int n, particle_t *p );
 void find_neighbors(bin_t *bins, int cur_bin, int len_bin);

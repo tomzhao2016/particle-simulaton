@@ -8,7 +8,7 @@
 #include <sys/time.h>
 #include "common2.h"
 #include <iostream>
-
+#include <algorithm>
 
 
 double size;
@@ -109,12 +109,20 @@ void init_particles( int n, particle_t *p )
 }
 
 
-int bin_length(int n)
+int bin_length(int num_proc_x, int num_proc_y)
 {
-    return (int)ceil(size/cutoff);
-    //long int num_bin = len_bin * len_bin;
-    //return num_bin;
+    //
+    // smallest gcd
+    //
+    int s_gcd = std::__gcd(num_proc_x, num_proc_y);
+    //
+    // original bin size, which may not divided by num_pro_x and num_proc_y
+    //
+     int bin_len = (int)ceil(size/cutoff);
+     bin_len = (bin_len/s_gcd) * s_gcd;
+     return bin_len;
 }
+
 //
 // Initialize the bins and assign each particle into bins
 //

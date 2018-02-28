@@ -15,7 +15,6 @@ int get_proc_x(double pos_x, int num_proc_x)
 {
 	// Returns the position of the particle processor along the x-direction
 	double len = get_size() / num_proc_x;
-
 	return (int) floor(pos_x / len);
 }
 
@@ -27,20 +26,33 @@ int get_proc_y(double pos_y, int num_proc_y)
 }
 
 int* get_bin_size(int num_proc_x, int num_proc_y, int rank, int bin_len){
+	//
+	// col and row for each processor
+	//
+
 	int idx_col = rank/num_proc_x;
 	int idx_row = rank%num_proc_x;
 	int *num_bin = new int[2];
-	num_bin[0] = (bin_len + num_proc_x - 1)/num_proc_x;
-	num_bin[1] = (bin_len + num_proc_y - 1)/num_proc_y;
+
+	//
+	// num_bin[0] is the numbers of bins in each processor x axis
+	// num_bin[1] is the numbers of bins in each processor y axis
+	//
+	num_bin[0] = bin_len/num_proc_x;
+	num_bin[1] = bin_len/num_proc_y;
+
+	//
+	//
+	//
 	if (idx_col == num_proc_y - 1)
-		num_bin[1] = bin_len - idx_col*num_bin[1] + 1;
+		num_bin[1] += 1;
 	else if (idx_col == 0)
 		num_bin[1] += 1;
 	else
 		num_bin[1] += 2;
 
 	if (idx_row == num_proc_x - 1)
-		num_bin[0] = bin_len - idx_row*num_bin[0] + 1;
+		num_bin[0] += 1;
 	else if (idx_row == 0)
 		num_bin[0] += 1;
 	else
@@ -224,9 +236,9 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	// num of bins in each proc which has not3 added neighbors yet
 	//
 	int *num_bin = new int[2];
-	num_bin[0] = (bin_len + num_proc_x - 1) /num_proc_x;
-	num_bin[1] = (bin_len + num_proc_y - 1)/num_proc_y;
-	double cutoff = get_cut_off();
+	num_bin[0] = bin_len /num_proc_x;
+	num_bin[1] = bin_len /num_proc_y;
+	double cutoff = get_size()/bin_len;
 	//
 	// assign each particle to bins
 	//
@@ -267,13 +279,13 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		//
 		// hard code
 		//
-		if(local_row > 0 || local_col > 0){
-			int cur_bin = local_col * local_bin_size[0] + local_row;
-			// 
-			// insert particle into bins
-			//
-			local_bins[cur_bin].native_particle.insert({idx ,local_particles[idx]});
-		}
+
+		int cur_bin = local_col * local_bin_size[0] + local_row;
+		// 
+		// insert particle into bins
+		//
+		local_bins[cur_bin].native_particle.insert({idx ,local_particles[idx]});
+		
 		//
 		// bin idx in 1D array
 		//
