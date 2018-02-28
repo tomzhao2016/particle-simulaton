@@ -295,7 +295,7 @@ int main( int argc, char **argv )
         //  iterate over each native bins
         //
         
-        for(int idx = 0; idx < local_bin_size ; idx++){
+        for(int idx = 0; idx < local_bin_row*local_row_col ; idx++){
             //
             // if flag ==0 it is a native bin
             //
@@ -307,7 +307,7 @@ int main( int argc, char **argv )
                 //
                 // iterate over all the particles in this bin
                 //
-                for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); it!=p1_map.end(); ++p1){
+                for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
                     //  
                     // store set of neighbor index of this bin
                     //
@@ -319,11 +319,11 @@ int main( int argc, char **argv )
                         //  
                         // store map of particles in this neighbor bin
                         //
-                        std::map<double,particle_t> p2_map = local_bins[j].native_particle;
+                        std::map<double,particle_t> p2_map = local_bins[*j].native_particle;
                         //
                         // iterate over particles in this bin
                         //
-                        for(std::map<double,particle_t>::iterator p2 = p2_map.begin();p2 != p2_map.end(); ++p2){
+                        for(std::map<double,particle_t>::iterator p2 = p2_map.begin();p2 != p2_map.end(); ++p2)
                             apply_force( p1->second, p2->second,&dmin,&davg,&navg);
                 }   
             }
