@@ -233,7 +233,7 @@ int main( int argc, char **argv )
     {
         for (int i = 0; i < *local_size+1; i++)
         {
-            std::cout<<"\n\n i, and the offset is "<<i<<" "<<partition_offsets[i].x<<std::endl;
+            std::cout<<"\n\n i, and the offset is "<<i<<" "<<partition_offsets[i]<<std::endl;
         }
     }
 
