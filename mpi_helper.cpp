@@ -268,28 +268,25 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		int local_col = glob2loc_col(global_col, idx_col,  num_proc_y, num_bin[1]);
 		//std::cout<<"I am processor "<<rank<<" "<<" I am particle "<<offsets[rank] + idx<<" with local_row and local_col"<<local_row<<" "<<local_col<<std::endl;
 		int cur_bin = local_col * local_bin_size[0] + local_row;
-		if (local_row >0 && local_col>0 && cur_bin < num_bin[0]*num_bin[1]){
-			
-			
-			if( rank == 2){
-			std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
-			std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
-			std::cout<<"This particle local_row is "<<local_row<<std::endl;
-			std::cout<<"This particle local_col is "<<local_col<<std::endl;
-			std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
-			std::cout<<"This idx_row  is "<<idx_row<<std::endl;
-			std::cout<<"This idx_col is "<<idx_col<<std::endl;
-			std::cout<<"This global_row is "<<global_col<<std::endl;
-			std::cout<<"This global_col is "<<global_col<<std::endl;
-			std::cout<<"This bin_width is "<<bin_width<<std::endl;
-			std::cout<<"This bin_len is "<<bin_len<<std::endl;
-			}
+		if (local_row >0 && local_col>0 && cur_bin < num_bin[0]*num_bin[1] && rank ==2){
 			local_bins[cur_bin].native_particle.insert({idx ,local_particles[idx]});
 		}
 		
 
 		// Debug
-		
+		// if( rank == 2){
+		// 	std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
+		// 	std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
+		// 	std::cout<<"This particle local_row is "<<local_row<<std::endl;
+		// 	std::cout<<"This particle local_col is "<<local_col<<std::endl;
+		// 	std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
+		// 	std::cout<<"This idx_row  is "<<idx_row<<std::endl;
+		// 	std::cout<<"This idx_col is "<<idx_col<<std::endl;
+		// 	std::cout<<"This global_row is "<<global_col<<std::endl;
+		// 	std::cout<<"This global_col is "<<global_col<<std::endl;
+		// 	std::cout<<"This bin_width is "<<bin_width<<std::endl;
+		// 	std::cout<<"This bin_len is "<<bin_len<<std::endl;
+		// }
 
 		// 
 		// insert particle into bins
