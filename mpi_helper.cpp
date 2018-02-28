@@ -250,13 +250,13 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		int local_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin[0]);
 		int local_col = glob2loc_col(global_col, idx_col,  num_proc_y, num_bin[1]);
 		//std::cout<<"I am processor "<<rank<<" "<<" I am particle "<<offsets[rank] + idx<<" with local_row and local_col"<<local_row<<" "<<local_col<<std::endl;
-		std::cout<<"I am processor "<<rank<<" "<<"particle "<<idx<<" My local_row is "<<local_row<<std::endl;
+		
 
 		//
 		// bin idx in 1D array
 		//
 		int cur_bin = local_col * local_bin_size[0] + local_row;
-
+		std::cout<<"I am processor "<<rank<<" "<<"cur_bin "<<cur_bin<<" My local_bins_size is "<<local_bin_size[0]*local_bin_size[1]<<std::endl;
 		// 
 		// insert particle into bins
 		//
