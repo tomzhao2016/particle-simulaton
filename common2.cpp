@@ -183,7 +183,7 @@ void find_neighbors(bin_t *bins, int cur_bin, int len_bin)
     
     for (int i = init_x; i < end_x; i++)
         for (int j = init_y; j < end_y; j++)
-            bins[bin_x * len_bin + bin_y].neighbour_idx.insert((bin_x + i)*len_bin + bin_y + j);
+            bins[bin_x * len_bin + bin_y].neighbor_idx.insert((bin_x + i)*len_bin + bin_y + j);
 
     
 }

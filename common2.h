@@ -19,7 +19,7 @@ const int SAVEFREQ = 10;
 typedef struct
 {
   std::set<particle_t> particle;
-  std::set<int> neighbour_idx;
+  std::set<int> neighbor_idx;
   // 0 = native, 1 = edge, 2 = neighbor
   int flag;
 } bin_t;

@@ -30,5 +30,8 @@ typedef struct{
 int get_proc_x(double pos_x, int num_proc_x);
 int get_proc_y(double pos_y, int num_proc_y);
 int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y);
+int glob2loc_row(int global_row, int idx_row, int num_proc_x, int num_bin_row);
+int glob2loc_col(int global_col, int idx_col, int num_proc_y, int num_bin_col);
+void init_local_bins(bin_t* local_bins, particle_t* local_particles, int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len);
 
 
