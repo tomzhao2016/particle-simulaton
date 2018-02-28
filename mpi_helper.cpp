@@ -309,7 +309,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	}
 	if (rank == 0){
 		for (int i = 0; i<local_col_size*local_row_size; i++){
-			std::cout<<"I am "<<rank<<" particle size for bins is "<<local_bins[i].native_particle.size()<<endl;
+			std::cout<<"I am "<<rank<<" particle size for bins is "<<local_bins[i].native_particle.size()<<std::endl;
 		}
 		
 	}
