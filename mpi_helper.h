@@ -15,13 +15,13 @@ typedef struct{
 	// flag == 1 edge
 	// flag == 2 neighbor
 	int flag;
-} mbin_t;
+} bin_t;
 
-typedef struct{
-	std::map<int, mbin_t> native_bins;
-	std::map<int, mbin_t> neighbor_bins;
-	std::map<int, mbin_t> edge_bins;
-} processor_t;
+// typedef struct{
+// 	std::map<int, mbin_t> native_bins;
+// 	std::map<int, mbin_t> neighbor_bins;
+// 	std::map<int, mbin_t> edge_bins;
+// } processor_t;
 
 //void get_dest_bin(int curpos, int newpos);
 
