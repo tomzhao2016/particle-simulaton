@@ -89,7 +89,7 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 
 	process_ids[index++] = native_proc;
 
-	double bin_len = get_cut_off();
+	double bin_len = get_size()/bin_length(num_proc_x, num_proc_y);
 
 	// Up?
 	int up_proc = get_proc_y(pos_y - bin_len, num_proc_y);
@@ -266,7 +266,6 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		//
 		int local_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin[0]);
 		int local_col = glob2loc_col(global_col, idx_col,  num_proc_y, num_bin[1]);
-		//std::cout<<rank<<" finished glob2loc local_row:"<<local_row<<std::endl;
 		//std::cout<<"I am processor "<<rank<<" "<<" I am particle "<<offsets[rank] + idx<<" with local_row and local_col"<<local_row<<" "<<local_col<<std::endl;
 	
 		int cur_bin = local_col * local_bin_size[0] + local_row;
