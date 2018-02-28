@@ -115,8 +115,9 @@ int bin_length(int num_proc_x, int num_proc_y)
     // smallest gcd
     //
     int s_gcd = std::__gcd(num_proc_x, num_proc_y);
-    std::cout<<"s_lcm "<<s_lcm<<std::endl;
+    
     int s_lcm = num_proc_x/s_gcd*num_proc_y;
+    std::cout<<"s_lcm "<<s_lcm<<std::endl;
     //
     // original bin size, which may not divided by num_pro_x and num_proc_y
     //
