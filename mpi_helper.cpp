@@ -209,7 +209,7 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
 //
 // edge cases: when 2 processors
 
-void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_size, int *offsets,
+void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_size, 
  int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len){
 	
 	//
@@ -259,8 +259,9 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		// 
 		// insert particle into bins
 		//
-		local_bins[cur_bin].native_particle.insert({offsets[rank] + idx ,local_particles[idx]});
+		local_bins[cur_bin].native_particle.insert({idx ,local_particles[idx]});
 	}
+	std::cout<<"I am processor "<<rank<<" "<<" My native particle is "<<local_bins[0].native_particle.size()<<std::endl;
 
 	int local_col_size = local_bin_size[1];
 	int local_row_size = local_bin_size[0];

@@ -222,7 +222,7 @@ int main( int argc, char **argv )
     // Debugging
     if (rank == 3)
     {
-        for (int i = 0; i < *local_size; i++)
+        for (int i = 0; i < 13; i++)
         {
             //std::cout<<"\n\n i, and the x pos is "<<i<<" "<<local_particles[i].x;
         }
