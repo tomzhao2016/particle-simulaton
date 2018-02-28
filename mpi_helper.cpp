@@ -167,6 +167,44 @@ int glob2loc_col(int global_col, int idx_col, int num_proc_y, int num_bin_col){
 		local_col++;
 	return local_col;
 }
+
+void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
+{
+    int init_x, init_y, end_x, end_y;
+    int bin_x = cur_bin/len_row;
+    int bin_y = cur_bin%len_row;  
+    if (bin_x == 0) {
+        init_x = 0;
+        end_x = 2;
+    }
+    else if(bin_x == len_row - 1) {
+        init_x = -1;
+        end_x = 1;
+    }
+    else {
+        init_x = -1;
+        end_x = 2;
+    }
+    if (bin_y == 0) {
+        init_y = 0;
+        end_y = 2;
+    }
+    else if(bin_y == len_col - 1) {
+        end_y = 1;
+        init_y = -1;
+    }
+    else{
+        init_y = -1;
+        end_y = 2;
+    }
+
+    
+    for (int i = init_x; i < end_x; i++)
+        for (int j = init_y; j < end_y; j++)
+            bins[cur_bin].neighbor_idx.insert((bin_x + i)*len_row + bin_y + j);
+
+    
+}
 //
 // initialize bins locally
 //
@@ -186,7 +224,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles, int *local_
 	int *num_bin = new int[2];
 	num_bin[0] = (bin_len + num_proc_x - 1) /num_proc_x;
 	num_bin[1] = (bin_len + num_proc_y - 1)/num_proc_y;
-	cutoff = get_cut_off();
+	double cutoff = get_cut_off();
 	//
 	// assign each particle to bins
 	//
@@ -226,7 +264,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles, int *local_
 	int local_row_size = local_bin_size[0];
 	for (int i = 0; i<local_col_size*local_row_size; i++){
 		local_bins[i].flag = 0;
-		find_neighbors(local_bins, i, len_bin);
+		find_local_neighbors(local_bins, i, local_row_size, local_col_size);
 	}
 	if (idx_col == num_proc_y - 1){
 		for (int i= 0 ; i< local_row_size;i++){
