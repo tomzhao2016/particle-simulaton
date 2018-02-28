@@ -238,7 +238,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	int *num_bin = new int[2];
 	num_bin[0] = bin_len /num_proc_x;
 	num_bin[1] = bin_len /num_proc_y;
-	double cutoff = (double)get_size()/bin_len;
+	double bin_width = (double)get_size()/bin_len;
 
 	//
 	// assign each particle to bins
@@ -249,8 +249,8 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		//
 		// global bin index in row and col
 		//
-		int global_row = (int)floor(local_particles[idx].x/cutoff);
-		int global_col = (int)floor(local_particles[idx].y/cutoff);
+		int global_row = (int)floor(local_particles[idx].x/bin_width);
+		int global_col = (int)floor(local_particles[idx].y/bin_width);
 		//
 		// Edge case: if particle is in the left/down most edges then it belongs to the last bin
 		//
@@ -272,17 +272,17 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		int cur_bin = local_col * local_bin_size[0] + local_row;
 
 		// Debug
-		if( rank == 1){
-			std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
-			std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
-			std::cout<<"This particle local_row is "<<local_row<<std::endl;
-			std::cout<<"This particle local_col is "<<local_col<<std::endl;
-			std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
-			std::cout<<"This idx_row  is "<<idx_row<<std::endl;
-			std::cout<<"This idx_col is "<<idx_col<<std::endl;
-			std::cout<<"This global_col is "<<global_col<<std::endl;
-			std::cout<<"This cutoff is "<<cutoff<<std::endl;
-		}
+		// if( rank ==1){
+		// 	std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
+		// 	std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
+		// 	std::cout<<"This particle local_row is "<<local_row<<std::endl;
+		// 	std::cout<<"This particle local_col is "<<local_col<<std::endl;
+		// 	std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
+		// 	std::cout<<"This idx_row  is "<<idx_row<<std::endl;
+		// 	std::cout<<"This idx_col is "<<idx_col<<std::endl;
+		// 	std::cout<<"This global_col is "<<global_col<<std::endl;
+		// 	std::cout<<"This bin_width is "<<bin_width<<std::endl;
+		// }
 		// 
 		// insert particle into bins
 		//
