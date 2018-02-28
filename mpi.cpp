@@ -328,7 +328,7 @@ int main( int argc, char **argv )
                     //
                     for(std::set<int>::iterator j = neighbor_idx.begin();j != neighbor_idx.end(); ++j){
                         if (rank == 0){
-                                std::cout<<"neighbor index"<<*j<<std::endl;
+                                //std::cout<<"neighbor index"<<*j<<std::endl;
                         }
                         //  
                         // store map of particles in this neighbor bin
