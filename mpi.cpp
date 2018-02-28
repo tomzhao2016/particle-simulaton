@@ -236,8 +236,8 @@ int main( int argc, char **argv )
 
     // each bins include particles on left and up edges 
     // and the right most particles belongs to the right most bins
-    init_local_bins(local_bins, local_particles, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
-    
+    //init_local_bins(local_bins, local_particles, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+
     // int bin_per_proc;
     // std::cout << "TO DO HERE" << std::endl;
 
