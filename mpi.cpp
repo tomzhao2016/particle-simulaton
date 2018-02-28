@@ -301,7 +301,7 @@ int main( int argc, char **argv )
             // if flag ==0 it is a native bin
             //
             if (rank == 0 && step < 3){
-                //std::cout<<"this bin's flag is : "<<local_bins[idx].flag<<std::endl;
+                std::cout<<"this bin's particle num is : "<<local_bins[idx].native_particle.size()<<std::endl;
             }
             if (local_bins[idx].flag != 2){
                 //  
@@ -332,8 +332,8 @@ int main( int argc, char **argv )
                         // store map of particles in this neighbor bin
                         //
                         if (step == 0 && rank ==0){
-                            std::cout<<"I am "<<rank<<" bin "<<idx<<std::endl;
-                            std::cout<<"I am "<<rank<<" My neighbors are "<<*j<<std::endl;
+                            //std::cout<<"I am "<<rank<<" bin "<<idx<<std::endl;
+                            //std::cout<<"I am "<<rank<<" My neighbors are "<<*j<<std::endl;
                         }
 
                         std::map<double,particle_t> p2_map = local_bins[*j].native_particle;
