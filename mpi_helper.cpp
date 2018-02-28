@@ -255,7 +255,15 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		//std::cout<<"I am processor "<<rank<<" "<<" I am particle "<<offsets[rank] + idx<<" with local_row and local_col"<<local_row<<" "<<local_col<<std::endl;
 		if(local_row < 0 || local_col<0){
 			int *proc_temp = get_procs(local_particles[idx].x, local_particles[idx].y, num_proc_x, num_proc_y);
-			std::cout<<"It should not be -1"<<proc_temp[rank]<<std::endl;
+			std::cout<<"I am "<<rank<<" "<<std::endl;
+			for (int temp = 0; temp < 9 ;temp++){
+				std::cout<<"This particle is in "<<proc_temp[temp]<<std::endl;
+				std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
+				std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
+				int temp_proc_x = get_proc_x(local_particles[idx].x, num_proc_x);
+				int temp_proc_y = get_proc_y(local_particles[idx].y, num_proc_y);
+				std::cout<<"This particle should be in "<<num_proc_x*temp_proc_y+temp_proc_x<<std::endl;
+			}
 		}
 
 		//
