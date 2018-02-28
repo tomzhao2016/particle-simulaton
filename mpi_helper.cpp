@@ -228,8 +228,9 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles, int *local_
 	//
 	// assign each particle to bins
 	//
-	for (int idx = 0; idx < ( sizeof(local_particles) / sizeof(local_particles[0])); idx++){
-
+	//for (int idx = 0; idx < ( sizeof(local_particles) / sizeof(*local_particles)); idx++){
+	for (int idx = 0; idx < 10; idx++){
+		
 		//
 		// global bin index in row and col
 		//
