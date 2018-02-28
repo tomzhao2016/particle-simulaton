@@ -202,7 +202,6 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
     for (int i = init_x; i < end_x; i++)
         for (int j = init_y; j < end_y; j++)
             bins[cur_bin].neighbor_idx.insert((bin_x + i)*len_row + bin_y + j);
-
     
 }
 //
@@ -210,7 +209,8 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
 //
 // edge cases: when 2 processors
 
-void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_size, int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len){
+void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_size, int *offsets,
+ int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len){
 	
 	//
 	// col and row index of processor
@@ -219,7 +219,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	int idx_row = rank%num_proc_x;
 	
 	//
-	// num of bins in each proc which has not added neighbors yet
+	// num of bins in each proc which has not3 added neighbors yet
 	//
 	int *num_bin = new int[2];
 	num_bin[0] = (bin_len + num_proc_x - 1) /num_proc_x;
@@ -258,7 +258,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		// 
 		// insert particle into bins
 		//
-		local_bins[cur_bin].native_particle.insert(*local_particles+idx);
+		local_bins[cur_bin].native_particle.insert({offsets[rank] + idx ,local_particles[idx]});
 	}
 
 	int local_col_size = local_bin_size[1];

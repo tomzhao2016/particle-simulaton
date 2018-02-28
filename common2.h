@@ -1,4 +1,5 @@
 #include <set>
+#include <map>
 
 #ifndef __CS267_COMMON_H__
 #define __CS267_COMMON_H__
@@ -41,7 +42,7 @@ typedef struct
 
 
 typedef struct{
-	std::set<particle_t> native_particle;
+	std::map<int, particle_t> native_particle;
 	std::set<int> neighbor_idx;
 	// flag == 0 native
 	// flag == 1 edge
