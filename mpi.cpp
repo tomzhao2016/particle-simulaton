@@ -300,9 +300,8 @@ int main( int argc, char **argv )
             //
             // if flag ==0 it is a native bin
             //
-            if (rank == 0){
-                std::cout<<"begin apply force"<<std::endl;
-                std::cout<<"bin size is : "<<local_bin_row*local_bin_col<<std::endl;
+            if (rank == 0 && step < 3){
+                //std::cout<<"this bin's flag is : "<<local_bins[idx].flag<<std::endl;
             }
             if (local_bins[idx].flag != 2){
                 //  
@@ -312,15 +311,17 @@ int main( int argc, char **argv )
                 //
                 // iterate over all the particles in this bin
                 //
-                
+                if (rank == 0 && step < 3){
+                    //std::cout<<"this bin's particle num is : "<<p1_map.size()<<std::endl;
+                }
                 for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
                     //  
                     // store set of neighbor index of this bin
                     //
                     std::set<int> neighbor_idx = local_bins[idx].neighbor_idx;
                     if (rank == 0){
-                        std::cout<<"before p1 acceleration x"<<p1->second.ax<<std::endl;
-                        std::cout<<"before p1 acceleration y"<<p1->second.ay<<std::endl;
+                        //std::cout<<"before p1 acceleration x"<<p1->second.ax<<std::endl;
+                        //std::cout<<"before p1 acceleration y"<<p1->second.ay<<std::endl;
                     }
                     //
                     // iterate over all the neighbor bins
@@ -337,12 +338,12 @@ int main( int argc, char **argv )
                         // iterate over particles in this bin
                         //
                         for(std::map<double,particle_t>::iterator p2 = p2_map.begin();p2 != p2_map.end(); ++p2){
-                            if (rank == 0){
+                            if (rank == 0 && step < 3){
                                 std::cout<<"before p1 acceleration x"<<p1->second.ax<<std::endl;
                                 std::cout<<"before p1 acceleration y"<<p1->second.ay<<std::endl;
                             }
                             apply_force( p1->second, p2->second,&dmin,&davg,&navg);
-                            if (rank == 0){
+                            if (rank == 0 && step < 3){
                                 std::cout<<"after p1 acceleration x"<<p1->second.ax<<std::endl;
                                 std::cout<<"after p1 acceleration y"<<p1->second.ay<<std::endl;
                             }
