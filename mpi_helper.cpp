@@ -458,4 +458,23 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	
 }
 
+void clean_local_bins(bin_t *local_bins, int local_bin_size){
+	//
+	// This method cleans the particles in all local_bins
+	// local_bin: is array of bins in each processor
+	// local_bin_size: is the size of this local_bin
+	//
+	for (int idx = 0; idx<local_bin_size; idx++){
+		local_bins[idx].native_particle.clear();
+	}
+}
+
+void update_local_bins(bin_t *local_bins, std::map<double,partcle_t>local_particles_native, int local_size_native){
+	//
+	// This method assign each particle into bins in this processor
+	//
+	//for (int idx_p ;) 
+
+}
+
 

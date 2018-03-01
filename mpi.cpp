@@ -328,8 +328,6 @@ int main( int argc, char **argv )
             }     
         }
 
-
-
         // NOT SURE how to change avg and min
         if( find_option( argc, argv, "-no" ) == -1 )
         {
@@ -352,31 +350,64 @@ int main( int argc, char **argv )
         }
 
         //
-        // 2.move particles
+        // 2.move particles and save all the native particles to a map
         // for b in native_bin & edge_bin:
         //   for p in b:
-        //      mpi_move(p, M); 
-        // M: map processor_id to particle_t
-        // std::map<int, particle_t> M;
+        //      move(p); 
+        //
+        std::map<double, particle_t> local_particles_native;
+        int local_size_native = 0;
+        for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
+            //
+            // if flag !=2 it is a native/edge bin
+            //
+            if (local_bins[idx].flag != 2){
+                //  
+                // store map of particles in this bin
+                //
+                std::map<double,particle_t> p1_map = local_bins[idx].native_particle;
+                //
+                // iterate over all the particles in this map
+                //
+                // if (rank == 0 && step < 3){
+                //    std::cout<<"this bin's particle num is : "<<p1_map.size()<<std::endl;
+                // }
+                for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
+                    //  
+                    // move particles
+                    //
+                    move(p1->second);
+                    local_particles_native.insert({p1.id, p1});
+                    local_size_native++;
+                }   
+            }     
+        }
 
         //
-        // 3.1 send particle to other processor
+        // 3.1 send and receove particles to/from other processor
         // for processor_id,particle_t in M:
         //   MPI_send(particle_t to native/edge)
         //
 
-        //
-        // 3.2receive from other processor
-        // for n in neighbor_processor_id:
-        //   MPI_receive(particle_t into native/edge)
-        //
 
         //
         // 4.update_bins
-        // 
+        // local_particles_native and local_size_native contains the new particles and new size 
+        // of all particles
+        //
+
+        //
+        // clean native particles in bins
+        //
+        clean_local_bins(local_bins, local_bin_row*local_bin_col);
+        //
+        // reassign each particles in each bins
+        //
+        update_local_bins(local_bins, local_particles_native, local_size_native);
 
         // barrier
-
+        MPI_Barrier(MPI_COMM_WORLD);
+        
         //
         // 5.1 send edge bins to neighbor processor
         // 
