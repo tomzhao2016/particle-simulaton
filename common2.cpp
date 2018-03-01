@@ -113,7 +113,7 @@ void init_particles( int n, particle_t *p )
 int bin_length(int num_proc_x, int num_proc_y)
 {
     //
-    // smallest gcd
+    // smallest lcm
     //
     int s_gcd = std::__gcd(num_proc_x, num_proc_y);
     

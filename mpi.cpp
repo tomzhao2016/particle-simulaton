@@ -194,10 +194,6 @@ int main( int argc, char **argv )
             }
             free(process_ids);
 
-
-
-
-
             // for (int j = 0; j < 9; i++) 
             // {
             //     if (process_ids[j] != -1)
@@ -219,64 +215,35 @@ int main( int argc, char **argv )
     MPI_Barrier(MPI_COMM_WORLD); //TODO: Possibly remove this.
     MPI_Scatterv( particles_to_scatter, partition_sizes, partition_offsets, PARTICLE,
              local_particles, *local_size, PARTICLE, 0, MPI_COMM_WORLD );
-
-    // Debugging
-    if (rank == 3)
-    {
-        for (int i = 0; i < 13; i++)
-        {
-            //std::cout<<"\n\n i, and the x pos is "<<i<<" "<<local_particles[i].x;
-        }
-    }
     
-
+    //
+    // bin_len is the total number of bins before divide into local processors
+    //
     int bin_len = bin_length(num_proc_x, num_proc_y);
+    //
+    // local_bin_size is the an array, first elements being row bin number in local processor
+    // second elements being col bin number in local processor
+    //
     int *local_bin_size = get_bin_size(num_proc_x, num_proc_y, rank, bin_len);
     int local_bin_row = local_bin_size[0];
     int local_bin_col = local_bin_size[1];
-    //std::cout<<"I am"<<rank<<" "<<"local bin number"<<local_bin_row<<" "<<local_bin_col<<std::endl;
-    bin_t *local_bins = new bin_t[local_bin_row*local_bin_col];
-
-    // each bins include particles on left and up edges 
-    // and the right most particles belongs to the right most bins
-    init_local_bins(local_bins, local_particles, *local_size,
-        local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
-    //std::cout<<"I am processor "<<rank<<" "<<" I finish initializing local bins"<<std::endl;
-
-    // int bin_per_proc;
-    // std::cout << "TO DO HERE" << std::endl;
-
-    //
-    //  allocate storage for local partition
-    //
-
-    // TO DO HERE
-    // std::cout << "TO DO HERE" << std::endl;
-
-    // int nlocal = partition_sizes[rank];
-    // processor_t *local = new mbin_t[nlocal];
     
     //
-    //  initialize and distribute the particles (that's fine to leave it unoptimized)
+    // local bin is the bins allocate in each processor
     //
-    // TO DO HERE
-    // std::cout << "TO DO HERE" << std::endl;
+    bin_t *local_bins = new bin_t[local_bin_row*local_bin_col];
 
-    // fill in init_mbins() in mpi_helper.cpp
-    // fill in init_mblocks() in mpi_helper.cpp
-    // Or we may use MPI_Comm_split???
-
-    // set_size( n );
-    // if( rank == 0 ){
-        // init_particles( n, particles );
-        // init_mbins(mbins, n, particles); 
-    // }
-    // MPI_Scatterv( mbins, partition_sizes, partition_offsets, MBIN, local, nlocal, MBIN, 0, MPI_COMM_WORLD );
+    //
+    // each bins include particles on left and up edges 
+    // and the right most particles belongs to the right most bins
+    //
+    init_local_bins(local_bins, local_particles, *local_size,
+        local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
     
     //
     //  simulate a number of time steps
     //
-    double simulation_time = read_timer( );
+    double simulation_time = read_timer();
     for( int step = 0; step < NSTEPS; step++ )
     {
         navg = 0;
@@ -298,32 +265,26 @@ int main( int argc, char **argv )
         
         for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
             //
-            // if flag ==0 it is a native bin
+            // if flag !=2 it is a native/edge bin
             //
-            if (rank == 0 && step < 3){
-                std::cout<<"this "<<idx<<" bin's particle num is : "<<local_bins[idx].native_particle.size()<<std::endl;
-            }
             if (local_bins[idx].flag != 2){
                 //  
                 // store map of particles in this bin
                 //
                 std::map<double,particle_t> p1_map = local_bins[idx].native_particle;
                 //
-                // iterate over all the particles in this bin
+                // iterate over all the particles in this map
                 //
-                if (rank == 0 && step < 3){
-                    //std::cout<<"this bin's particle num is : "<<p1_map.size()<<std::endl;
-                }
+                // if (rank == 0 && step < 3){
+                //    std::cout<<"this bin's particle num is : "<<p1_map.size()<<std::endl;
+                // }
                 for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
                     //  
                     // store set of neighbor index of this bin
                     //
                     p1->second.ax = p1->second.ay = 0;
                     std::set<int> neighbor_idx = local_bins[idx].neighbor_idx;
-                    if (rank == 0){
-                        //std::cout<<"before p1 acceleration x"<<p1->second.ax<<std::endl;
-                        //std::cout<<"before p1 acceleration y"<<p1->second.ay<<std::endl;
-                    }
+                    
                     //
                     // iterate over all the neighbor bins
                     //
@@ -331,47 +292,41 @@ int main( int argc, char **argv )
                         //  
                         // store map of particles in this neighbor bin
                         //
-                        if (step == 0 && rank ==0){
-                            //std::cout<<"I am "<<rank<<" bin "<<idx<<std::endl;
-                            //std::cout<<"I am "<<rank<<" My neighbors are "<<*j<<std::endl;
-                        }
-
                         std::map<double,particle_t> p2_map = local_bins[*j].native_particle;
+
+                        // DEBUG - print the neighbor index
+                        // if (step == 0 && rank ==0){
+                        //     std::cout<<"I am "<<rank<<" bin "<<idx<<std::endl;
+                        //     std::cout<<"I am "<<rank<<" My neighbors are "<<*j<<std::endl;
+                        // }
+                        
                         //
                         // iterate over particles in this bin
                         //
                         for(std::map<double,particle_t>::iterator p2 = p2_map.begin();p2 != p2_map.end(); ++p2){
                             if (p1->first != p2->first){
 
-                                 if (step == 0){
-                                     std::cout<<"I am "<<rank<<" before p1 acceleration x "<<p1->second.ax<<std::endl;
-                                     std::cout<<"I am "<<rank<<" before p1 acceleration y "<<p1->second.ay<<std::endl;
+                                // DEBUG - print acceleration before applying force
+                                // if (step == 0){
+                                //    std::cout<<"I am "<<rank<<" before p1 acceleration x "<<p1->second.ax<<std::endl;
+                                //     std::cout<<"I am "<<rank<<" before p1 acceleration y "<<p1->second.ay<<std::endl;
                                 //     std::cout<<"I am "<<rank<<" My x is"<<p1->second.x<<std::endl;
                                 //     std::cout<<"I am "<<rank<<" My y is"<<p1->second.y<<std::endl;
                                 //     std::cout<<"I am "<<rank<<" My neighbour x is "<<p2->second.x<<std::endl;
                                 //     std::cout<<"I am "<<rank<<" My neighbour y is "<<p2->second.y<<std::endl;
-                                 }
+                                // }
                                 apply_force( p1->second, p2->second,&dmin,&davg,&navg);
-                                if (step == 0 ){
-                                     std::cout<<"I am "<<rank<<" after p1 acceleration x "<<p1->second.ax<<std::endl;
-                                     std::cout<<"I am "<<rank<<" after p1 acceleration y "<<p1->second.ay<<std::endl;
-                                }
+                                // DEBUG - print acceleration after applying force
+                                // if (step == 0 ){
+                                //      std::cout<<"I am "<<rank<<" after p1 acceleration x "<<p1->second.ax<<std::endl;
+                                //      std::cout<<"I am "<<rank<<" after p1 acceleration y "<<p1->second.ay<<std::endl;
+                                // }
                             }
-                            
                         }
                     }
-                        
                 }   
-            }
-            
+            }     
         }
-
-        // for b in native_bins & egde_bins:
-        //   for p1 in b:
-        //      for p2 in b.neighbors:
-        //          apply_force(p1, p2);
-        // 
-        
 
 
 

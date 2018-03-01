@@ -42,7 +42,11 @@ int* get_bin_size(int num_proc_x, int num_proc_y, int rank, int bin_len){
 	num_bin[1] = bin_len/num_proc_y;
 
 	//
-	//
+	// Note that all processor has same size of bins
+	// add neighbor bins, three cases 
+	// top: +1
+	// bottom: +1
+	// middle: +2
 	//
 	if (idx_col == num_proc_y - 1)
 		num_bin[1] += 1;
@@ -169,7 +173,6 @@ int glob2loc_row(int global_row, int idx_row, int num_proc_x, int num_bin_row){
 	local_row = global_row - idx_row*num_bin_row;
 	if (idx_row > 0)
 		local_row++;
-	//std::cout<<"idx_row:"<<idx_row<<std::endl;
 	return local_row;
 }
 
@@ -178,41 +181,65 @@ int glob2loc_col(int global_col, int idx_col, int num_proc_y, int num_bin_col){
 	local_col = global_col - idx_col*num_bin_col;
 	if (idx_col > 0)
 		local_col++;
-	//std::cout<<"idx_row:"<<idx_col<<std::endl;
 	return local_col;
 }
 
+
+
 void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
 {
+	//
+	// this method has same function as find_neighbors in serial code
+	// bins: first bins address
+	// cur_bin: the target bin, we want to insert neighbor idx to this bin
+	// len_row: number of bins in row
+	// len_col: number of bins in col
+	//
     int init_x, init_y, end_x, end_y;
     int bin_x = cur_bin/len_row;
     int bin_y = cur_bin%len_row;  
+    
+    //
+    // set offset for three cases top/bottom/middle
+    // for both x and y 
+    // (given cur_bin we just need to know the offsets from this cur_bin)
+    // offset -1:2
+    // neighbor_idx = cur_bin + offset
+    //
+    // x most left only 0:2
     if (bin_x == 0) {
         init_x = 0;
         end_x = 2;
     }
+    // x most right only -1:1
     else if(bin_x == len_row - 1) {
         init_x = -1;
         end_x = 1;
     }
+    // x most right only -1:2
     else {
         init_x = -1;
         end_x = 2;
     }
+    // y top only 0:2
     if (bin_y == 0) {
         init_y = 0;
         end_y = 2;
     }
+    // y bottom only -1:1
     else if(bin_y == len_col - 1) {
         end_y = 1;
         init_y = -1;
     }
+    // x most right only -1:2
     else{
         init_y = -1;
         end_y = 2;
     }
 
-    
+    //
+    // find neighbors in x and y direction
+    //
     for (int i = init_x; i < end_x; i++)
         for (int j = init_y; j < end_y; j++)
             bins[cur_bin].neighbor_idx.insert((bin_x + i)*len_row + bin_y + j);
@@ -222,10 +249,21 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
 // initialize bins locally
 //
 // edge cases: when 2 processors
-
+//
 void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_size, 
  int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len){
-	
+
+	//
+	// This function intializes bins in each processor.
+	// local_bins: is array of bins needed to be initialized
+	// local_particles: are array of particles in current processor
+	// local_size: is number of particles
+	// local_bin_size: is array[2], which is the row and col num of local bin numbers
+	// num_proc_x and num_proc_y: are x and y numbers of processors
+	// rank: is the id of current processor
+	// bin_len is the total number of bins before scattering particles
+	//
+
 	//
 	// col and row index of processor
 	//
@@ -233,7 +271,9 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	int idx_row = rank%num_proc_x;
 	
 	//
-	// num of bins in each proc which has not3 added neighbors yet
+	// num of bins in each proc which has not added neighbors yet
+	// num_bin :the number of native bins + edge bins
+	// bin_width: width of each bin
 	//
 	int *num_bin = new int[2];
 	num_bin[0] = bin_len /num_proc_x;
@@ -244,7 +284,6 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	// assign each particle to bins
 	//
 	for (int idx = 0; idx < local_size; idx++){
-	//for (int idx = 0; idx < 10; idx++){
 		
 		//
 		// global bin index in row and col
@@ -252,7 +291,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		int global_row = (int)floor(local_particles[idx].x/bin_width);
 		int global_col = (int)floor(local_particles[idx].y/bin_width);
 		//
-		// Edge case: if particle is in the left/down most edges then it belongs to the last bin
+		// Edge case: if particle is in the left/downside edges then it belongs to the last bin
 		//
 		if (global_row == bin_len)
 			global_row--;
@@ -260,23 +299,21 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 			global_col--;
 
 
-
 		//
 		// map into local bin index in row and col
 		//
 		int local_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin[0]);
 		int local_col = glob2loc_col(global_col, idx_col,  num_proc_y, num_bin[1]);
-		//std::cout<<"I am processor "<<rank<<" "<<" I am particle "<<offsets[rank] + idx<<" with local_row and local_col"<<local_row<<" "<<local_col<<std::endl;
+		
+		//
+		// calculate idx of bin in current processor
+		//
 		int cur_bin = local_col * local_bin_size[0] + local_row;
 
 		//
 		// insert particle into bins
 		//
-		// harrd code since in 2 some particles are wrong
-
-		// if (cur_bin >= 0 && cur_bin <=local_bin_size[0]*local_bin_size[1]){
-		// 	local_bins[cur_bin].native_particle.insert({ local_particles[idx].id,local_particles[idx]});
-		// }
+		// hard code since in 2 some particles are wrong
 		if (rank!=2){
 			local_bins[cur_bin].native_particle.insert({ local_particles[idx].id,local_particles[idx]});
 		}
@@ -298,25 +335,34 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 
 	}
 
+
+
 	//
-	// local col size and row size thsi was redundant, the same as num_bin[0]/[1]
+	// local col and row bin num,
 	//
 	int local_col_size = local_bin_size[1];
 	int local_row_size = local_bin_size[0];
 
-	// find neighbors and set all flags as 0
-	for (int i = 0; i<local_col_size*local_row_size; i++){
-		local_bins[i].flag = 0;
-		find_local_neighbors(local_bins, i, local_row_size, local_col_size);
-	}
-	//DEBUG
+	//DEBUG - if insert correctly
 	// if (rank == 0){
 	// 	for (int i = 0; i<local_col_size*local_row_size; i++){
 	// 		std::cout<<"I am "<<rank<<" particle size for bins is "<<local_bins[i].native_particle.size()<<std::endl;
 	// 	}
 		
 	// }
+	//
+	// find neighbors and reset neighbor_index set 
+	// and initialize all flags as 0
+	//
+	for (int i = 0; i<local_col_size*local_row_size; i++){
+		local_bins[i].flag = 0;
+		find_local_neighbors(local_bins, i, local_row_size, local_col_size);
+	}
 
+
+	//
+	// set edge and neighbor flag
+	//
 	// most down, only up set as 2 and 1
 	if (idx_col == num_proc_y - 1){
 		for (int i= 0 ; i< local_row_size;i++){
