@@ -91,15 +91,15 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 	int proc_y = y_proc;
 	int native_proc = (y_proc * num_proc_x) + x_proc;
 
-	std::cout<<"In get procs, pos_x is "<<pos_x<<std::endl;
-	std::cout<<"In get procs, pos_y is "<<pos_y<<std::endl;
-	std::cout<<"In get procs, x_proc is "<<x_proc<<std::endl;
-	std::cout<<"In get procs, y_proc is "<<y_proc<<std::endl;
+	// std::cout<<"In get procs, pos_x is "<<pos_x<<std::endl;
+	// std::cout<<"In get procs, pos_y is "<<pos_y<<std::endl;
+	// std::cout<<"In get procs, x_proc is "<<x_proc<<std::endl;
+	// std::cout<<"In get procs, y_proc is "<<y_proc<<std::endl;
 
-	if (pos_x == 0.471405)
-	{
-		std::cout<<"Hello testing";
-	}
+	// if (pos_x == 0.471405)
+	// {
+		// std::cout<<"Hello testing";
+	// }
 
 
 
@@ -138,25 +138,25 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 	// Top Right?
 	if ((right_proc != proc_x) && (up_proc != proc_y))
 	{
-		process_ids[index++] = up_proc + 1;
+		process_ids[index++] = (up_proc * num_proc_x) + x_proc + 1;
 	}
 
 	// Top Left?
 	if ((left_proc != proc_x) && (up_proc != proc_y))
 	{
-		process_ids[index++] = up_proc - 1;
+		process_ids[index++] = (up_proc * num_proc_x) + x_proc - 1;
 	}
 
 	// Bottom Left?
 	if ((left_proc != proc_x) && (down_proc != proc_y))
 	{
-		process_ids[index++] = down_proc - 1;
+		process_ids[index++] = (down_proc * num_proc_x) + x_proc - 1;
 	}
 
-	// Top Right?
+	// Bottom Right?
 	if ((right_proc != proc_x) && (down_proc != proc_y))
 	{
-		process_ids[index++] = down_proc + 1;
+		process_ids[index++] = (down_proc * num_proc_x) + x_proc + 1;
 	}
 
 
