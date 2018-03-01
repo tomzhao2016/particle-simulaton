@@ -487,14 +487,13 @@ void clean_local_bins(bin_t *local_bins, int local_bin_size){
 	}
 }
 
-void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_particles_native, int local_size_native,
+void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_particles_native,
 	int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len){
 
 	//
 	// This method assign each particle into bins in this processor
 	// local_bins: is empty array of bins needed to be updated
 	// local_particles_native: are array of new native particles(map) in current processor
-	// local_size_native: is number of new particles
 	// local_bin_size: is array[2], which is the row and col num of local bin numbers
 	// num_proc_x and num_proc_y: are x and y numbers of processors
 	// rank: is the id of current processor
