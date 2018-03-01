@@ -96,6 +96,11 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 	std::cout<<"In get procs, x_proc is "<<x_proc<<std::endl;
 	std::cout<<"In get procs, y_proc is "<<y_proc<<std::endl;
 
+	if (pos_x == 0.471405)
+	{
+		std::cout<<"Hello testing";
+	}
+
 
 
 	process_ids[index++] = native_proc;
