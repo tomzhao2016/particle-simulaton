@@ -714,6 +714,7 @@ int main( int argc, char **argv )
         code to send/receive particles between processors
         ******************************************************************
     */
+    
     double simulation_time = read_timer( );
     for( int step = 0; step < NSTEPS; step++ )
     {
