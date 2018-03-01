@@ -52,7 +52,7 @@ int main( int argc, char **argv )
 
     // The total number of processes available to us are n_proc.
     int num_proc_x = (int) floor(sqrt(n_proc)); // The number of processors along the x-axis.
-    int num_proc_y = (int) floor(n_proc / sqrt(n_proc)); // The number of processors along the y-axis. 
+    int num_proc_y = (int) floor(n_proc) / num_proc_x; // The number of processors along the y-axis. 
     printf("Number of total processes %d", n_proc);
     fflush(stdout);
     printf("Number of processes_x %d\n", num_proc_x);
