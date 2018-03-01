@@ -314,24 +314,27 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		// insert particle into bins
 		//
 		// hard code since in 2 some particles are wrong
-		if (cur_bin > 0  && cur_bin < local_bin_size[0]*local_bin_size[1]){
-			local_bins[cur_bin].native_particle.insert({ local_particles[idx].id,local_particles[idx]});
-		}
+
+		//if (cur_bin > 0  && cur_bin < local_bin_size[0]*local_bin_size[1]){
+			
+		//}
 
 		// Debug
-		// if( rank == 2){
-		// 	std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
-		// 	std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
-		// 	std::cout<<"This particle local_row is "<<local_row<<std::endl;
-		// 	std::cout<<"This particle local_col is "<<local_col<<std::endl;
-		// 	std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
-		// 	std::cout<<"This idx_row  is "<<idx_row<<std::endl;
-		// 	std::cout<<"This idx_col is "<<idx_col<<std::endl;
-		// 	std::cout<<"This global_row is "<<global_col<<std::endl;
-		// 	std::cout<<"This global_col is "<<global_col<<std::endl;
-		// 	std::cout<<"This bin_width is "<<bin_width<<std::endl;
-		// 	std::cout<<"This bin_len is "<<bin_len<<std::endl;
-		// }
+		if( rank == 2){
+			
+			std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
+			std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
+			std::cout<<"This particle local_row is "<<local_row<<std::endl;
+			std::cout<<"This particle local_col is "<<local_col<<std::endl;
+			std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
+			std::cout<<"This idx_row  is "<<idx_row<<std::endl;
+			std::cout<<"This idx_col is "<<idx_col<<std::endl;
+			std::cout<<"This global_row is "<<global_row<<std::endl;
+			std::cout<<"This global_col is "<<global_col<<std::endl;
+			std::cout<<"This bin_width is "<<bin_width<<std::endl;
+			std::cout<<"This bin_len is "<<bin_len<<std::endl;
+			local_bins[cur_bin].native_particle.insert({ local_particles[idx].id,local_particles[idx]});
+		}
 
 	}
 
