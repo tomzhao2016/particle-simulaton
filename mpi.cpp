@@ -52,7 +52,7 @@ int main( int argc, char **argv )
 
     // The total number of processes available to us are n_proc.
     int num_proc_x = (int) floor(sqrt(n_proc)); // The number of processors along the x-axis.
-    int num_proc_y = (int) floor(n_proc / sqrt(n_proc)); // The number of processors along the y-axis. 
+    int num_proc_y = (int) floor(n_proc) / num_proc_x; // The number of processors along the y-axis. 
     printf("Number of total processes %d", n_proc);
     fflush(stdout);
     printf("Number of processes_x %d\n", num_proc_x);
@@ -352,31 +352,31 @@ int main( int argc, char **argv )
 
         // TEST - Before updating
         // find first second and third particles after updating
-        if (step == 0)
-            for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
-                if (local_bins[idx].flag!=2){
-                    for(std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin(); it_p != local_bins[idx].native_particle.end(); ++it_p){
-                        if (it_p->first == 0.0){
-                            //  
-                            // store map of particles in this bin
-                            //
-                            std::cout<<"0 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
-                        } 
-                        if (it_p->first == 4.0){
-                            //  
-                            // store map of particles in this bin
-                            //
-                            std::cout<<"4 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
-                        } 
-                        if (it_p->first == 5.0){
-                            //  
-                            // store map of particles in this bin
-                            //
-                            std::cout<<"5 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
-                        }   
-                    }
-                }
-            } 
+        // if (step == 0)
+        //     for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
+        //         if (local_bins[idx].flag!=2){
+        //             for(std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin(); it_p != local_bins[idx].native_particle.end(); ++it_p){
+        //                 if (it_p->first == 0.0){
+        //                     //  
+        //                     // store map of particles in this bin
+        //                     //
+        //                     std::cout<<"0 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
+        //                 } 
+        //                 if (it_p->first == 4.0){
+        //                     //  
+        //                     // store map of particles in this bin
+        //                     //
+        //                     std::cout<<"4 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
+        //                 } 
+        //                 if (it_p->first == 5.0){
+        //                     //  
+        //                     // store map of particles in this bin
+        //                     //
+        //                     std::cout<<"5 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
+        //                 }   
+        //             }
+        //         }
+        //     } 
 
         //
         // 2.move particles and save all the native particles to a map
@@ -437,34 +437,34 @@ int main( int argc, char **argv )
         //
         // reassign each particles in each bins
         //
-        update_local_bins(local_bins, local_particles_native, local_size_native, 
-            local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+        // update_local_bins(local_bins, local_particles_native, local_size_native, 
+        //     local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
 
         // TEST: after updating    
         // find first second and third particles after updating
-        if (step == 0)
-            for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
-                for(std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin(); it_p != local_bins[idx].native_particle.end(); ++it_p){
-                    if (it_p->first == 0.0){
-                        //  
-                        // store map of particles in this bin
-                        //
-                        std::cout<<"0 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
-                    } 
-                    if (it_p->first == 4.0){
-                        //  
-                        // store map of particles in this bin
-                        //
-                        std::cout<<"4 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
-                    } 
-                    if (it_p->first == 5.0){
-                        //  
-                        // store map of particles in this bin
-                        //
-                        std::cout<<"5 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
-                    }   
-                }
-            } 
+        // if (step == 0)
+        //     for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
+        //         for(std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin(); it_p != local_bins[idx].native_particle.end(); ++it_p){
+        //             if (it_p->first == 0.0){
+        //                 //  
+        //                 // store map of particles in this bin
+        //                 //
+        //                 std::cout<<"0 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
+        //             } 
+        //             if (it_p->first == 4.0){
+        //                 //  
+        //                 // store map of particles in this bin
+        //                 //
+        //                 std::cout<<"4 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
+        //             } 
+        //             if (it_p->first == 5.0){
+        //                 //  
+        //                 // store map of particles in this bin
+        //                 //
+        //                 std::cout<<"5 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
+        //             }   
+        //         }
+        //     } 
 
         // barrier
         MPI_Barrier(MPI_COMM_WORLD);
