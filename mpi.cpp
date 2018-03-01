@@ -351,30 +351,31 @@ int main( int argc, char **argv )
 
 
         // TEST - Before moving
-        for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
-            if (local_bins[idx].flag!=2){
-                for(std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin(); it_p != local_bins[idx].native_particle.end(); ++it_p){
-                    if (it_p->first == 0.0){
-                        //  
-                        // store map of particles in this bin
-                        //
-                        std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" before moving. "<<std::endl;
-                    } 
-                    if (it_p->first == 1.0){
-                        //  
-                        // store map of particles in this bin
-                        //
-                        std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" before moving. "<<std::endl;
-                    } 
-                    if (it_p->first == 2.0){
-                        //  
-                        // store map of particles in this bin
-                        //
-                        std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" before moving. "<<std::endl;
-                    }   
+        if (step == 0)
+            for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
+                if (local_bins[idx].flag!=2){
+                    for(std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin(); it_p != local_bins[idx].native_particle.end(); ++it_p){
+                        if (it_p->first == 0.0){
+                            //  
+                            // store map of particles in this bin
+                            //
+                            std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" before moving. "<<std::endl;
+                        } 
+                        if (it_p->first == 1.0){
+                            //  
+                            // store map of particles in this bin
+                            //
+                            std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" before moving. "<<std::endl;
+                        } 
+                        if (it_p->first == 2.0){
+                            //  
+                            // store map of particles in this bin
+                            //
+                            std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" before moving. "<<std::endl;
+                        }   
+                    }
                 }
-            }
-        } 
+            } 
 
         //
         // 2.move particles and save all the native particles to a map
@@ -412,28 +413,29 @@ int main( int argc, char **argv )
 
         // TEST: before moving    
         // find first second and third particles
-        for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
-            for(std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin(); it_p != local_bins[idx].native_particle.end(); ++it_p){
-                if (it_p->first == 0.0){
-                    //  
-                    // store map of particles in this bin
-                    //
-                    std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" after moving. "<<std::endl;
-                } 
-                if (it_p->first == 1.0){
-                    //  
-                    // store map of particles in this bin
-                    //
-                    std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" after moving. "<<std::endl;
-                } 
-                if (it_p->first == 2.0){
-                    //  
-                    // store map of particles in this bin
-                    //
-                    std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" after moving. "<<std::endl;
-                }   
-            }
-        } 
+        if (step == 0)
+            for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
+                for(std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin(); it_p != local_bins[idx].native_particle.end(); ++it_p){
+                    if (it_p->first == 0.0){
+                        //  
+                        // store map of particles in this bin
+                        //
+                        std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" after moving. "<<std::endl;
+                    } 
+                    if (it_p->first == 1.0){
+                        //  
+                        // store map of particles in this bin
+                        //
+                        std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" after moving. "<<std::endl;
+                    } 
+                    if (it_p->first == 2.0){
+                        //  
+                        // store map of particles in this bin
+                        //
+                        std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" after moving. "<<std::endl;
+                    }   
+                }
+            } 
 
 
 
