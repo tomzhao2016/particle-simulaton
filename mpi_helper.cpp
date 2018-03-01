@@ -159,8 +159,6 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 		process_ids[index++] = (down_proc * num_proc_x) + x_proc + 1;
 	}
 
-
-
 	// Debugging
 	// std::cout<<"My pos x is "<< pos_x<<" and pos y is "<<pos_y<<std::endl;
 	// std::cout<<"The processors I belong to are :::: \n\n\n";
@@ -171,16 +169,17 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 	// }
 	// std::cout<<"\n\n\n";
 	return process_ids;
-
-
-
-
-
 }
-//
-// This method map a global bin index into a local index inside the proc
-//
+
 int glob2loc_row(int global_row, int idx_row, int num_proc_x, int num_bin_row){
+	//
+	// This method map a global bin index into a local index inside the proc
+	// global_row: global row index for this bin before distributed
+	// idx_row: row index of the processor
+	// num_proc_x: row total number of processors
+	// num_bin_row: this should be the native&edge row bin number
+	// 
+
 	int local_row;
 	local_row = global_row - idx_row*num_bin_row;
 	if (idx_row > 0)
@@ -189,6 +188,13 @@ int glob2loc_row(int global_row, int idx_row, int num_proc_x, int num_bin_row){
 }
 
 int glob2loc_col(int global_col, int idx_col, int num_proc_y, int num_bin_col){
+	//
+	// This method map a global bin index into a local index inside the proc
+	// global_col: global col index for this bin before distributed
+	// idx_col: col index of the processor
+	// num_proc_y: col total number of processors
+	// num_bin_col: this should be the native&edge col bin number
+	//
 	int local_col;
 	local_col = global_col - idx_col*num_bin_col;
 	if (idx_col > 0)
@@ -330,24 +336,22 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		//if (cur_bin > 0  && cur_bin < local_bin_size[0]*local_bin_size[1]){
 			
 		//}
-
+		local_bins[cur_bin].native_particle.insert({ local_particles[idx].id,local_particles[idx]});
 		// Debug
-		if( rank == 0){
-			std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
-			std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
-			std::cout<<"This particle local_row is "<<local_row<<std::endl;
-			std::cout<<"This particle local_col is "<<local_col<<std::endl;
-			std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
-			std::cout<<"This idx_row  is "<<idx_row<<std::endl;
-			std::cout<<"This idx_col is "<<idx_col<<std::endl;
-			std::cout<<"This global_row is "<<global_row<<std::endl;
-			std::cout<<"This global_col is "<<global_col<<std::endl;
-			std::cout<<"This bin_width is "<<bin_width<<std::endl;
-			std::cout<<"This bin_len is "<<bin_len<<std::endl;
-			std::cout<<"The size is "<<get_size()<<std::endl;
-
-			local_bins[cur_bin].native_particle.insert({ local_particles[idx].id,local_particles[idx]});
-		}
+		// if( rank == 0){
+		// 	std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
+		// 	std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
+		// 	std::cout<<"This particle local_row is "<<local_row<<std::endl;
+		// 	std::cout<<"This particle local_col is "<<local_col<<std::endl;
+		// 	std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
+		// 	std::cout<<"This idx_row  is "<<idx_row<<std::endl;
+		// 	std::cout<<"This idx_col is "<<idx_col<<std::endl;
+		// 	std::cout<<"This global_row is "<<global_row<<std::endl;
+		// 	std::cout<<"This global_col is "<<global_col<<std::endl;
+		// 	std::cout<<"This bin_width is "<<bin_width<<std::endl;
+		// 	std::cout<<"This bin_len is "<<bin_len<<std::endl;
+		// 	std::cout<<"The size is "<<get_size()<<std::endl;
+		// }
 
 	}
 
@@ -472,26 +476,29 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	
 }
 
-void clean_local_bins(bin_t *local_bins, int local_bin_size){
-	//
-	// This method cleans the particles in all local_bins
-	// local_bin: is array of bins in each processor
-	// local_bin_size: is the size of this local_bin
-	//
-	for (int idx = 0; idx<local_bin_size; idx++){
-		local_bins[idx].native_particle.clear();
-	}
-}
+// void clean_local_bins(bin_t *local_bins, int local_bin_size){
+// 	//
+// 	// This method cleans the particles in all local_bins
+// 	// local_bin: is array of bins in each processor
+// 	// local_bin_size: is the size of this local_bin
+// 	//
+// 	for (int idx = 0; idx<local_bin_size; idx++){
+// 		local_bins[idx].native_particle.clear();
+// 	}
+// }
 
-void update_local_bins(bin_t *local_bins, std::map<double,partcle_t>local_particles_native, int local_size_native){
-	//
-	// This method assign each particle into bins in this processor
-	//
-	for (std::map<double, particle_t>::iterator it_p = local_particles_native.begin() ;it_p < local_particles_native.end(); ++it_p){
-		// global
-		it_p->second
-	}
+// void update_local_bins(bin_t *local_bins, std::map<double,partcle_t>local_particles_native, int local_size_native){
+// 	//
+// 	// This method assign each particle into bins in this processor
+// 	//
+// 	for (std::map<double, particle_t>::iterator it_p = local_particles_native.begin() ;it_p < local_particles_native.end(); ++it_p){
+// 		// global index
+// 		int global_row;
+// 		int global_col;
+		
 
-}
+// 	}
+
+// }
 
 
