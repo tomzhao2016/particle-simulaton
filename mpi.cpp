@@ -355,8 +355,8 @@ int main( int argc, char **argv )
         //   for p in b:
         //      move(p); 
         //
-        // std::map<double, particle_t> local_particles_native;
-        // int local_size_native = 0;
+        std::map<double, particle_t> local_particles_native;
+        int local_size_native = 0;
         for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
             //
             // if flag !=2 it is a native/edge bin
