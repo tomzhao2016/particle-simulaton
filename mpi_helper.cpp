@@ -502,7 +502,7 @@ void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_parti
 	// index row of this processor
 	//
 	int idx_row = rank%num_proc_x;
-	int idx_col = rank/num_proc_y;
+	int idx_col = rank/num_proc_x;
 	
 	int local_col_size = local_bin_size[1];
 	int local_row_size = local_bin_size[0];

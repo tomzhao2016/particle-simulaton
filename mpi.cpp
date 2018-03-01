@@ -144,7 +144,7 @@ int main( int argc, char **argv )
     } 
 
 
-    
+
     // Each processor allocates space.
     particle_t *local_particles = (particle_t*) malloc( *local_size * sizeof(particle_t) );
     //std::cout<<"Rank "<<rank<<" allocated space for local particles"<<std::endl;
@@ -862,8 +862,6 @@ int main( int argc, char **argv )
         std::cout<<"rank "<<rank<<" " <<local_particles_native_map_new.size()<<std::endl;
 
         // end receive 
-
-        local_particles_native_map_new;
 
         //
         // clean native particles in bins
