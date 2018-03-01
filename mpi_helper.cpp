@@ -511,12 +511,12 @@ void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_parti
 	// nuber of native bins in row and col
 	//
 	int num_bin_row = bin_len/num_proc_x;
-	int num_bin_col = bin_len/proc_y;
+	int num_bin_col = bin_len/num_proc_y;
 	//
 	// width of each bin
 	//
 	double bin_width = get_size()/bin_len;
-	for (std::map<double, particle_t>::iterator it_p = local_particles_native.begin() ;it_p < local_particles_native.end(); ++it_p){
+	for (std::map<double, particle_t>::iterator it_p = local_particles_native.begin() ;it_p != local_particles_native.end(); ++it_p){
 		//
 		// global index
 		//
@@ -542,7 +542,7 @@ void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_parti
 		// find cur_bin index
 		//
 		int cur_bin = local_col * local_row_size + local_row;
-		local_bin[cur_bin].native_particle.insert({it_p->second.id, it_p->second});
+		local_bins[cur_bin].native_particle.insert({it_p->second.id, it_p->second});
 	}
 
 }
