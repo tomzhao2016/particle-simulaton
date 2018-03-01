@@ -144,7 +144,7 @@ int main( int argc, char **argv )
     } 
 
 
-
+    
     // Each processor allocates space.
     particle_t *local_particles = (particle_t*) malloc( *local_size * sizeof(particle_t) );
     //std::cout<<"Rank "<<rank<<" allocated space for local particles"<<std::endl;
@@ -401,7 +401,7 @@ int main( int argc, char **argv )
         //   for p in b:
         //      move(p); 
         //
-        std::map<double, particle_t> local_particles_native;
+        std::map<double, particle_t> local_particles_native_map;
         for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
             //
             // if flag !=2 it is a native/edge bin
@@ -422,7 +422,7 @@ int main( int argc, char **argv )
                     // move particles
                     //
                     move(p1->second);
-                    local_particles_native.insert({p1->second.id, p1->second});
+                    local_particles_native_map.insert({p1->second.id, p1->second});
                 }   
             }     
         }
@@ -430,8 +430,6 @@ int main( int argc, char **argv )
         
 
 
-
-        local_particles_native_map = local_particles_native;
         //
         // 3.1 send and receove particles to/from other processor
         // for processor_id,particle_t in M:
@@ -865,7 +863,7 @@ int main( int argc, char **argv )
 
         // end receive 
 
-        local_particles_native = local_particles_native_map_new;
+        local_particles_native_map_new;
 
         //
         // clean native particles in bins
@@ -874,7 +872,7 @@ int main( int argc, char **argv )
         //
         // reassign each particles in each bins
         //
-        update_local_bins(local_bins, local_particles_native, 
+        update_local_bins(local_bins, local_particles_native_map_new, 
             local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
 
         // TEST: after updating    
