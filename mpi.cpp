@@ -355,33 +355,33 @@ int main( int argc, char **argv )
         //   for p in b:
         //      move(p); 
         //
-        std::map<double, particle_t> local_particles_native;
-        int local_size_native = 0;
-        for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
-            //
-            // if flag !=2 it is a native/edge bin
-            //
-            if (local_bins[idx].flag != 2){
-                //  
-                // store map of particles in this bin
-                //
-                std::map<double,particle_t> p1_map = local_bins[idx].native_particle;
-                //
-                // iterate over all the particles in this map
-                //
-                // if (rank == 0 && step < 3){
-                //    std::cout<<"this bin's particle num is : "<<p1_map.size()<<std::endl;
-                // }
-                for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
-                    //  
-                    // move particles
-                    //
-                    move(p1->second);
-                    local_particles_native.insert({p1.id, p1});
-                    local_size_native++;
-                }   
-            }     
-        }
+        // std::map<double, particle_t> local_particles_native;
+        // int local_size_native = 0;
+        // for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
+        //     //
+        //     // if flag !=2 it is a native/edge bin
+        //     //
+        //     if (local_bins[idx].flag != 2){
+        //         //  
+        //         // store map of particles in this bin
+        //         //
+        //         std::map<double,particle_t> p1_map = local_bins[idx].native_particle;
+        //         //
+        //         // iterate over all the particles in this map
+        //         //
+        //         // if (rank == 0 && step < 3){
+        //         //    std::cout<<"this bin's particle num is : "<<p1_map.size()<<std::endl;
+        //         // }
+        //         for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
+        //             //  
+        //             // move particles
+        //             //
+        //             move(p1->second);
+        //             local_particles_native.insert({p1.id, p1});
+        //             local_size_native++;
+        //         }   
+        //     }     
+        // }
 
         //
         // 3.1 send and receove particles to/from other processor
@@ -399,14 +399,14 @@ int main( int argc, char **argv )
         //
         // clean native particles in bins
         //
-        clean_local_bins(local_bins, local_bin_row*local_bin_col);
+        // clean_local_bins(local_bins, local_bin_row*local_bin_col);
         //
         // reassign each particles in each bins
         //
-        update_local_bins(local_bins, local_particles_native, local_size_native);
+        // update_local_bins(local_bins, local_particles_native, local_size_native);
 
         // barrier
-        MPI_Barrier(MPI_COMM_WORLD);
+        // MPI_Barrier(MPI_COMM_WORLD);
         
         //
         // 5.1 send edge bins to neighbor processor
