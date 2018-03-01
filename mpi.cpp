@@ -227,8 +227,10 @@ int main( int argc, char **argv )
     ******************************************************************
     */
     // 
-    int proc_y_current = (int) floor(rank/num_proc_x);
-    int proc_x_current = (int) rank - proc_y_current * num_proc_x;
+    //int proc_y_current = (int) floor(rank/num_proc_x);
+    //int proc_x_current = (int) rank - proc_y_current * num_proc_x;
+    int proc_y_current = rank/num_proc_x);
+    int proc_x_current = rank%num_proc_x;
     int proc_x, proc_y;
     int proc_x_new, proc_y_new;
 
