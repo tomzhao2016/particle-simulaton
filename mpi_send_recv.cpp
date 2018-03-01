@@ -225,22 +225,52 @@ int main( int argc, char **argv )
         code to send/receive particles between processors
         ******************************************************************
     */
+    // first make local_particles_native from local_particles, local_size_native from local_size
+    int proc_y_current = (int) floor(rank/num_proc_x);
+    int proc_x_current = (int) rank - proc_y_current * num_proc_x;
+    int *local_size_native = (int *)malloc(sizeof(int)); 
+    *local_size_native = 0;
+    int proc_x, proc_y;
+    std::set<int>  index_native; 
+    for (int i = 0; i < *local_size; i++){
+            proc_x =  get_proc_x(local_particles[i].x, num_proc_x);
+            proc_y =  get_proc_y(local_particles[i].y, num_proc_y);
+            if ( proc_y == proc_y_current &&  proc_x == proc_x_current ){
+                 index_native.insert(i);
+                 *local_size_native += 1;
+            }
+    }
+    particle_t *local_particles_native = (particle_t*) malloc (*local_size_native * sizeof(particle_t));
+    std::set<int>::iterator it1;
+    int index_temp = 0;
+    for (it1 = index_native.begin(); it1 != index_native.end(); ++it1){
+        local_particles_native[index_temp++] = local_particles[*it1];
+    }
+
 
     // manually change the location of some particles to other processors for experiment
     if (rank == 0){
         for (int i = 0; i < 10; i++){
-            local_particles[i].y = get_size() - 0.00001;
-        }
+            local_particles_native[i].y = get_size() - 0.000001 * (i+1);
+            local_particles_native[i].x = get_size() - 0.000001 * (i+1);
+        } // should send to the upper right corner
+        for (int i = 10; i < 20; i++){
+            local_particles_native[i].x = get_size() - 0.000001 * (i+1);
+        } // send to the right most processor in the row
     }
-    if (rank == 1){
+    if (rank == num_proc_x*num_proc_y - 1){
         for (int i = 0; i < 10; i++){
-            local_particles[i].y = 0 + 0.00001 ;
-        }
+            local_particles_native[i].x = 0 + 0.000001 * (i+1);
+            local_particles_native[i].y = 0 + 0.000001 * (i+1);
+        } // send to the lower left corner
+        for (int i = 10; i < 20; i++){
+            local_particles_native[i].x = 0 + 0.000001 * (i+1);
+        } // send to the left most processor in the same row
     }
+
+
     // assuming that I know the native particles, the number of native particles, and their new x and y in each processor
     int proc_x_new, proc_y_new;
-    int proc_y_current = (int) floor(rank/num_proc_x);
-    int proc_x_current = (int) rank - proc_y_current * num_proc_x;
 
     // size of array of particles to be sent to 8 neighboring processors
     int *send_size_up = (int *)malloc(sizeof(int));
@@ -267,17 +297,22 @@ int main( int argc, char **argv )
     */
     // std::cout<< "  nnum_proc_x "<<num_proc_x<<std::endl;
     // std::cout<< "  num_proc_y "<<num_proc_y<<std::endl;
-    for (int i = 0; i < *local_size; i++){
-            proc_x_new =  get_proc_x(local_particles[i].x, num_proc_x);
-            proc_y_new =  get_proc_y(local_particles[i].y, num_proc_y);
+    for (int i = 0; i < *local_size_native; i++){
+            proc_x_new =  get_proc_x(local_particles_native[i].x, num_proc_x);
+            proc_y_new =  get_proc_y(local_particles_native[i].y, num_proc_y);
             // if(i < 10){
             //         std::cout<<"rank "<<rank<< " size of board is "<<get_size()<<std::endl;
-            //         std::cout<<"rank "<<rank<< " y of top 10 particles are "<<local_particles[i].y<<std::endl;
+            //         std::cout<<"rank "<<rank<< " y of top 10 particles are "<<local_particles_native[i].y<<std::endl;
             //         std::cout<<"rank "<<rank<< " proc_y_new is "<<proc_y_new<<std::endl;
             //         std::cout<<"rank "<<rank<< " proc_y_current is "<<proc_y_current<<std::endl;
             //         std::cout<<"*********************************"<<std::endl;
             // }
-            if ((proc_y_new * num_proc_x) + proc_x_new != rank){ // if the native particles moves to another processor
+            if ( proc_y_new != proc_y_current ||  proc_x_new != proc_x_current ){ // if the native particles moves to another processor
+            //     if(rank == 0){
+            //     std::cout<<"rank "<<rank<< "before index_send i is "<<i<<std::endl;
+            //     std::cout<<"rank "<<rank<< "x of  i is "<<local_particles_native[i].x<<std::endl;
+            //     std::cout<<"rank "<<rank<< "y of i is "<<local_particles_native[i].y<<std::endl;
+            // }
                 index_send.insert(i);
                 // up
                 if(proc_x_new == proc_x_current && proc_y_new == proc_y_current + 1){
@@ -316,16 +351,18 @@ int main( int argc, char **argv )
         }
 
     // debugging
-    std::cout<<"rank "<<rank<<" index_send size:"<<index_send.size()<<std::endl;
-    std::cout<<"rank "<<rank<<" send_size_up:"<<*send_size_up<<std::endl;
-    std::cout<<"rank "<<rank<<" send_size_upperleft:"<<*send_size_upperleft<<std::endl;
-    std::cout<<"rank "<<rank<<" send_size_left:"<<*send_size_left<<std::endl;
-    std::cout<<"rank "<<rank<<" send_size_lowerleft:"<<*send_size_lowerleft<<std::endl;
-    std::cout<<"rank "<<rank<<" send_size_down:"<<*send_size_down<<std::endl;
-    std::cout<<"rank "<<rank<<" send_size_lowerright:"<<*send_size_lowerright<<std::endl;
-    std::cout<<"rank "<<rank<<" send_size_right:"<<*send_size_right<<std::endl;
-    std::cout<<"rank "<<rank<<" send_size_upperright:"<<*send_size_upperright<<std::endl;
-
+//     if(rank == 0){
+//     std::cout<<"rank "<<rank<<" index_send size:"<<index_send.size()<<std::endl;
+//     std::cout<<"rank "<<rank<<" send_size_up:"<<*send_size_up<<std::endl;
+//     std::cout<<"rank "<<rank<<" send_size_upperleft:"<<*send_size_upperleft<<std::endl;
+//     std::cout<<"rank "<<rank<<" send_size_left:"<<*send_size_left<<std::endl;
+//     std::cout<<"rank "<<rank<<" send_size_lowerleft:"<<*send_size_lowerleft<<std::endl;
+//     std::cout<<"rank "<<rank<<" send_size_down:"<<*send_size_down<<std::endl;
+//     std::cout<<"rank "<<rank<<" send_size_lowerright:"<<*send_size_lowerright<<std::endl;
+//     std::cout<<"rank "<<rank<<" send_size_right:"<<*send_size_right<<std::endl;
+//     std::cout<<"rank "<<rank<<" send_size_upperright:"<<*send_size_upperright<<std::endl;
+//     std::cout<<"#######################################################"<<std::endl;
+// }
 
     /*
       assign memory for 8 arrays of particles to be sent
@@ -354,39 +391,39 @@ int main( int argc, char **argv )
 
     for (it2 = index_send.begin(); it2 != index_send.end(); ++it2){
        
-        proc_x_new =  get_proc_x(local_particles[*it2].x, num_proc_x);
-        proc_y_new =  get_proc_y(local_particles[*it2].y, num_proc_y);
+        proc_x_new =  get_proc_x(local_particles_native[*it2].x, num_proc_x);
+        proc_y_new =  get_proc_y(local_particles_native[*it2].y, num_proc_y);
         // up
         if(proc_x_new == proc_x_current && proc_y_new == proc_y_current + 1){
-            particles_send_up[index_up++] = local_particles[*it2];
+            particles_send_up[index_up++] = local_particles_native[*it2];
         }
         // upper left
         if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1){
-            particles_send_upperleft[index_upperleft++] = local_particles[*it2];
+            particles_send_upperleft[index_upperleft++] = local_particles_native[*it2];
         }
         // left
         if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current){
-            particles_send_left[index_left++] = local_particles[*it2];
+            particles_send_left[index_left++] = local_particles_native[*it2];
         }
         // lower left
         if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1){
-            particles_send_lowerleft[index_lowerleft++] = local_particles[*it2];
+            particles_send_lowerleft[index_lowerleft++] = local_particles_native[*it2];
         }
         // down
         if(proc_x_new == proc_x_current && proc_y_new == proc_y_current - 1){
-            particles_send_down[index_down++] = local_particles[*it2];
+            particles_send_down[index_down++] = local_particles_native[*it2];
         }
         // lower right
         if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1){
-            particles_send_lowerright[index_lowerright++] = local_particles[*it2];
+            particles_send_lowerright[index_lowerright++] = local_particles_native[*it2];
         }
         // right
         if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current){
-            particles_send_right[index_right++] = local_particles[*it2];
+            particles_send_right[index_right++] = local_particles_native[*it2];
         }
         // upper right
         if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1){
-            particles_send_upperright[index_upperright++] = local_particles[*it2];
+            particles_send_upperright[index_upperright++] = local_particles_native[*it2];
         }
     }
 
@@ -570,47 +607,63 @@ int main( int argc, char **argv )
     /*
         finally do some test
     */
-    // should receive 10 points from up
+    // should receive 10 points from upper right
     if(rank == 0){
         std::cout<<"rank 0**************************************************"<<std::endl;
-        std::cout<<"number of particles received from up"<<*receive_size_up<<std::endl;
-        std::cout<<"number of particles received from upperleft"<<*receive_size_upperleft<<std::endl;
-        std::cout<<"number of particles received from left"<<*receive_size_left<<std::endl;
-        std::cout<<"number of particles received from lowerleft"<<*receive_size_lowerleft<<std::endl;
-        std::cout<<"number of particles received from down"<<*receive_size_down<<std::endl;
-        std::cout<<"number of particles received from lowerright"<<*receive_size_lowerright<<std::endl;
-        std::cout<<"number of particles received from right"<<*receive_size_right<<std::endl;
-        std::cout<<"number of particles received from upperright"<<*receive_size_upperright<<std::endl;
+        std::cout<<"rank 0 number of particles received from up"<<*receive_size_up<<std::endl;
+        std::cout<<"rank 0 number of particles received from upperleft"<<*receive_size_upperleft<<std::endl;
+        std::cout<<"rank 0 number of particles received from left"<<*receive_size_left<<std::endl;
+        std::cout<<"rank 0 number of particles received from lowerleft"<<*receive_size_lowerleft<<std::endl;
+        std::cout<<"rank 0 number of particles received from down"<<*receive_size_down<<std::endl;
+        std::cout<<"rank 0 number of particles received from lowerright"<<*receive_size_lowerright<<std::endl;
+        std::cout<<"rank 0 number of particles received from right"<<*receive_size_right<<std::endl;
+        std::cout<<"rank 0 number of particles received from upperright"<<*receive_size_upperright<<std::endl;
     }
-    // should receive 10 points from down
+    // should receive 10 points from left
     if(rank == 1){
         std::cout<<"rank 1**************************************************"<<std::endl;
-        std::cout<<"number of particles received from up"<<*receive_size_up<<std::endl;
-        std::cout<<"number of particles received from upperleft"<<*receive_size_upperleft<<std::endl;
-        std::cout<<"number of particles received from left"<<*receive_size_left<<std::endl;
-        std::cout<<"number of particles received from lowerleft"<<*receive_size_lowerleft<<std::endl;
-        std::cout<<"number of particles received from down"<<*receive_size_down<<std::endl;
-        std::cout<<"number of particles received from lowerright"<<*receive_size_lowerright<<std::endl;
-        std::cout<<"number of particles received from right"<<*receive_size_right<<std::endl;
-        std::cout<<"number of particles received from upperright"<<*receive_size_upperright<<std::endl;
+        std::cout<<"rank 1 number of particles received from up"<<*receive_size_up<<std::endl;
+        std::cout<<"rank 1 number of particles received from upperleft"<<*receive_size_upperleft<<std::endl;
+        std::cout<<"rank 1 number of particles received from left"<<*receive_size_left<<std::endl;
+        std::cout<<"rank 1 number of particles received from lowerleft"<<*receive_size_lowerleft<<std::endl;
+        std::cout<<"rank 1 number of particles received from down"<<*receive_size_down<<std::endl;
+        std::cout<<"rank 1 number of particles received from lowerright"<<*receive_size_lowerright<<std::endl;
+        std::cout<<"rank 1 number of particles received from right"<<*receive_size_right<<std::endl;
+        std::cout<<"rank 1 number of particles received from upperright"<<*receive_size_upperright<<std::endl;
+    }
+    // should receive 10 points from right
+    if(rank == 2){
+        std::cout<<"rank 2**************************************************"<<std::endl;
+        std::cout<<"rank 2 number of particles received from up"<<*receive_size_up<<std::endl;
+        std::cout<<"rank 2 number of particles received from upperleft"<<*receive_size_upperleft<<std::endl;
+        std::cout<<"rank 2 number of particles received from left"<<*receive_size_left<<std::endl;
+        std::cout<<"rank 2 number of particles received from lowerleft"<<*receive_size_lowerleft<<std::endl;
+        std::cout<<"rank 2 number of particles received from down"<<*receive_size_down<<std::endl;
+        std::cout<<"rank 2 number of particles received from lowerright"<<*receive_size_lowerright<<std::endl;
+        std::cout<<"rank 2 number of particles received from right"<<*receive_size_right<<std::endl;
+        std::cout<<"rank 2 number of particles received from upperright"<<*receive_size_upperright<<std::endl;
+    }
+    // should receive 10 points from lowerleft
+    if(rank == 3){
+        std::cout<<"rank 3**************************************************"<<std::endl;
+        std::cout<<"rank 3 number of particles received from up"<<*receive_size_up<<std::endl;
+        std::cout<<"rank 3 number of particles received from upperleft"<<*receive_size_upperleft<<std::endl;
+        std::cout<<"rank 3 number of particles received from left"<<*receive_size_left<<std::endl;
+        std::cout<<"rank 3 number of particles received from lowerleft"<<*receive_size_lowerleft<<std::endl;
+        std::cout<<"rank 3 number of particles received from down"<<*receive_size_down<<std::endl;
+        std::cout<<"rank 3 number of particles received from lowerright"<<*receive_size_lowerright<<std::endl;
+        std::cout<<"rank 3 number of particles received from right"<<*receive_size_right<<std::endl;
+        std::cout<<"rank 3 number of particles received from upperright"<<*receive_size_upperright<<std::endl;
     }
     // 
-    if(rank == 0){
-        std::cout<<"rank 0**************************************************"<<std::endl;
-        for(int i = 0; i < *receive_size_up; i++){
-             std::cout<<"particles_receive_up x"<<particles_receive_up[i].x<<std::endl;
-             std::cout<<"particles_receive_up y"<<particles_receive_up[i].y<<std::endl;
-        }
-    }
-    //
-    if(rank == 1){
-        std::cout<<"rank 0**************************************************"<<std::endl;
-        for(int i = 0; i < *receive_size_down; i++){
-             std::cout<<"particles_receive_down x"<<particles_receive_down[i].x<<std::endl;
-             std::cout<<"particles_receive_down y"<<particles_receive_down[i].y<<std::endl;
-        }
-    }
-
+    // should receive 10 points from upperright
+    // if(rank == 0){
+    //     std::cout<<"rank 0**************************************************"<<std::endl;
+    //     for(int i = 0; i < *receive_size_up; i++){
+    //          std::cout<<"particles_receive_upperright x"<<particles_receive_upperright[i].x<<std::endl;
+    //          std::cout<<"particles_receive_upperright y"<<particles_receive_upperright[i].y<<std::endl;
+    //     }
+    // }
 
     /*
         ******************************************************************
