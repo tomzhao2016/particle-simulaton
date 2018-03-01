@@ -320,8 +320,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		//}
 
 		// Debug
-		if( rank == 2){
-			
+		if( rank == 0){
 			std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
 			std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
 			std::cout<<"This particle local_row is "<<local_row<<std::endl;
