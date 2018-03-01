@@ -332,6 +332,8 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 			std::cout<<"This global_col is "<<global_col<<std::endl;
 			std::cout<<"This bin_width is "<<bin_width<<std::endl;
 			std::cout<<"This bin_len is "<<bin_len<<std::endl;
+			std::cout<<"The size is "<<get_size()<<std::endl;
+			
 			local_bins[cur_bin].native_particle.insert({ local_particles[idx].id,local_particles[idx]});
 		}
 
