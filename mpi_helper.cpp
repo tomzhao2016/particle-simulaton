@@ -487,7 +487,10 @@ void update_local_bins(bin_t *local_bins, std::map<double,partcle_t>local_partic
 	//
 	// This method assign each particle into bins in this processor
 	//
-	//for (int idx_p ;) 
+	for (std::map<double, particle_t>::iterator it_p = local_particles_native.begin() ;it_p < local_particles_native.end(); ++it_p){
+		// global
+		it_p->second
+	}
 
 }
 
