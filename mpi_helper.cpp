@@ -314,7 +314,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 		// insert particle into bins
 		//
 		// hard code since in 2 some particles are wrong
-		if (rank!=2){
+		if (cur_bin > 0  && cur_bin < local_bin_size[0]*local_bin_size[1]){
 			local_bins[cur_bin].native_particle.insert({ local_particles[idx].id,local_particles[idx]});
 		}
 
