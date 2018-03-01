@@ -350,7 +350,8 @@ int main( int argc, char **argv )
         }
 
 
-        // TEST - Before moving
+        // TEST - Before updating
+        // find first second and third particles after updating
         if (step == 0)
             for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
                 if (local_bins[idx].flag!=2){
@@ -359,19 +360,19 @@ int main( int argc, char **argv )
                             //  
                             // store map of particles in this bin
                             //
-                            std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" before moving. "<<std::endl;
+                            std::cout<<"0 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
                         } 
                         if (it_p->first == 1.0){
                             //  
                             // store map of particles in this bin
                             //
-                            std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" before moving. "<<std::endl;
+                            std::cout<<"1 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
                         } 
                         if (it_p->first == 2.0){
                             //  
                             // store map of particles in this bin
                             //
-                            std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" before moving. "<<std::endl;
+                            std::cout<<"2 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
                         }   
                     }
                 }
@@ -411,31 +412,7 @@ int main( int argc, char **argv )
             }     
         }
 
-        // TEST: before moving    
-        // find first second and third particles
-        if (step == 0)
-            for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
-                for(std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin(); it_p != local_bins[idx].native_particle.end(); ++it_p){
-                    if (it_p->first == 0.0){
-                        //  
-                        // store map of particles in this bin
-                        //
-                        std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" after moving. "<<std::endl;
-                    } 
-                    if (it_p->first == 1.0){
-                        //  
-                        // store map of particles in this bin
-                        //
-                        std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" after moving. "<<std::endl;
-                    } 
-                    if (it_p->first == 2.0){
-                        //  
-                        // store map of particles in this bin
-                        //
-                        std::cout<<"I am in bin: "<<idx<<" , rank: "<<rank<<" after moving. "<<std::endl;
-                    }   
-                }
-            } 
+        
 
 
 
@@ -462,6 +439,32 @@ int main( int argc, char **argv )
         //
         update_local_bins(local_bins, local_particles_native, local_size_native, 
             local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+
+        // TEST: after updating    
+        // find first second and third particles after updating
+        if (step == 0)
+            for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
+                for(std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin(); it_p != local_bins[idx].native_particle.end(); ++it_p){
+                    if (it_p->first == 0.0){
+                        //  
+                        // store map of particles in this bin
+                        //
+                        std::cout<<"0 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
+                    } 
+                    if (it_p->first == 1.0){
+                        //  
+                        // store map of particles in this bin
+                        //
+                        std::cout<<"1 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
+                    } 
+                    if (it_p->first == 2.0){
+                        //  
+                        // store map of particles in this bin
+                        //
+                        std::cout<<"2 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
+                    }   
+                }
+            } 
 
         // barrier
         MPI_Barrier(MPI_COMM_WORLD);
