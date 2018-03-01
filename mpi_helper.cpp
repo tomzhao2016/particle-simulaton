@@ -91,6 +91,13 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 	int proc_y = y_proc;
 	int native_proc = (y_proc * num_proc_x) + x_proc;
 
+	std::cout<<"In get procs, pos_x is "<<pos_x<<std::endl;
+	std::cout<<"In get procs, pos_y is "<<pos_y<<std::endl;
+	std::cout<<"In get procs, x_proc is "<<x_proc<<std::endl;
+	std::cout<<"In get procs, y_proc is "<<y_proc<<std::endl;
+
+
+
 	process_ids[index++] = native_proc;
 
 	double bin_len = get_size()/bin_length(num_proc_x, num_proc_y);
@@ -333,7 +340,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 			std::cout<<"This bin_width is "<<bin_width<<std::endl;
 			std::cout<<"This bin_len is "<<bin_len<<std::endl;
 			std::cout<<"The size is "<<get_size()<<std::endl;
-			
+
 			local_bins[cur_bin].native_particle.insert({ local_particles[idx].id,local_particles[idx]});
 		}
 
