@@ -362,17 +362,17 @@ int main( int argc, char **argv )
                             //
                             std::cout<<"0 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
                         } 
-                        if (it_p->first == 1.0){
+                        if (it_p->first == 4.0){
                             //  
                             // store map of particles in this bin
                             //
-                            std::cout<<"1 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
+                            std::cout<<"4 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
                         } 
-                        if (it_p->first == 2.0){
+                        if (it_p->first == 5.0){
                             //  
                             // store map of particles in this bin
                             //
-                            std::cout<<"2 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
+                            std::cout<<"5 is in bin: "<<idx<<" , rank: "<<rank<<" before updating. "<<std::endl;
                         }   
                     }
                 }
@@ -451,17 +451,17 @@ int main( int argc, char **argv )
                         //
                         std::cout<<"0 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
                     } 
-                    if (it_p->first == 1.0){
+                    if (it_p->first == 4.0){
                         //  
                         // store map of particles in this bin
                         //
-                        std::cout<<"1 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
+                        std::cout<<"4 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
                     } 
-                    if (it_p->first == 2.0){
+                    if (it_p->first == 5.0){
                         //  
                         // store map of particles in this bin
                         //
-                        std::cout<<"2 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
+                        std::cout<<"5 is in bin: "<<idx<<" , rank: "<<rank<<" after updating. "<<std::endl;
                     }   
                 }
             } 
