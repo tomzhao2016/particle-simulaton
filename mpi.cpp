@@ -329,12 +329,12 @@ int main( int argc, char **argv )
 
                                 // DEBUG - print acceleration before applying force
                                 // if (step == 0){
-                                //    std::cout<<"I am "<<rank<<" before p1 acceleration x "<<p1->second.ax<<std::endl;
-                                //     std::cout<<"I am "<<rank<<" before p1 acceleration y "<<p1->second.ay<<std::endl;
-                                //     std::cout<<"I am "<<rank<<" My x is"<<p1->second.x<<std::endl;
-                                //     std::cout<<"I am "<<rank<<" My y is"<<p1->second.y<<std::endl;
-                                //     std::cout<<"I am "<<rank<<" My neighbour x is "<<p2->second.x<<std::endl;
-                                //     std::cout<<"I am "<<rank<<" My neighbour y is "<<p2->second.y<<std::endl;
+                                   std::cout<<"I am "<<rank<<" before p1 acceleration x "<<p1->second.ax<<std::endl;
+                                    std::cout<<"I am "<<rank<<" before p1 acceleration y "<<p1->second.ay<<std::endl;
+                                    std::cout<<"I am "<<rank<<" My x is"<<p1->second.x<<std::endl;
+                                    std::cout<<"I am "<<rank<<" My y is"<<p1->second.y<<std::endl;
+                                    std::cout<<"I am "<<rank<<" My neighbour x is "<<p2->second.x<<std::endl;
+                                    std::cout<<"I am "<<rank<<" My neighbour y is "<<p2->second.y<<std::endl;
                                 // }
                                 apply_force( p1->second, p2->second,&dmin,&davg,&navg);
                                 // DEBUG - print acceleration after applying force
