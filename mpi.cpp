@@ -446,125 +446,125 @@ int main( int argc, char **argv )
 //
 //        // assuming that I know the native particles, the number of native particles, and their new x and y in each processor
 //        // size of array of particles to be sent to 8 neighboring processors
-//        *send_size_up = 0;
-//        *send_size_upperleft = 0;
-//        *send_size_left = 0;
-//        *send_size_lowerleft = 0;
-//        *send_size_down = 0;
-//        *send_size_lowerright = 0;
-//        *send_size_right = 0;
-//        *send_size_upperright = 0;
+        *send_size_up = 0;
+        *send_size_upperleft = 0;
+        *send_size_left = 0;
+        *send_size_lowerleft = 0;
+        *send_size_down = 0;
+        *send_size_lowerright = 0;
+        *send_size_right = 0;
+        *send_size_upperright = 0;
 //        // store the indices of particles to be sent/ or not sent, save time
-//        std::set<int>  index_send;
-//        std::set<int>  index_keep;
+        std::set<int>  index_send;
+        std::set<int>  index_keep;
 //
 //        /*
 //          calculate the send_size of array of particles to be sent to 8 neighboring processors
 //        */
-//        for (int i = 0; i < *local_size_native; i++)
-//        {
+        for (int i = 0; i < *local_size_native; i++)
+        {
 ////                if (i >= (sizeof(local_particles_native)/sizeof(local_particles_native[0])))
 ////                {
 ////                    std::cout<<"Problem in line 441"<<std::endl;
 ////                }
 //
-//                proc_x_new =  get_proc_x(local_particles_native[i].x, num_proc_x);
-//                proc_y_new =  get_proc_y(local_particles_native[i].y, num_proc_y);
-//                if(proc_x_new == num_proc_x)
-//                {
-//                    proc_x_new--;
-//                }
-//                if(proc_y_new == num_proc_y)
-//                {
-//                    proc_y_new--;
-//                }
-//
-//                if (proc_y_current < 0 || proc_y_current >= num_proc_y)
-//                {
-//                    std::cout<<"Problem in line 457"<<std::endl;
-//                }
-//                if (proc_x_current < 0 || proc_x_current >= num_proc_x)
-//                {
-//                    std::cout<<"Problem in line 461"<<std::endl;
-//                }
-//
-//                if (proc_x_new < 0 || proc_x_new >= num_proc_x)
-//                {
-//                    std::cout<<"Problem in line 466"<<std::endl;
-//                }
-//                if (proc_y_new < 0 || proc_y_new >= num_proc_y)
-//                {
-//                    std::cout<<"Problem in line 470"<<std::endl;
-//                }
-//
-//                if ( proc_y_new != proc_y_current ||  proc_x_new != proc_x_current )
-//                { // if the native particles moves to another processor
-//
-//                    index_send.insert(i);
+                proc_x_new =  get_proc_x(local_particles_native[i].x, num_proc_x);
+                proc_y_new =  get_proc_y(local_particles_native[i].y, num_proc_y);
+                if(proc_x_new == num_proc_x)
+                {
+                    proc_x_new--;
+                }
+                if(proc_y_new == num_proc_y)
+                {
+                    proc_y_new--;
+                }
+
+                if (proc_y_current < 0 || proc_y_current >= num_proc_y)
+                {
+                    std::cout<<"Problem in line 457"<<std::endl;
+                }
+                if (proc_x_current < 0 || proc_x_current >= num_proc_x)
+                {
+                    std::cout<<"Problem in line 461"<<std::endl;
+                }
+
+                if (proc_x_new < 0 || proc_x_new >= num_proc_x)
+                {
+                    std::cout<<"Problem in line 466"<<std::endl;
+                }
+                if (proc_y_new < 0 || proc_y_new >= num_proc_y)
+                {
+                    std::cout<<"Problem in line 470"<<std::endl;
+                }
+
+                if ( proc_y_new != proc_y_current ||  proc_x_new != proc_x_current )
+                { // if the native particles moves to another processor
+
+                    index_send.insert(i);
 //                    // up
-//                    if(proc_x_new == proc_x_current && proc_y_new == proc_y_current - 1){
-//
-//                        *send_size_up += 1;
-//                    }
-//                    // upper left
-//                    if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1){
-//                        *send_size_upperleft += 1;
-//                    }
-//                    // left
-//                    if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current){
-//                        *send_size_left += 1;
-//                    }
-//                    // lower left
-//                    if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1){
-//                        *send_size_lowerleft += 1;
-//                    }
-//                    // down
-//                    if(proc_x_new == proc_x_current && proc_y_new == proc_y_current + 1){
-//                        *send_size_down += 1;
-//                    }
-//                    // lower right
-//                    if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1){
-//                        *send_size_lowerright += 1;
-//                    }
-//                    // right
-//                    if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current){
-//                        *send_size_right += 1;
-//                    }
-//                    // upper right
-//                    if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1){
-//                        *send_size_upperright += 1;
-//                    }
-//
-//                } else
-//                {
-//                    index_keep.insert(i); // indices of particles kept in the current processor
-//                }
-//            }
+                    if(proc_x_new == proc_x_current && proc_y_new == proc_y_current - 1){
+
+                        *send_size_up += 1;
+                    }
+                    // upper left
+                    if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1){
+                        *send_size_upperleft += 1;
+                    }
+                    // left
+                    if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current){
+                        *send_size_left += 1;
+                    }
+                    // lower left
+                    if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1){
+                        *send_size_lowerleft += 1;
+                    }
+                    // down
+                    if(proc_x_new == proc_x_current && proc_y_new == proc_y_current + 1){
+                        *send_size_down += 1;
+                    }
+                    // lower right
+                    if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1){
+                        *send_size_lowerright += 1;
+                    }
+                    // right
+                    if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current){
+                        *send_size_right += 1;
+                    }
+                    // upper right
+                    if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1){
+                        *send_size_upperright += 1;
+                    }
+
+                } else
+                {
+                    index_keep.insert(i); // indices of particles kept in the current processor
+                }
+            }
 //
 //        /*
 //          assign memory for 8 arrays of particles to be sent
 //        */
-//        particle_t *particles_send_up = (particle_t*) malloc (*send_size_up * sizeof(particle_t));
-//        particle_t *particles_send_upperleft = (particle_t*) malloc (*send_size_upperleft * sizeof(particle_t));
-//        particle_t *particles_send_left = (particle_t*) malloc (*send_size_left * sizeof(particle_t));
-//        particle_t *particles_send_lowerleft = (particle_t*) malloc (*send_size_lowerleft * sizeof(particle_t));
-//        particle_t *particles_send_down = (particle_t*) malloc (*send_size_down * sizeof(particle_t));
-//        particle_t *particles_send_lowerright = (particle_t*) malloc (*send_size_lowerright * sizeof(particle_t));
-//        particle_t *particles_send_right = (particle_t*) malloc (*send_size_right * sizeof(particle_t));
-//        particle_t *particles_send_upperright = (particle_t*) malloc (*send_size_upperright * sizeof(particle_t));
+        particle_t *particles_send_up = (particle_t*) malloc (*send_size_up * sizeof(particle_t));
+        particle_t *particles_send_upperleft = (particle_t*) malloc (*send_size_upperleft * sizeof(particle_t));
+        particle_t *particles_send_left = (particle_t*) malloc (*send_size_left * sizeof(particle_t));
+        particle_t *particles_send_lowerleft = (particle_t*) malloc (*send_size_lowerleft * sizeof(particle_t));
+        particle_t *particles_send_down = (particle_t*) malloc (*send_size_down * sizeof(particle_t));
+        particle_t *particles_send_lowerright = (particle_t*) malloc (*send_size_lowerright * sizeof(particle_t));
+        particle_t *particles_send_right = (particle_t*) malloc (*send_size_right * sizeof(particle_t));
+        particle_t *particles_send_upperright = (particle_t*) malloc (*send_size_upperright * sizeof(particle_t));
 //
 //        // /*
 //        //   populate these 8 arrays of particles to be sent
 //        // */
-//        std::set<int>::iterator it2;
-//        int index_up = 0;
-//        int index_upperleft = 0;
-//        int index_left = 0;
-//        int index_lowerleft = 0;
-//        int index_down = 0;
-//        int index_lowerright = 0;
-//        int index_right = 0;
-//        int index_upperright = 0;
+        std::set<int>::iterator it2;
+        int index_up = 0;
+        int index_upperleft = 0;
+        int index_left = 0;
+        int index_lowerleft = 0;
+        int index_down = 0;
+        int index_lowerright = 0;
+        int index_right = 0;
+        int index_upperright = 0;
 //
 //        for (it2 = index_send.begin(); it2 != index_send.end(); ++it2){
 //
