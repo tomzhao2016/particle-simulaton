@@ -27,6 +27,8 @@ void checkMPIError(MPI_Request status, int expected, int line)
 }
 
 
+
+
 //
 //  benchmarking program
 //
@@ -55,9 +57,9 @@ int main( int argc, char **argv )
     char *sumname = read_string( argc, argv, "-s", NULL );
 
 
-    //
-    //  set up MPI
-    //
+    /*********************************************
+     * Set up MPI
+     ********************************************/
     int number_of_processors, rank;
     MPI_Request send_request0,send_request1,
     send_request2, send_request3, send_request4, 
@@ -68,13 +70,16 @@ int main( int argc, char **argv )
     MPI_Comm_size( MPI_COMM_WORLD, &number_of_processors );
     MPI_Comm_rank( MPI_COMM_WORLD, &rank );
     
-    //
-    //  allocate generic resources
-    //
+    /******************************************
+     *  Allocate Generic Resources
+     ********************************************/
     FILE *fsave = savename && rank == 0 ? fopen( savename, "w" ) : NULL;
     FILE *fsum = sumname && rank == 0 ? fopen ( sumname, "a" ) : NULL;
     particle_t *particles = (particle_t*) malloc( n * sizeof(particle_t) );
 
+    /************************************************************************
+     * Calculate total number of processors available, and how to split them into a grid.
+     ************************************************************************************/
     // The total number of processes available to us are n_proc.
     int num_proc_x = (int) floor(sqrt(number_of_processors)); // The number of processors along the x-axis.
     int num_proc_y = (int) floor(number_of_processors) / num_proc_x; // The number of processors along the y-axis.
@@ -86,7 +91,9 @@ int main( int argc, char **argv )
     fflush(stdout);
 
 
-    // Create MPI Datatype for particle. 
+    /*****************************************
+     * Create MPI Datatype
+     ********************************************/
     MPI_Datatype PARTICLE;
     //MPI_Type_contiguous( 6, MPI_DOUBLE, &PARTICLE );
     MPI_Type_contiguous( 7, MPI_DOUBLE, &PARTICLE );
@@ -100,6 +107,9 @@ int main( int argc, char **argv )
         init_particles( n, particles );
     }
 
+    /**********************************************************************************************
+     * Initialization ---- sending the particles from root node to the oher node */
+    /****************************************************************************************/
     // sizes array stores the number of particles that each processor is to be sent in the beginning.
     int *partition_sizes = (int*) malloc (number_of_processors * sizeof(int));
     if (rank == 0)
@@ -182,63 +192,64 @@ int main( int argc, char **argv )
     MPI_Scatterv( particles_to_scatter, partition_sizes, partition_offsets, PARTICLE,
              local_particles, *local_size, PARTICLE, 0, MPI_COMM_WORLD );
     
-    /*
-    ******************************************************************
-        code to send/receive particles between processors
-    ******************************************************************
-    */
-    // 
 
-        // The current indices of the processors.
-        int proc_y_current = rank/num_proc_x;
-        int proc_x_current = rank%num_proc_x;
+    /******************************************
+     * Get current indices of the processors
+     ******************************************/
 
-        if (proc_y_current < 0 || proc_y_current >= num_proc_y)
-        {
-            std::cout<<"Problem in line 176."<<std::endl;
-        }
-        if (proc_x_current < 0 || proc_x_current >= num_proc_x)
-        {
-            std::cout<<"Problem in line 180."<<std::endl;
-        }
+    // The current indices of the processors.
+    int proc_y_current = rank/num_proc_x;
+    int proc_x_current = rank%num_proc_x;
 
-        // The new processor of the particle.
-        int proc_x_new, proc_y_new;
+    if (proc_y_current < 0 || proc_y_current >= num_proc_y)
+    {
+        std::cout<<"Problem in line 176."<<std::endl;
+    }
+    if (proc_x_current < 0 || proc_x_current >= num_proc_x)
+    {
+        std::cout<<"Problem in line 180."<<std::endl;
+    }
 
-        // Number of particles received from above, and so on.
-        int *receive_size_up = (int *)malloc(sizeof(int));
-         *receive_size_up = 0;
-        int *receive_size_upperleft = (int *)malloc(sizeof(int));
-         *receive_size_upperleft = 0;
-        int *receive_size_left = (int *)malloc(sizeof(int));
-         *receive_size_left = 0;
-        int *receive_size_lowerleft = (int *)malloc(sizeof(int));
-         *receive_size_lowerleft = 0;
-        int *receive_size_down = (int *)malloc(sizeof(int));
-         *receive_size_down = 0;
-        int *receive_size_lowerright = (int *)malloc(sizeof(int));
-         *receive_size_lowerright = 0;
-        int *receive_size_right = (int *)malloc(sizeof(int));
-         *receive_size_right = 0;
-        int *receive_size_upperright = (int *)malloc(sizeof(int));
-         *receive_size_upperright = 0;
+    // The new processor of the particle.
+    int proc_x_new, proc_y_new;
 
-        int *send_size_up = (int *)malloc(sizeof(int));
-        *send_size_up = 0;
-        int *send_size_upperleft = (int *)malloc(sizeof(int));
-        *send_size_upperleft = 0;
-        int *send_size_left = (int *)malloc(sizeof(int));
-        *send_size_left = 0;
-        int *send_size_lowerleft = (int *)malloc(sizeof(int));
-        *send_size_lowerleft = 0;
-        int *send_size_down = (int *)malloc(sizeof(int));
-        *send_size_down = 0;
-        int *send_size_lowerright = (int *)malloc(sizeof(int));
-        *send_size_lowerright = 0;
-        int *send_size_right = (int *)malloc(sizeof(int));
-        *send_size_right = 0;
-        int *send_size_upperright = (int *)malloc(sizeof(int));
-        *send_size_upperright = 0;
+    /*************************************************************
+     * Variable initialization
+     *********************************************************/
+    // Number of particles received from above, and so on.
+    int *receive_size_up = (int *)malloc(sizeof(int));
+     *receive_size_up = 0;
+    int *receive_size_upperleft = (int *)malloc(sizeof(int));
+     *receive_size_upperleft = 0;
+    int *receive_size_left = (int *)malloc(sizeof(int));
+     *receive_size_left = 0;
+    int *receive_size_lowerleft = (int *)malloc(sizeof(int));
+     *receive_size_lowerleft = 0;
+    int *receive_size_down = (int *)malloc(sizeof(int));
+     *receive_size_down = 0;
+    int *receive_size_lowerright = (int *)malloc(sizeof(int));
+     *receive_size_lowerright = 0;
+    int *receive_size_right = (int *)malloc(sizeof(int));
+     *receive_size_right = 0;
+    int *receive_size_upperright = (int *)malloc(sizeof(int));
+     *receive_size_upperright = 0;
+
+    int *send_size_up = (int *)malloc(sizeof(int));
+    *send_size_up = 0;
+    int *send_size_upperleft = (int *)malloc(sizeof(int));
+    *send_size_upperleft = 0;
+    int *send_size_left = (int *)malloc(sizeof(int));
+    *send_size_left = 0;
+    int *send_size_lowerleft = (int *)malloc(sizeof(int));
+    *send_size_lowerleft = 0;
+    int *send_size_down = (int *)malloc(sizeof(int));
+    *send_size_down = 0;
+    int *send_size_lowerright = (int *)malloc(sizeof(int));
+    *send_size_lowerright = 0;
+    int *send_size_right = (int *)malloc(sizeof(int));
+    *send_size_right = 0;
+    int *send_size_upperright = (int *)malloc(sizeof(int));
+    *send_size_upperright = 0;
 
 
 
@@ -268,559 +279,563 @@ int main( int argc, char **argv )
     init_local_bins(local_bins, local_particles, *local_size,
         local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
 
-    //
-    //  simulate a number of time steps
-    //
+    /**********************************************************************
+     * Simulation begins
+     * ******************************************************************
+     */
     double simulation_time = read_timer();
-    for( int step = 0; step < NSTEPS; step++ )
-    //for( int step = 0; step < 5; step++ )
-    {
-
-
-
-
+    for( int step = 0; step < NSTEPS; step++ ) {
         navg = 0;
         dmin = 1.0;
         davg = 0.0;
 
+
         // std::cout<<"I am beginning of step: "<<step<<std::endl;
+
+        //std::cout << "I am beginning of step, in rank " << step << " " << rank << std::endl;
+
         //
         //  save current step if necessary (slightly different semantics than in other codes)
         //
-        if( find_option( argc, argv, "-no" ) == -1 )
-          if( fsave && (step%SAVEFREQ) == 0 )
-            save( fsave, n, particles );
-        
+        if (find_option(argc, argv, "-no") == -1)
+            if (fsave && (step % SAVEFREQ) == 0)
+                save(fsave, n, particles);
+
         //
         //  1.Update forces 
         //  iterate over each native bins
         //
-        for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
-            //
+        /*********************************************************************
+         * Update forces
+         ****************************************************************/
+        for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
             // if flag !=2 it is a native/edge bin
-            //
-//            if ((sizeof(local_bins)/sizeof(local_bins[0])) <= idx)
-//            {
-//                std::cout<<"Problem in line 278"<<std::endl;
-//                std::cout<<"IDX is "<<idx<<std::endl;
-//                std::cout<<"local bin row is "<<local_bin_row<<std::endl;
-//                std::cout<<"local bin col is"<<local_bin_col<<std::endl;
-//                std::cout<<"Size of local bins is "<<(sizeof(local_bins))<<std::endl;
-//                std::cout<<"Size of local bins[0] is"<<sizeof(local_bins[0])<<std::endl;
-//            }
-
-            if (local_bins[idx].flag != 2){
+            if (local_bins[idx].flag != 2) {
                 //  
                 // store map of particles in this bin
                 //
-                std::map<double,particle_t> p1_map = local_bins[idx].native_particle;
+                std::map<double, particle_t> p1_map = local_bins[idx].native_particle;
                 //
                 // iterate over all the particles in this map
-                //
-                // if (rank == 4 && step < 3){
-                //    std::cout<<"this bin's particle num is : "<<p1_map.size()<<std::endl;
-                // }
-                for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
+
+                for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1) {
                     //  
                     // store set of neighbor index of this bin
                     //
                     p1->second.ax = p1->second.ay = 0;
                     std::set<int> neighbor_idx = local_bins[idx].neighbor_idx;
-                    
+
                     //
                     // iterate over all the neighbor bins
                     //
-                    for(std::set<int>::iterator j = neighbor_idx.begin();j != neighbor_idx.end(); ++j){
+                    for (std::set<int>::iterator j = neighbor_idx.begin(); j != neighbor_idx.end(); ++j) {
                         //  
                         // store map of particles in this neighbor bin
                         //
-                        std::map<double,particle_t> p2_map = local_bins[*j].native_particle;
+                        std::map<double, particle_t> p2_map = local_bins[*j].native_particle;
 
-                        // DEBUG - print the neighbor index
-                        // if (step == 0 && rank ==0){
-                        //     std::cout<<"I am "<<rank<<" bin "<<idx<<std::endl;
-                        //     std::cout<<"I am "<<rank<<" My neighbors are "<<*j<<std::endl;
-                        // }
-                        
                         //
                         // iterate over particles in this bin
                         //
-                        for(std::map<double,particle_t>::iterator p2 = p2_map.begin();p2 != p2_map.end(); ++p2){
-                            if (p1->first != p2->first){
-
-                                // DEBUG - print acceleration before applying force
-                                // if (step == 0){
-                                   // std::cout<<"I am "<<rank<<" before p1 acceleration x "<<p1->second.ax<<std::endl;
-                                   //  std::cout<<"I am "<<rank<<" before p1 acceleration y "<<p1->second.ay<<std::endl;
-                                   //  std::cout<<"I am "<<rank<<" My x is"<<p1->second.x<<std::endl;
-                                   //  std::cout<<"I am "<<rank<<" My y is"<<p1->second.y<<std::endl;
-                                   //  std::cout<<"I am "<<rank<<" My neighbour x is "<<p2->second.x<<std::endl;
-                                   //  std::cout<<"I am "<<rank<<" My neighbour y is "<<p2->second.y<<std::endl;
-                                // }
-                                apply_force( p1->second, p2->second,&dmin,&davg,&navg);
-                                // DEBUG - print acceleration after applying force
-                                // if (step == 0 ){
-                                //      std::cout<<"I am "<<rank<<" after p1 acceleration x "<<p1->second.ax<<std::endl;
-                                //      std::cout<<"I am "<<rank<<" after p1 acceleration y "<<p1->second.ay<<std::endl;
-                                // }
+                        for (std::map<double, particle_t>::iterator p2 = p2_map.begin(); p2 != p2_map.end(); ++p2) {
+                            if (p1->first != p2->first) {
+                                apply_force(p1->second, p2->second, &dmin, &davg, &navg);
                             }
                         }
                     }
-                }   
-            }     
-        }
-        
-        // NOT SURE how to change avg and min
-        if( find_option( argc, argv, "-no" ) == -1 )
-        {
-          
-          MPI_Reduce(&davg,&rdavg,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
-          MPI_Reduce(&navg,&rnavg,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD); 
-          MPI_Reduce(&dmin,&rdmin,1,MPI_DOUBLE,MPI_MIN,0,MPI_COMM_WORLD);
-
- 
-          if (rank == 0){
-            //
-            // Computing statistical data
-            //
-            if (rnavg) {
-              absavg +=  rdavg/rnavg;
-              nabsavg++;
+                }
             }
-            if (rdmin < absmin) absmin = rdmin;
-          }
         }
 
+            std::cout<<"I finished updating forces in step, rank "<<step<<" "<<rank<<std::endl;
+            /****************************
+             * Statistical data
+             *************************/
+            // NOT SURE how to change avg and min
+            if (find_option(argc, argv, "-no") == -1) {
 
-        //
-        // 2.move particles and save all the native particles to a map
-        // for b in native_bin & edge_bin:
-        //   for p in b:
-        //      move(p); 
-        //
+//                MPI_Reduce(&davg, &rdavg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+//                MPI_Reduce(&navg, &rnavg, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+//                MPI_Reduce(&dmin, &rdmin, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
 
-        std::map<double, particle_t> local_particles_native_map;
-        // Move the particles.
-         for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
-             //
-             // if flag !=2 it is a native/edge bin
-             //
-             if (local_bins[idx].flag != 2){
-                 //
-                 // store map of particles in this bin
-                 //
-                 std::map<double,particle_t> p1_map = local_bins[idx].native_particle;
-                 //
-                 // iterate over all the particles in this map
-                 //
-                 for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
-                     //
-                     // move particles
-                     //
-                     move(p1->second);
-                     local_particles_native_map.insert({p1->second.id, p1->second});
-                 }
-             }
-         }
-//
-//
-//
-//        //
-//        // 3.1 send and receove particles to/from other processor
+
+                if (rank == 0) {
+                    //
+                    // Computing statistical data
+                    //
+                    if (rnavg) {
+                        absavg += rdavg / rnavg;
+                        nabsavg++;
+                    }
+                    if (rdmin < absmin) absmin = rdmin;
+                }
+            }
+
+            std::cout<<"I finished doing statistics in step, rank "<<step<<" "<<rank<<std::endl;
+
+            //
+            // 2.move particles and save all the native particles to a map
+            // for b in native_bin & edge_bin:
+            //   for p in b:
+            //      move(p);
+            //
+
+            /******************************
+             * Move particles **********
+             ******************************/
+
+            std::map<double, particle_t> local_particles_native_map;
+            // Move the particles.
+            for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
+
+                if (rank == 0)
+                {
+//                    std::cout<<"I am rank 0, in step "<<step<<" and in line 388 with idx "<<idx<<std::endl;
+                }
+                //
+                // if flag !=2 it is a native/edge bin
+                //
+                if (local_bins[idx].flag != 2) {
+                    if (rank == 0)
+                    {
+//                        std::cout<<"I am rank 0, in step "<<step<<" and in line 396"<<std::endl;
+                    }
+                    //
+                    // store map of particles in this bin
+                    //
+                    std::map<double, particle_t> p1_map = local_bins[idx].native_particle;
+                    //
+                    // iterate over all the particles in this map
+                    //
+                    for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1) {
+                        // move particles
+                        // std::cout<<"Old Info, Step, ID, X, Y "<<step<<" "<<p1->second.id<<" "<<p1->second.x<<" "<<p1->second.y<<std::endl;
+                        move(p1->second);
+                        local_particles_native_map.insert({p1->second.id, p1->second});
+                    }
+                }
+            }
+
+
+           std::cout<<"I finished moving in step, rank "<<step<<" "<<rank<<std::endl;
+//        // 3.1 send and receive particles to/from other processor
 //        // for processor_id,particle_t in M:
 //        //   MPI_send(particle_t to native/edge)
 //        //
 //        /*
 //         convert a map to an array, assuming I receive a map named local_particles_native_map
 //         */
-        int *local_size_native = (int *)malloc(sizeof(int));
+            int *local_size_native = (int *) malloc(sizeof(int));
 
-
-        *local_size_native = local_particles_native_map.size();
 
         std::map<double, particle_t>::iterator tmp;
-        for (tmp = local_particles_native_map.begin(); tmp != local_particles_native_map.end(); ++tmp){
-            //std::cout<<"Step, Particle ID, X, Y"<<step<<" "<<tmp->first<<" "<<(tmp->second).x<<" "<<(tmp->second).y<<std::endl;
-        }
+        // for (tmp = local_particles_native_map.begin(); tmp != local_particles_native_map.end(); ++tmp){
+        //     //std::cout<<"Step, Particle ID, X, Y"<<step<<" "<<tmp->first<<" "<<(tmp->second).x<<" "<<(tmp->second).y<<std::endl;
+        // }
+
+            *local_size_native = local_particles_native_map.size();
 
 
+            std::map<double, particle_t>::iterator tmp;
+            for (tmp = local_particles_native_map.begin(); tmp != local_particles_native_map.end(); ++tmp) {
+//            std::cout<<"Trying to print individually"<<step;
+//            std::cout<<"Trying to print individually first"<<tmp->first;
+//            std::cout<<"Trying to print individually second id"<<tmp->second.id;
+//
+//            std::cout<<"Step, Particle ID, X, Y"<<step<<" "<<tmp->first<<" "<<(tmp->second).x<<" "<<(tmp->second).y<<std::endl;
+            }
 
-        particle_t *local_particles_native = (particle_t*)malloc(*local_size_native*sizeof(particle_t));
-        int index_temp0 = 0;
+
+            particle_t *local_particles_native = (particle_t *) malloc(*local_size_native * sizeof(particle_t));
+            int index_temp0 = 0;
 
 
-        std::map<double, particle_t>::iterator it_particle;
-        for (it_particle = local_particles_native_map.begin(); it_particle != local_particles_native_map.end(); ++it_particle){
-            local_particles_native[index_temp0++] = it_particle -> second;
-        }
+            std::map<double, particle_t>::iterator it_particle;
+            for (it_particle = local_particles_native_map.begin();
+                 it_particle != local_particles_native_map.end(); ++it_particle) {
+                local_particles_native[index_temp0++] = it_particle->second;
+            }
 //
 //        // assuming that I know the native particles, the number of native particles, and their new x and y in each processor
 //        // size of array of particles to be sent to 8 neighboring processors
-        *send_size_up = 0;
-        *send_size_upperleft = 0;
-        *send_size_left = 0;
-        *send_size_lowerleft = 0;
-        *send_size_down = 0;
-        *send_size_lowerright = 0;
-        *send_size_right = 0;
-        *send_size_upperright = 0;
+            *send_size_up = 0;
+            *send_size_upperleft = 0;
+            *send_size_left = 0;
+            *send_size_lowerleft = 0;
+            *send_size_down = 0;
+            *send_size_lowerright = 0;
+            *send_size_right = 0;
+            *send_size_upperright = 0;
 //        // store the indices of particles to be sent/ or not sent, save time
-        std::set<int>  index_send;
-        std::set<int>  index_keep;
+            std::set<int> index_send;
+            std::set<int> index_keep;
 //
 //        /*
 //          calculate the send_size of array of particles to be sent to 8 neighboring processors
 //        */
-        for (int i = 0; i < *local_size_native; i++)
-        {
-////                if (i >= (sizeof(local_particles_native)/sizeof(local_particles_native[0])))
-////                {
-////                    std::cout<<"Problem in line 441"<<std::endl;
-////                }
-//
-                proc_x_new =  get_proc_x(local_particles_native[i].x, num_proc_x);
-                proc_y_new =  get_proc_y(local_particles_native[i].y, num_proc_y);
-                if(proc_x_new == num_proc_x)
-                {
+            for (int i = 0; i < *local_size_native; i++) {
+                proc_x_new = get_proc_x(local_particles_native[i].x, num_proc_x);
+                proc_y_new = get_proc_y(local_particles_native[i].y, num_proc_y);
+                if (proc_x_new == num_proc_x) {
                     proc_x_new--;
                 }
-                if(proc_y_new == num_proc_y)
-                {
+                if (proc_y_new == num_proc_y) {
                     proc_y_new--;
                 }
 
-                if (proc_y_current < 0 || proc_y_current >= num_proc_y)
-                {
-                    std::cout<<"Problem in line 457"<<std::endl;
+                if (proc_y_current < 0 || proc_y_current >= num_proc_y) {
+                    std::cout << "Problem in line 457" << std::endl;
                 }
-                if (proc_x_current < 0 || proc_x_current >= num_proc_x)
-                {
-                    std::cout<<"Problem in line 461"<<std::endl;
+                if (proc_x_current < 0 || proc_x_current >= num_proc_x) {
+                    std::cout << "Problem in line 461" << std::endl;
                 }
 
-                if (proc_x_new < 0 || proc_x_new >= num_proc_x)
-                {
-                    std::cout<<"Problem in line 466"<<std::endl;
+                if (proc_x_new < 0 || proc_x_new >= num_proc_x) {
+                    std::cout << "Problem in line 466" << std::endl;
                 }
-                if (proc_y_new < 0 || proc_y_new >= num_proc_y)
-                {
-                    std::cout<<"Problem in line 470"<<std::endl;
+                if (proc_y_new < 0 || proc_y_new >= num_proc_y) {
+                    std::cout << "Problem in line 470" << std::endl;
                 }
 
-                if ( proc_y_new != proc_y_current ||  proc_x_new != proc_x_current )
-                { // if the native particles moves to another processor
+                if (proc_y_new != proc_y_current ||
+                    proc_x_new != proc_x_current) { // if the native particles moves to another processor
 
                     index_send.insert(i);
 //                    // up
-                    if(proc_x_new == proc_x_current && proc_y_new == proc_y_current - 1){
+                    if (proc_x_new == proc_x_current && proc_y_new == proc_y_current - 1) {
 
                         *send_size_up += 1;
                     }
                     // upper left
-                    if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1){
+                    if (proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1) {
                         *send_size_upperleft += 1;
                     }
                     // left
-                    if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current){
+                    if (proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current) {
                         *send_size_left += 1;
                     }
                     // lower left
-                    if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1){
+                    if (proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1) {
                         *send_size_lowerleft += 1;
                     }
                     // down
-                    if(proc_x_new == proc_x_current && proc_y_new == proc_y_current + 1){
+                    if (proc_x_new == proc_x_current && proc_y_new == proc_y_current + 1) {
                         *send_size_down += 1;
                     }
                     // lower right
-                    if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1){
+                    if (proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1) {
                         *send_size_lowerright += 1;
                     }
                     // right
-                    if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current){
+                    if (proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current) {
                         *send_size_right += 1;
                     }
                     // upper right
-                    if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1){
+                    if (proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1) {
                         *send_size_upperright += 1;
                     }
 
-                } else
-                {
+                } else {
                     index_keep.insert(i); // indices of particles kept in the current processor
                 }
             }
-//
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 532"<<std::endl;
 //        /*
 //          assign memory for 8 arrays of particles to be sent
 //        */
-        particle_t *particles_send_up = (particle_t*) malloc (*send_size_up * sizeof(particle_t));
-        particle_t *particles_send_upperleft = (particle_t*) malloc (*send_size_upperleft * sizeof(particle_t));
-        particle_t *particles_send_left = (particle_t*) malloc (*send_size_left * sizeof(particle_t));
-        particle_t *particles_send_lowerleft = (particle_t*) malloc (*send_size_lowerleft * sizeof(particle_t));
-        particle_t *particles_send_down = (particle_t*) malloc (*send_size_down * sizeof(particle_t));
-        particle_t *particles_send_lowerright = (particle_t*) malloc (*send_size_lowerright * sizeof(particle_t));
-        particle_t *particles_send_right = (particle_t*) malloc (*send_size_right * sizeof(particle_t));
-        particle_t *particles_send_upperright = (particle_t*) malloc (*send_size_upperright * sizeof(particle_t));
-//
+            particle_t *particles_send_up = (particle_t *) malloc(*send_size_up * sizeof(particle_t));
+            particle_t *particles_send_upperleft = (particle_t *) malloc(*send_size_upperleft * sizeof(particle_t));
+            particle_t *particles_send_left = (particle_t *) malloc(*send_size_left * sizeof(particle_t));
+            particle_t *particles_send_lowerleft = (particle_t *) malloc(*send_size_lowerleft * sizeof(particle_t));
+            particle_t *particles_send_down = (particle_t *) malloc(*send_size_down * sizeof(particle_t));
+            particle_t *particles_send_lowerright = (particle_t *) malloc(*send_size_lowerright * sizeof(particle_t));
+            particle_t *particles_send_right = (particle_t *) malloc(*send_size_right * sizeof(particle_t));
+            particle_t *particles_send_upperright = (particle_t *) malloc(*send_size_upperright * sizeof(particle_t));
+      std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 544"<<std::endl;
 //        // /*
 //        //   populate these 8 arrays of particles to be sent
 //        // */
-        std::set<int>::iterator it2;
-        int index_up = 0;
-        int index_upperleft = 0;
-        int index_left = 0;
-        int index_lowerleft = 0;
-        int index_down = 0;
-        int index_lowerright = 0;
-        int index_right = 0;
-        int index_upperright = 0;
+            std::set<int>::iterator it2;
+            int index_up = 0;
+            int index_upperleft = 0;
+            int index_left = 0;
+            int index_lowerleft = 0;
+            int index_down = 0;
+            int index_lowerright = 0;
+            int index_right = 0;
+            int index_upperright = 0;
+      std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 557"<<std::endl;
+            for (it2 = index_send.begin(); it2 != index_send.end(); ++it2) {
+
+                proc_x_new = get_proc_x(local_particles_native[*it2].x, num_proc_x);
+                proc_y_new = get_proc_y(local_particles_native[*it2].y, num_proc_y);
+
+                if (proc_x_new == num_proc_x) {
+                    proc_x_new--;
+                }
+                if (proc_y_new == num_proc_y) {
+                    proc_y_new--;
+                }
+
+
+
+                // up
+                if (proc_x_new == proc_x_current && proc_y_new == proc_y_current - 1) {
+
+                    checkError(particles_send_up, index_up, 571, *send_size_up);
+                    particles_send_up[index_up++] = local_particles_native[*it2];
+                }
+                // upper left
+                if (proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1) {
+                    checkError(particles_send_upperleft, index_upperleft, 576, *send_size_upperleft);
+                    particles_send_upperleft[index_upperleft++] = local_particles_native[*it2];
+                }
+                // left
+                if (proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current) {
+                    checkError(particles_send_left, index_left, 581, *send_size_left);
+                    particles_send_left[index_left++] = local_particles_native[*it2];
+                }
+                // lower left
+                if (proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1) {
+                    checkError(particles_send_lowerleft, index_lowerleft, 586, *send_size_lowerleft);
+                    particles_send_lowerleft[index_lowerleft++] = local_particles_native[*it2];
+                }
+                // down
+                if (proc_x_new == proc_x_current && proc_y_new == proc_y_current + 1) {
+                    checkError(particles_send_down, index_down, 591, *send_size_down);
+                    particles_send_down[index_down++] = local_particles_native[*it2];
+                }
+                // lower right
+                if (proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1) {
+                    checkError(particles_send_lowerright, index_lowerright, 596, *send_size_lowerright);
+                    particles_send_lowerright[index_lowerright++] = local_particles_native[*it2];
+                }
+                // right
+                if (proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current) {
+                    checkError(particles_send_right, index_right, 601, *send_size_right);
+                    particles_send_right[index_right++] = local_particles_native[*it2];
+                }
+                // upper right
+                if (proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1) {
+                    checkError(particles_send_upperright, index_upperright, 606, *send_size_upperright);
+                    particles_send_upperright[index_upperright++] = local_particles_native[*it2];
+                }
+            }
 //
-        for (it2 = index_send.begin(); it2 != index_send.end(); ++it2){
-
-            proc_x_new =  get_proc_x(local_particles_native[*it2].x, num_proc_x);
-            proc_y_new =  get_proc_y(local_particles_native[*it2].y, num_proc_y);
-
-            if(proc_x_new == num_proc_x)
-            {
-                proc_x_new--;
-            }
-            if(proc_y_new == num_proc_y)
-            {
-                proc_y_new--;
-            }
-
-
-
-            // up
-            if(proc_x_new == proc_x_current && proc_y_new == proc_y_current - 1){
-
-                checkError(particles_send_up, index_up, 571, *send_size_up);
-                particles_send_up[index_up++] = local_particles_native[*it2];
-            }
-            // upper left
-            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1){
-                checkError(particles_send_upperleft, index_upperleft, 576, *send_size_upperleft);
-                particles_send_upperleft[index_upperleft++] = local_particles_native[*it2];
-            }
-            // left
-            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current){
-                checkError(particles_send_left, index_left, 581, *send_size_left);
-                particles_send_left[index_left++] = local_particles_native[*it2];
-            }
-            // lower left
-            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1){
-                checkError(particles_send_lowerleft, index_lowerleft, 586, *send_size_lowerleft);
-                particles_send_lowerleft[index_lowerleft++] = local_particles_native[*it2];
-            }
-            // down
-            if(proc_x_new == proc_x_current && proc_y_new == proc_y_current + 1){
-                checkError(particles_send_down, index_down, 591, *send_size_down);
-                particles_send_down[index_down++] = local_particles_native[*it2];
-            }
-            // lower right
-            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1){
-                checkError(particles_send_lowerright, index_lowerright, 596, *send_size_lowerright);
-                particles_send_lowerright[index_lowerright++] = local_particles_native[*it2];
-            }
-            // right
-            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current){
-                checkError(particles_send_right, index_right, 601, *send_size_right);
-                particles_send_right[index_right++] = local_particles_native[*it2];
-            }
-            // upper right
-            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1){
-                checkError(particles_send_upperright, index_upperright, 606, *send_size_upperright);
-                particles_send_upperright[index_upperright++] = local_particles_native[*it2];
-            }
-        }
-//
-//
+          std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 615"<<std::endl;
 //        /*
 //          first send the 8 integer of number of particles, MPI can send empty messages, so always send
 //        */
-        // up
-        if(proc_y_current - 1 >= 0){
-            MPI_Isend(send_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&send_request0);
-        }
-        // upperleft
-        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
-            MPI_Isend(send_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request1);
-        }
+            // up
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 620"<<std::endl;
+            if (proc_y_current - 1 >= 0) {
+                MPI_Isend(send_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD, &send_request0);
+            }
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 624"<<std::endl;
+            // upperleft
+            if (proc_y_current - 1 >= 0 && proc_x_current - 1 >= 0) {
+                MPI_Isend(send_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD, &send_request1);
+            }
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 629"<<std::endl;
 //         left
-        if( proc_x_current - 1 >=0){
-            MPI_Isend(send_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD,&send_request2);
-        }
-        // lowerleft
-        if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
-            MPI_Isend(send_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request3);
-        }
-        // down
-        if(proc_y_current + 1 < num_proc_y){
-            MPI_Isend(send_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&send_request4);
-        }
-        // lowerright
-        if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
-            MPI_Isend(send_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request5);
-        }
-        // right
-        if(proc_x_current + 1 < num_proc_x){
-            MPI_Isend(send_size_right, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD,&send_request6);
-        }
-        // upperright
-        if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
-            MPI_Isend(send_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
-        }
-        MPI_Barrier(MPI_COMM_WORLD); //
-
-        /*
-          first receive the 8 integer of number of particles
-        */
-        // int *receive_size_up = (int *)malloc(sizeof(int));
-         *receive_size_up = 0;
-        // int *receive_size_upperleft = (int *)malloc(sizeof(int));
-         *receive_size_upperleft = 0;
-        // int *receive_size_left = (int *)malloc(sizeof(int));
-         *receive_size_left = 0;
-        // int *receive_size_lowerleft = (int *)malloc(sizeof(int));
-         *receive_size_lowerleft = 0;
-        // int *receive_size_down = (int *)malloc(sizeof(int));
-         *receive_size_down = 0;
-        // int *receive_size_lowerright = (int *)malloc(sizeof(int));
-         *receive_size_lowerright = 0;
-        // int *receive_size_right = (int *)malloc(sizeof(int));
-         *receive_size_right = 0;
-        // int *receive_size_upperright = (int *)malloc(sizeof(int));
-         *receive_size_upperright = 0;
-        // up
-        if(proc_y_current - 1 >= 0){
-            MPI_Irecv(receive_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&recv_request0);
+            if (proc_x_current - 1 >= 0) {
+                MPI_Isend(send_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, &send_request2);
+            }
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 633"<<std::endl;
+            // lowerleft
+            if (proc_y_current + 1 < num_proc_y && proc_x_current - 1 >= 0) {
+                MPI_Isend(send_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD, &send_request3);
+            }
+            // down
+            if (proc_y_current + 1 < num_proc_y) {
+                MPI_Isend(send_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD, &send_request4);
+            }
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 643"<<std::endl;
+            // lowerright
+            if (proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x) {
+                MPI_Isend(send_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD, &send_request5);
+            }
+            // right
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 649"<<std::endl;
+            if (proc_x_current + 1 < num_proc_x) {
+                MPI_Isend(send_size_right, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD, &send_request6);
+            }
+            // upperright
+            if (proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x) {
+                MPI_Isend(send_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD, &send_request7);
+            }
+        std::cout<<"I am in line 657.."<<std::endl;
+            MPI_Barrier(MPI_COMM_WORLD); //
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 652"<<std::endl;
+            /*
+              first receive the 8 integer of number of particles
+            */
+            // int *receive_size_up = (int *)malloc(sizeof(int));
+            *receive_size_up = 0;
+            // int *receive_size_upperleft = (int *)malloc(sizeof(int));
+            *receive_size_upperleft = 0;
+            // int *receive_size_left = (int *)malloc(sizeof(int));
+            *receive_size_left = 0;
+            // int *receive_size_lowerleft = (int *)malloc(sizeof(int));
+            *receive_size_lowerleft = 0;
+            // int *receive_size_down = (int *)malloc(sizeof(int));
+            *receive_size_down = 0;
+            // int *receive_size_lowerright = (int *)malloc(sizeof(int));
+            *receive_size_lowerright = 0;
+            // int *receive_size_right = (int *)malloc(sizeof(int));
+            *receive_size_right = 0;
+            // int *receive_size_upperright = (int *)malloc(sizeof(int));
+            *receive_size_upperright = 0;
+            // up
+            if (proc_y_current - 1 >= 0) {
+                MPI_Irecv(receive_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD, &recv_request0);
 //            checkMPIError(recv_request0, *receive_size_up, 688);
-        }
-        // upperleft
-        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
-            MPI_Irecv(receive_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request1);
+            }
+            // upperleft
+            if (proc_y_current - 1 >= 0 && proc_x_current - 1 >= 0) {
+                MPI_Irecv(receive_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD, &recv_request1);
 //           checkMPIError(recv_request1, *receive_size_upperleft, 693);
-        }
-        // left
-        if( proc_x_current - 1 >=0){
-            MPI_Irecv(receive_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD,&recv_request2);
+            }
+            // left
+            if (proc_x_current - 1 >= 0) {
+                MPI_Irecv(receive_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, &recv_request2);
 //            checkMPIError(recv_request2, *receive_size_left, 698);
-        }
-        // lowerleft
-       if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
-            MPI_Irecv(receive_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request3);
+            }
+            // lowerleft
+            if (proc_y_current + 1 < num_proc_y && proc_x_current - 1 >= 0) {
+                MPI_Irecv(receive_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD, &recv_request3);
 //           checkMPIError(recv_request3, *receive_size_lowerleft, 702);
-        }
-        // down
-        if(proc_y_current + 1 < num_proc_y){
-            MPI_Irecv(receive_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&recv_request4);
+            }
+            // down
+            if (proc_y_current + 1 < num_proc_y) {
+                MPI_Irecv(receive_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD, &recv_request4);
 //            checkMPIError(recv_request4, *receive_size_down, 708);
-        }
-        // lowerright
-        if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
-            MPI_Irecv(receive_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request5);
+            }
+            // lowerright
+            if (proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x) {
+                MPI_Irecv(receive_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,
+                          &recv_request5);
 
 //            checkMPIError(recv_request5, *receive_size_lowerright, 713);
-        }
-        // right
-        if(proc_x_current + 1 < num_proc_x){
-            MPI_Irecv(receive_size_right, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD,&recv_request6);
+            }
+            // right
+            if (proc_x_current + 1 < num_proc_x) {
+                MPI_Irecv(receive_size_right, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD, &recv_request6);
 //            checkMPIError(recv_request6, *receive_size_right, 718);
-        }
-        // upperright
-        if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
-            MPI_Irecv(receive_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request7);
+            }
+            // upperright
+            if (proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x) {
+                MPI_Irecv(receive_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,
+                          &recv_request7);
 //            checkMPIError(recv_request7, *receive_size_upperright, 723);
-        }
-        MPI_Barrier(MPI_COMM_WORLD);
-
+            }
+            MPI_Barrier(MPI_COMM_WORLD);
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 716"<<std::endl;
 //
 //        /*
 //          then send the 8 arrays of particles, MPI can send empty messages, so always send
 //        */
 //        // up
-        if(proc_y_current - 1 >= 0){
-            MPI_Isend(particles_send_up, *send_size_up, PARTICLE, rank - num_proc_x, 0, MPI_COMM_WORLD,&send_request0);
-        }
-        // upperleft
-        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
-            MPI_Isend(particles_send_upperleft, *send_size_upperleft, PARTICLE, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request1);
-        }
-        // left
-        if( proc_x_current - 1 >=0){
-            MPI_Isend(particles_send_left, *send_size_left, PARTICLE, rank - 1, 0, MPI_COMM_WORLD,&send_request2);
-        }
-        // lowerleft
-        if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
-            MPI_Isend(particles_send_lowerleft, *send_size_lowerleft, PARTICLE, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request3);
-        }
+            if (proc_y_current - 1 >= 0) {
+                MPI_Isend(particles_send_up, *send_size_up, PARTICLE, rank - num_proc_x, 0, MPI_COMM_WORLD,
+                          &send_request0);
+            }
+            // upperleft
+            if (proc_y_current - 1 >= 0 && proc_x_current - 1 >= 0) {
+                MPI_Isend(particles_send_upperleft, *send_size_upperleft, PARTICLE, rank - num_proc_x - 1, 0,
+                          MPI_COMM_WORLD, &send_request1);
+            }
+            // left
+            if (proc_x_current - 1 >= 0) {
+                MPI_Isend(particles_send_left, *send_size_left, PARTICLE, rank - 1, 0, MPI_COMM_WORLD, &send_request2);
+            }
+            // lowerleft
+            if (proc_y_current + 1 < num_proc_y && proc_x_current - 1 >= 0) {
+                MPI_Isend(particles_send_lowerleft, *send_size_lowerleft, PARTICLE, rank + num_proc_x - 1, 0,
+                          MPI_COMM_WORLD, &send_request3);
+            }
 //        // down
-        if(proc_y_current + 1 < num_proc_y){
-            MPI_Isend(particles_send_down, *send_size_down, PARTICLE, rank + num_proc_x, 0, MPI_COMM_WORLD,&send_request4);
-        }
-        // lowerright
-        if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
-            MPI_Isend(particles_send_lowerright, *send_size_lowerright, PARTICLE, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request5);
-        }
-        // right
-        if(proc_x_current + 1 < num_proc_x){
-            MPI_Isend(particles_send_right, *send_size_right, PARTICLE, rank + 1, 0, MPI_COMM_WORLD,&send_request6);
-        }
-        // upperright
-        if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
-            MPI_Isend(particles_send_upperright, *send_size_upperright, PARTICLE, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
-        }
-        MPI_Barrier(MPI_COMM_WORLD); //
+            if (proc_y_current + 1 < num_proc_y) {
+                MPI_Isend(particles_send_down, *send_size_down, PARTICLE, rank + num_proc_x, 0, MPI_COMM_WORLD,
+                          &send_request4);
+            }
+            // lowerright
+            if (proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x) {
+                MPI_Isend(particles_send_lowerright, *send_size_lowerright, PARTICLE, rank + num_proc_x + 1, 0,
+                          MPI_COMM_WORLD, &send_request5);
+            }
+            // right
+            if (proc_x_current + 1 < num_proc_x) {
+                MPI_Isend(particles_send_right, *send_size_right, PARTICLE, rank + 1, 0, MPI_COMM_WORLD,
+                          &send_request6);
+            }
+            // upperright
+            if (proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x) {
+                MPI_Isend(particles_send_upperright, *send_size_upperright, PARTICLE, rank - num_proc_x + 1, 0,
+                          MPI_COMM_WORLD, &send_request7);
+            }
+            MPI_Barrier(MPI_COMM_WORLD); //
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 761"<<std::endl;
+            /*
+              assign memory for 8 arrays of particles to be received
+            */
+            particle_t *particles_receive_up = (particle_t *) malloc(*receive_size_up * sizeof(particle_t));
+            particle_t *particles_receive_upperleft = (particle_t *) malloc(
+                    *receive_size_upperleft * sizeof(particle_t));
+            particle_t *particles_receive_left = (particle_t *) malloc(*receive_size_left * sizeof(particle_t));
+            particle_t *particles_receive_lowerleft = (particle_t *) malloc(
+                    *receive_size_lowerleft * sizeof(particle_t));
+            particle_t *particles_receive_down = (particle_t *) malloc(*receive_size_down * sizeof(particle_t));
+            particle_t *particles_receive_lowerright = (particle_t *) malloc(
+                    *receive_size_lowerright * sizeof(particle_t));
+            particle_t *particles_receive_right = (particle_t *) malloc(*receive_size_right * sizeof(particle_t));
+            particle_t *particles_receive_upperright = (particle_t *) malloc(
+                    *receive_size_upperright * sizeof(particle_t));
 
-        /*
-          assign memory for 8 arrays of particles to be received
-        */
-        particle_t *particles_receive_up = (particle_t*) malloc (*receive_size_up * sizeof(particle_t));
-        particle_t *particles_receive_upperleft = (particle_t*) malloc (*receive_size_upperleft * sizeof(particle_t));
-        particle_t *particles_receive_left = (particle_t*) malloc (*receive_size_left * sizeof(particle_t));
-        particle_t *particles_receive_lowerleft = (particle_t*) malloc (*receive_size_lowerleft * sizeof(particle_t));
-        particle_t *particles_receive_down = (particle_t*) malloc (*receive_size_down * sizeof(particle_t));
-        particle_t *particles_receive_lowerright = (particle_t*) malloc (*receive_size_lowerright * sizeof(particle_t));
-        particle_t *particles_receive_right = (particle_t*) malloc (*receive_size_right * sizeof(particle_t));
-        particle_t *particles_receive_upperright = (particle_t*) malloc (*receive_size_upperright * sizeof(particle_t));
-
-        /*
-          receive the 8 arrays of particles
-        */
-        // up
-        if(proc_y_current - 1 >= 0){
-            MPI_Irecv(particles_receive_up, *receive_size_up, PARTICLE, rank - num_proc_x, 0, MPI_COMM_WORLD, &recv_request0);
-        }
-        // upperleft
-        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
-            MPI_Irecv(particles_receive_upperleft, *receive_size_upperleft, PARTICLE, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request1);
-        }
-        // left
-        if( proc_x_current - 1 >=0){
-            MPI_Irecv(particles_receive_left, *receive_size_left, PARTICLE, rank - 1, 0, MPI_COMM_WORLD,&recv_request2);
-        }
-        // lowerleft
-        if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
-            MPI_Irecv(particles_receive_lowerleft, *receive_size_lowerleft, PARTICLE, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request3);
-        }
-        // down
-        if(proc_y_current + 1 < num_proc_y){
-            MPI_Irecv(particles_receive_down, *receive_size_down, PARTICLE, rank + num_proc_x, 0, MPI_COMM_WORLD,&recv_request4);
-        }
-        // lowerright
-        if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
-            MPI_Irecv(particles_receive_lowerright, *receive_size_lowerright, PARTICLE, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request5);
-        }
-        // right
-        if(proc_x_current + 1 < num_proc_x){
-            MPI_Irecv(particles_receive_right, *receive_size_right, PARTICLE, rank + 1, 0, MPI_COMM_WORLD,&recv_request6);
-        }
-        // upperright
-        if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
-            MPI_Irecv(particles_receive_upperright, *receive_size_upperright, PARTICLE, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request7);
-        }
-        MPI_Barrier(MPI_COMM_WORLD); //
+            /*
+              receive the 8 arrays of particles
+            */
+            // up
+            if (proc_y_current - 1 >= 0) {
+                MPI_Irecv(particles_receive_up, *receive_size_up, PARTICLE, rank - num_proc_x, 0, MPI_COMM_WORLD,
+                          &recv_request0);
+            }
+            // upperleft
+            if (proc_y_current - 1 >= 0 && proc_x_current - 1 >= 0) {
+                MPI_Irecv(particles_receive_upperleft, *receive_size_upperleft, PARTICLE, rank - num_proc_x - 1, 0,
+                          MPI_COMM_WORLD, &recv_request1);
+            }
+            // left
+            if (proc_x_current - 1 >= 0) {
+                MPI_Irecv(particles_receive_left, *receive_size_left, PARTICLE, rank - 1, 0, MPI_COMM_WORLD,
+                          &recv_request2);
+            }
+            // lowerleft
+            if (proc_y_current + 1 < num_proc_y && proc_x_current - 1 >= 0) {
+                MPI_Irecv(particles_receive_lowerleft, *receive_size_lowerleft, PARTICLE, rank + num_proc_x - 1, 0,
+                          MPI_COMM_WORLD, &recv_request3);
+            }
+            // down
+            if (proc_y_current + 1 < num_proc_y) {
+                MPI_Irecv(particles_receive_down, *receive_size_down, PARTICLE, rank + num_proc_x, 0, MPI_COMM_WORLD,
+                          &recv_request4);
+            }
+            // lowerright
+            if (proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x) {
+                MPI_Irecv(particles_receive_lowerright, *receive_size_lowerright, PARTICLE, rank + num_proc_x + 1, 0,
+                          MPI_COMM_WORLD, &recv_request5);
+            }
+            // right
+            if (proc_x_current + 1 < num_proc_x) {
+                MPI_Irecv(particles_receive_right, *receive_size_right, PARTICLE, rank + 1, 0, MPI_COMM_WORLD,
+                          &recv_request6);
+            }
+            // upperright
+            if (proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x) {
+                MPI_Irecv(particles_receive_upperright, *receive_size_upperright, PARTICLE, rank - num_proc_x + 1, 0,
+                          MPI_COMM_WORLD, &recv_request7);
+            }
+            MPI_Barrier(MPI_COMM_WORLD); //
 //
 //        /*
 //            finally do some test
@@ -831,46 +846,515 @@ int main( int argc, char **argv )
 //            collect the particles remained in the processor as well as the particles from the
 //            "8" directions to a map called local_particles_native_map_new
 //        */
-        std::map<double, particle_t> local_particles_native_map_new;
-        std::set<int>::iterator it_indexkeep;
-        // insert particles kept in the current processor
-        for (it_indexkeep = index_keep.begin(); it_indexkeep != index_keep.end(); ++it_indexkeep){
-            local_particles_native_map_new.insert(std::pair<double, particle_t>(local_particles_native[*it_indexkeep].id, local_particles_native[*it_indexkeep]));
-        }
+            std::map<double, particle_t> local_particles_native_map_new;
+            std::set<int>::iterator it_indexkeep;
+            // insert particles kept in the current processor
+            for (it_indexkeep = index_keep.begin(); it_indexkeep != index_keep.end(); ++it_indexkeep) {
+                local_particles_native_map_new.insert(
+                        std::pair<double, particle_t>(local_particles_native[*it_indexkeep].id,
+                                                      local_particles_native[*it_indexkeep]));
+            }
 //        // insert particles from "8" directions
-        for(int i = 0; i < *receive_size_up; i++){
-            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_up[i].id, particles_receive_up[i]));
-        }
-        for(int i = 0; i < *receive_size_upperleft; i++){
-            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_upperleft[i].id, particles_receive_upperleft[i]));
-        }
-        for(int i = 0; i < *receive_size_left; i++){
-            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_left[i].id, particles_receive_left[i]));
-        }
-        for(int i = 0; i < *receive_size_lowerleft; i++){
-            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_lowerleft[i].id, particles_receive_lowerleft[i]));
-        }
-        for(int i = 0; i < *receive_size_down; i++){
-            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_down[i].id, particles_receive_down[i]));
-        }
-        for(int i = 0; i < *receive_size_lowerright; i++){
-            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_lowerright[i].id, particles_receive_lowerright[i]));
-        }
-        for(int i = 0; i < *receive_size_right; i++){
-            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_right[i].id, particles_receive_right[i]));
-        }
-        for(int i = 0; i < *receive_size_upperright; i++){
-            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_upperright[i].id, particles_receive_upperright[i]));
-        }
-        // check that the sum of local_particles_native_map_new.size()equal to 500
+            for (int i = 0; i < *receive_size_up; i++) {
+                local_particles_native_map_new.insert(
+                        std::pair<double, particle_t>(particles_receive_up[i].id, particles_receive_up[i]));
+            }
+            for (int i = 0; i < *receive_size_upperleft; i++) {
+                local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_upperleft[i].id,
+                                                                                    particles_receive_upperleft[i]));
+            }
+            for (int i = 0; i < *receive_size_left; i++) {
+                local_particles_native_map_new.insert(
+                        std::pair<double, particle_t>(particles_receive_left[i].id, particles_receive_left[i]));
+            }
+            for (int i = 0; i < *receive_size_lowerleft; i++) {
+                local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_lowerleft[i].id,
+                                                                                    particles_receive_lowerleft[i]));
+            }
+            for (int i = 0; i < *receive_size_down; i++) {
+                local_particles_native_map_new.insert(
+                        std::pair<double, particle_t>(particles_receive_down[i].id, particles_receive_down[i]));
+            }
+            for (int i = 0; i < *receive_size_lowerright; i++) {
+                local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_lowerright[i].id,
+                                                                                    particles_receive_lowerright[i]));
+            }
+            for (int i = 0; i < *receive_size_right; i++) {
+                local_particles_native_map_new.insert(
+                        std::pair<double, particle_t>(particles_receive_right[i].id, particles_receive_right[i]));
+            }
+            for (int i = 0; i < *receive_size_upperright; i++) {
+                local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_upperright[i].id,
+                                                                                    particles_receive_upperright[i]));
+            }
+            // check that the sum of local_particles_native_map_new.size()equal to 500
 
 //        //
 //        // clean native particles in bins
 //        //
-        clean_local_bins(local_bins, local_bin_row*local_bin_col);
+            clean_local_bins(local_bins, local_bin_row * local_bin_col);
 //        //
 //        // reassign each particles in each bins
 //        //
+            update_local_bins(local_bins, local_particles_native_map_new,
+                              local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+//
+//
+//
+//        // barrier
+//
+//        //
+//        // 5.1 send edge bins to neighbor processor
+//        //
+//
+//        //
+//        // 5.2 receive from edge processor
+//        //
+//
+//        //
+//        // free all variables
+//        //
+            if (particles_receive_up)
+                free(particles_receive_up);
+            if (particles_receive_upperleft)
+                free(particles_receive_upperleft);
+            if (particles_receive_left)
+                free(particles_receive_left);
+            if (particles_receive_lowerleft)
+                free(particles_receive_lowerleft);
+            if (particles_receive_down)
+                free(particles_receive_down);
+            if (particles_receive_lowerright)
+                free(particles_receive_lowerright);
+            if (particles_receive_right)
+                free(particles_receive_right);
+            if (particles_receive_upperright)
+                free(particles_receive_upperright);
+
+            if (particles_send_up)
+                free(particles_send_up);
+            if (particles_send_upperleft)
+                free(particles_send_upperleft);
+            if (particles_send_left)
+                free(particles_send_left);
+            if (particles_send_lowerleft)
+                free(particles_send_lowerleft);
+            if (particles_send_down)
+                free(particles_send_down);
+            if (particles_send_lowerright)
+                free(particles_send_lowerright);
+            if (particles_send_right)
+                free(particles_send_right);
+            if (particles_send_upperright)
+                free(particles_send_upperright);
+
+            if (local_size_native)
+                free(local_size_native);
+            if (local_particles_native)
+                free(local_particles_native);
+//
+            MPI_Barrier(MPI_COMM_WORLD);
+
+
+//            // lower left
+//            proc_x_new =  get_proc_x(local_particles_native_new[*it2_new].x - bin_size_x, num_proc_x);
+//            proc_y_new =  get_proc_y(local_particles_native_new[*it2_new].y - bin_size_y, num_proc_y);
+//            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1 && proc_x_new >= 0 && proc_y_new >= 0){
+//                particles_send_lowerleft_new[index_lowerleft_new++] = local_particles_native_new[*it2_new];
+//            }
+//            // down
+//            proc_y_new =  get_proc_y(local_particles_native_new[*it2_new].y - bin_size_y, num_proc_y);
+//            if(proc_y_new == proc_y_current - 1 && proc_y_new >= 0){
+//                particles_send_down_new[index_down_new++] = local_particles_native_new[*it2_new];
+//            }
+//            // lower right
+//            proc_x_new =  get_proc_x(local_particles_native_new[*it2_new].x + bin_size_x, num_proc_x);
+//            proc_y_new =  get_proc_y(local_particles_native_new[*it2_new].y - bin_size_y, num_proc_y);
+//            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1 && proc_x_new < num_proc_x && proc_y_new >= 0){
+//                particles_send_lowerright_new[index_lowerright_new++] = local_particles_native_new[*it2_new];
+//            }
+//            // right
+//            proc_x_new =  get_proc_x(local_particles_native_new[*it2_new].x + bin_size_x, num_proc_x);
+//            if(proc_x_new == proc_x_current + 1 && proc_x_new < num_proc_x ){
+//                particles_send_right_new[index_right_new++] = local_particles_native_new[*it2_new];
+//            }
+//            // upper right
+//            proc_x_new =  get_proc_x(local_particles_native_new[*it2_new].x + bin_size_x, num_proc_x);
+//            proc_y_new =  get_proc_y(local_particles_native_new[*it2_new].y + bin_size_y, num_proc_y);
+//            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1 && proc_x_new < num_proc_x && proc_y_new < num_proc_y){
+//                particles_send_upperright_new[index_upperright_new++] = local_particles_native_new[*it2_new];
+//            }
+//        }
+//
+//        /*
+//          first send the 8 integer of number of neighboring particles, MPI can send empty messages, so always send
+//        */
+//        // up
+//        if(proc_y_current + 1 < num_proc_y){
+//            MPI_Isend(send_size_up_new, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&send_request0);
+//        }
+//        // upperleft
+//        if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
+//            MPI_Isend(send_size_upperleft_new, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request1);
+//        }
+//        // left
+//        if( proc_x_current - 1 >=0){
+//            MPI_Isend(send_size_left_new, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD,&send_request2);
+//        }
+//        // lowerleft
+//        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
+        int *local_size_native_new = (int *)malloc(sizeof(int));
+        *local_size_native_new = local_particles_native_map_new.size();
+        particle_t *local_particles_native_new = (particle_t*) malloc (*local_size_native_new * sizeof(particle_t));
+        int index_temp1 = 0;
+        std::map<double, particle_t>::iterator it_particle_new;
+        for (it_particle_new = local_particles_native_map_new.begin(); it_particle_new != local_particles_native_map_new.end(); ++it_particle_new){
+            local_particles_native_new[index_temp1++] = it_particle_new -> second;
+        }
+
+        // sizes of array of neighboring particles to be sent
+        int *send_size_up_new = (int *)malloc(sizeof(int));
+        *send_size_up_new = 0;
+        int *send_size_upperleft_new = (int *)malloc(sizeof(int));
+        *send_size_upperleft_new = 0;
+        int *send_size_left_new = (int *)malloc(sizeof(int));
+        *send_size_left_new = 0;
+        int *send_size_lowerleft_new = (int *)malloc(sizeof(int));
+        *send_size_lowerleft_new = 0;
+        int *send_size_down_new = (int *)malloc(sizeof(int));
+        *send_size_down_new = 0;
+        int *send_size_lowerright_new = (int *)malloc(sizeof(int));
+        *send_size_lowerright_new = 0;
+        int *send_size_right_new = (int *)malloc(sizeof(int));
+        *send_size_right_new = 0;
+        int *send_size_upperright_new = (int *)malloc(sizeof(int));
+        *send_size_upperright_new = 0;
+
+        // store the indices of particles to be sent/ or not sent, save time
+        std::set<int>  index_send_new;
+
+        /*
+          calculate the send_size of array of neighboring particles to be sent to 8 neighboring processors
+        */
+        // int *process_ids_new = (int *) malloc(9 * sizeof(int));
+        double len_x = get_size() / num_proc_x;
+        double len_y = get_size() / num_proc_y;
+
+        // delete in mergeing code
+        int bin_len = bin_length(num_proc_x, num_proc_y);
+        int *local_bin_size = get_bin_size(num_proc_x, num_proc_y, rank, bin_len);
+        int local_bin_row = local_bin_size[0];
+        int local_bin_col = local_bin_size[1];
+        double bin_size_x = len_x / local_bin_col;
+        double bin_size_y = len_y / local_bin_row;
+        //
+        int temp = 0;
+        for (int i = 0; i < *local_size_native_new; i++){
+            // may <= num_proc_x or < 0
+            //up
+            proc_x_new =  get_proc_x(local_particles_native_new[i].x, num_proc_x);
+            proc_y_new =  get_proc_y(local_particles_native_new[i].y + bin_size_y, num_proc_y);
+            if(proc_y_new == proc_y_current + 1 && proc_y_new < num_proc_y){
+                *send_size_up_new += 1;
+                temp = 1;
+            }
+            // upper left
+            proc_x_new =  get_proc_x(local_particles_native_new[i].x - bin_size_x, num_proc_x);
+            proc_y_new =  get_proc_y(local_particles_native_new[i].y + bin_size_y, num_proc_y);
+            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1 && proc_x_new >= 0 && proc_y_new < num_proc_y){
+                *send_size_upperleft_new += 1;
+                temp = 1;
+            }
+            // left
+            proc_x_new =  get_proc_x(local_particles_native_new[i].x - bin_size_x, num_proc_x);
+            if(proc_x_new == proc_x_current - 1 && proc_x_new >= 0){
+                *send_size_left_new += 1;
+                temp = 1;
+            }
+            // lower left
+            proc_x_new =  get_proc_x(local_particles_native_new[i].x - bin_size_x, num_proc_x);
+            proc_y_new =  get_proc_y(local_particles_native_new[i].y - bin_size_y, num_proc_y);
+            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1 && proc_x_new >= 0 && proc_y_new >= 0){
+                *send_size_lowerleft_new += 1;
+                temp = 1;
+            }
+            // down
+            proc_y_new =  get_proc_y(local_particles_native_new[i].y - bin_size_y, num_proc_y);
+            if(proc_y_new == proc_y_current - 1 && proc_y_new >= 0){
+                *send_size_down_new += 1;
+                temp = 1;
+            }
+            // lower right
+            proc_x_new =  get_proc_x(local_particles_native_new[i].x + bin_size_x, num_proc_x);
+            proc_y_new =  get_proc_y(local_particles_native_new[i].y - bin_size_y, num_proc_y);
+            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1 && proc_x_new < num_proc_x && proc_y_new >= 0){
+                *send_size_lowerright_new += 1;
+                temp = 1;
+            }
+            // right
+            proc_x_new =  get_proc_x(local_particles_native_new[i].x + bin_size_x, num_proc_x);
+            if(proc_x_new == proc_x_current + 1 && proc_x_new < num_proc_x ){
+                *send_size_right_new += 1;
+                temp = 1;
+            }
+            // upper right
+            proc_x_new =  get_proc_x(local_particles_native_new[i].x + bin_size_x, num_proc_x);
+            proc_y_new =  get_proc_y(local_particles_native_new[i].y + bin_size_y, num_proc_y);
+            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1 && proc_x_new < num_proc_x && proc_y_new < num_proc_y){
+                *send_size_upperright_new += 1;
+                temp = 1;
+            }
+            if (temp == 1){
+                index_send_new.insert(i);
+                temp = 0;
+            }
+
+        }
+
+        std::cout<<"rank "<<rank<<" index_send_size_new: " <<index_send_new.size()<<std::endl;
+
+        /*
+          assign memory for 8 arrays of neighboring particles to be sent
+        */
+        particle_t *particles_send_up_new = (particle_t*) malloc (*send_size_up_new * sizeof(particle_t));
+        particle_t *particles_send_upperleft_new = (particle_t*) malloc (*send_size_upperleft_new * sizeof(particle_t));
+        particle_t *particles_send_left_new = (particle_t*) malloc (*send_size_left_new * sizeof(particle_t));
+        particle_t *particles_send_lowerleft_new = (particle_t*) malloc (*send_size_lowerleft_new * sizeof(particle_t));
+        particle_t *particles_send_down_new = (particle_t*) malloc (*send_size_down_new * sizeof(particle_t));
+        particle_t *particles_send_lowerright_new = (particle_t*) malloc (*send_size_lowerright_new * sizeof(particle_t));
+        particle_t *particles_send_right_new = (particle_t*) malloc (*send_size_right_new * sizeof(particle_t));
+        particle_t *particles_send_upperright_new = (particle_t*) malloc (*send_size_upperright_new * sizeof(particle_t));
+
+        // /*
+        //   populate these 8 arrays of neighboring particles to be sent
+        // */
+        std::set<int>::iterator it2_new;
+        int index_up_new = 0;
+        int index_upperleft_new = 0;
+        int index_left_new = 0;
+        int index_lowerleft_new = 0;
+        int index_down_new = 0;
+        int index_lowerright_new = 0;
+        int index_right_new = 0;
+        int index_upperright_new = 0;
+
+        for (it2_new = index_send_new.begin(); it2_new != index_send_new.end(); ++it2_new){
+            // up
+            proc_x_new =  get_proc_x(local_particles_native_new[*it2_new].x, num_proc_x);
+            proc_y_new =  get_proc_y(local_particles_native_new[*it2_new].y + bin_size_y, num_proc_y);
+            if(proc_y_new == proc_y_current + 1 && proc_y_new < num_proc_y){
+                particles_send_up_new[index_up_new++] = local_particles_native_new[*it2_new];
+            }
+            // upper left
+            proc_x_new =  get_proc_x(local_particles_native_new[*it2_new].x - bin_size_x, num_proc_x);
+            proc_y_new =  get_proc_y(local_particles_native_new[*it2_new].y + bin_size_y, num_proc_y);
+            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1 && proc_x_new >= 0 && proc_y_new < num_proc_y){
+                particles_send_upperleft_new[index_upperleft_new++] = local_particles_native_new[*it2_new];
+            }
+            // left
+            proc_x_new =  get_proc_x(local_particles_native_new[*it2_new].x - bin_size_x, num_proc_x);
+            if(proc_x_new == proc_x_current - 1 && proc_x_new >= 0){
+                particles_send_left_new[index_left_new++] = local_particles_native_new[*it2_new];
+            }
+            MPI_Isend(send_size_lowerleft_new, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request3);
+        }
+        // down
+        if(proc_y_current - 1 >= 0){
+            MPI_Isend(send_size_down_new, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&send_request4);
+        }
+        // lowerright
+        if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
+            MPI_Isend(send_size_lowerright_new, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request5);
+        }
+        // right
+        if(proc_x_current + 1 < num_proc_x){
+            MPI_Isend(send_size_right_new, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD,&send_request6);
+        }
+        // upperright
+        if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
+            MPI_Isend(send_size_upperright_new, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
+        }
+        MPI_Barrier(MPI_COMM_WORLD); //
+
+        /*
+          first receive the 8 integer of number of neighboring particles
+        */
+        int *receive_size_up_new = (int *)malloc(sizeof(int));
+        *receive_size_up_new = 0;
+        int *receive_size_upperleft_new = (int *)malloc(sizeof(int));
+        *receive_size_upperleft_new = 0;
+        int *receive_size_left_new = (int *)malloc(sizeof(int));
+        *receive_size_left_new = 0;
+        int *receive_size_lowerleft_new = (int *)malloc(sizeof(int));
+        *receive_size_lowerleft_new = 0;
+        int *receive_size_down_new = (int *)malloc(sizeof(int));
+        *receive_size_down_new = 0;
+        int *receive_size_lowerright_new = (int *)malloc(sizeof(int));
+        *receive_size_lowerright_new = 0;
+        int *receive_size_right_new = (int *)malloc(sizeof(int));
+        *receive_size_right_new = 0;
+        int *receive_size_upperright_new = (int *)malloc(sizeof(int));
+        *receive_size_upperright_new = 0;
+        // up
+        if(proc_y_current + 1 < num_proc_y){
+            MPI_Irecv(receive_size_up_new, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&recv_request0);
+        }
+        // upperleft
+        if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
+            MPI_Irecv(receive_size_upperleft_new, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request1);
+        }
+        // left
+        if( proc_x_current - 1 >=0){
+            MPI_Irecv(receive_size_left_new, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD,&recv_request2);
+        }
+        // lowerleft
+        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
+            MPI_Irecv(receive_size_lowerleft_new, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request3);
+        }
+        // down
+        if(proc_y_current - 1 >= 0){
+            MPI_Irecv(receive_size_down_new, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&recv_request4);
+        }
+        // lowerright
+        if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
+            MPI_Irecv(receive_size_lowerright_new, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request5);
+        }
+        // right
+        if(proc_x_current + 1 < num_proc_x){
+            MPI_Irecv(receive_size_right_new, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD,&recv_request6);
+        }
+        // upperright
+        if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
+            MPI_Irecv(receive_size_upperright_new, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request7);
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        /*
+          then send the 8 arrays of neighboring particles, MPI can send empty messages, so always send
+        */
+        // up
+        if(proc_y_current + 1 < num_proc_y){
+            MPI_Isend(particles_send_up_new, *send_size_up_new, PARTICLE, rank + num_proc_x, 0, MPI_COMM_WORLD,&send_request0);
+        }
+        // upperleft
+        if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
+            MPI_Isend(particles_send_upperleft_new, *send_size_upperleft_new, PARTICLE, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request1);
+        }
+        // left
+        if( proc_x_current - 1 >=0){
+            MPI_Isend(particles_send_left_new, *send_size_left_new, PARTICLE, rank - 1, 0, MPI_COMM_WORLD,&send_request2);
+        }
+        // lowerleft
+        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
+            MPI_Isend(particles_send_lowerleft_new, *send_size_lowerleft_new, PARTICLE, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request3);
+        }
+        // down
+        if(proc_y_current - 1 >= 0){
+            MPI_Isend(particles_send_down_new, *send_size_down_new, PARTICLE, rank - num_proc_x, 0, MPI_COMM_WORLD,&send_request4);
+        }
+        // lowerright
+        if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
+            MPI_Isend(particles_send_lowerright_new, *send_size_lowerright_new, PARTICLE, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request5);
+        }
+        // right
+        if(proc_x_current + 1 < num_proc_x){
+            MPI_Isend(particles_send_right_new, *send_size_right_new, PARTICLE, rank + 1, 0, MPI_COMM_WORLD,&send_request6);
+        }
+        // upperright
+        if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
+            MPI_Isend(particles_send_upperright_new, *send_size_upperright_new, PARTICLE, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
+        }
+        MPI_Barrier(MPI_COMM_WORLD); //
+
+
+
+
+        /*
+          assign memory for 8 arrays of neighboring particles to be received
+        */
+        particle_t *particles_receive_up_new = (particle_t*) malloc (*receive_size_up_new * sizeof(particle_t));
+        particle_t *particles_receive_upperleft_new = (particle_t*) malloc (*receive_size_upperleft_new * sizeof(particle_t));
+        particle_t *particles_receive_left_new = (particle_t*) malloc (*receive_size_left_new * sizeof(particle_t));
+        particle_t *particles_receive_lowerleft_new = (particle_t*) malloc (*receive_size_lowerleft_new * sizeof(particle_t));
+        particle_t *particles_receive_down_new = (particle_t*) malloc (*receive_size_down_new * sizeof(particle_t));
+        particle_t *particles_receive_lowerright_new = (particle_t*) malloc (*receive_size_lowerright_new * sizeof(particle_t));
+        particle_t *particles_receive_right_new = (particle_t*) malloc (*receive_size_right_new * sizeof(particle_t));
+        particle_t *particles_receive_upperright_new = (particle_t*) malloc (*receive_size_upperright_new * sizeof(particle_t));
+
+
+        /*
+          receive the 8 arrays of neighboring particles
+        */
+        // up
+        if(proc_y_current + 1 < num_proc_y){
+            MPI_Irecv(particles_receive_up_new, *receive_size_up_new, PARTICLE, rank + num_proc_x, 0, MPI_COMM_WORLD, &recv_request0);
+        }
+        // upperleft
+        if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
+            MPI_Irecv(particles_receive_upperleft_new, *receive_size_upperleft_new, PARTICLE, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request1);
+        }
+        // left
+        if( proc_x_current - 1 >=0){
+            MPI_Irecv(particles_receive_left_new, *receive_size_left_new, PARTICLE, rank - 1, 0, MPI_COMM_WORLD,&recv_request2);
+        }
+        // lowerleft
+        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
+            MPI_Irecv(particles_receive_lowerleft_new, *receive_size_lowerleft_new, PARTICLE, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request3);
+        }
+        // down
+        if(proc_y_current - 1 >= 0){
+            MPI_Irecv(particles_receive_down_new, *receive_size_down_new, PARTICLE, rank - num_proc_x, 0, MPI_COMM_WORLD,&recv_request4);
+        }
+        // lowerright
+        if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
+            MPI_Irecv(particles_receive_lowerright_new, *receive_size_lowerright_new, PARTICLE, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request5);
+        }
+        // right
+        if(proc_x_current + 1 < num_proc_x){
+            MPI_Irecv(particles_receive_right_new, *receive_size_right_new, PARTICLE, rank + 1, 0, MPI_COMM_WORLD,&recv_request6);
+        }
+        // upperright
+        if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
+            MPI_Irecv(particles_receive_upperright_new, *receive_size_upperright_new, PARTICLE, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request7);
+        }
+        MPI_Barrier(MPI_COMM_WORLD); //
+
+        /*
+            collect the neighboring particles from the
+            "8" directions to a map called local_particles_native_map_new
+        */
+        std::map<double, particle_t> local_particles_nb_map;
+        // insert particles from "8" directions
+        for(int i = 0; i < *receive_size_up_new; i++){
+            local_particles_nb_map.insert(std::pair<double, particle_t>(particles_receive_up_new[i].id, particles_receive_up_new[i]));
+        }
+        for(int i = 0; i < *receive_size_upperleft_new; i++){
+            local_particles_nb_map.insert(std::pair<double, particle_t>(particles_receive_upperleft_new[i].id, particles_receive_upperleft_new[i]));
+        }
+        for(int i = 0; i < *receive_size_left_new; i++){
+            local_particles_nb_map.insert(std::pair<double, particle_t>(particles_receive_left_new[i].id, particles_receive_left_new[i]));
+        }
+        for(int i = 0; i < *receive_size_lowerleft_new; i++){
+            local_particles_nb_map.insert(std::pair<double, particle_t>(particles_receive_lowerleft_new[i].id, particles_receive_lowerleft_new[i]));
+        }
+        for(int i = 0; i < *receive_size_down_new; i++){
+            local_particles_nb_map.insert(std::pair<double, particle_t>(particles_receive_down_new[i].id, particles_receive_down_new[i]));
+        }
+        for(int i = 0; i < *receive_size_lowerright_new; i++){
+            local_particles_nb_map.insert(std::pair<double, particle_t>(particles_receive_lowerright_new[i].id, particles_receive_lowerright_new[i]));
+        }
+        for(int i = 0; i < *receive_size_right_new; i++){
+            local_particles_nb_map.insert(std::pair<double, particle_t>(particles_receive_right_new[i].id, particles_receive_right_new[i]));
+        }
+        for(int i = 0; i < *receive_size_upperright_new; i++){
+            local_particles_nb_map.insert(std::pair<double, particle_t>(particles_receive_upperright_new[i].id, particles_receive_upperright_new[i]));
+        }
+
+
+//        //
+//        // reassign each particles in each bins
+//        //
+
         update_local_bins(local_bins, local_particles_native_map_new,
             local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
 //
@@ -931,8 +1415,53 @@ int main( int argc, char **argv )
         MPI_Barrier(MPI_COMM_WORLD);
         // std::cout<<"I am the end of step: "<<step<<std::endl;
 
+        update_local_bins(local_bins, local_particles_nb_map,
+                          local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
 
-    }
+
+        if (particles_receive_up_new)
+            free(particles_receive_up_new);
+        if (particles_receive_upperleft_new)
+            free(particles_receive_upperleft_new);
+        if (particles_receive_left_new)
+            free(particles_receive_left_new);
+        if (particles_receive_lowerleft_new)
+            free(particles_receive_lowerleft_new);
+        if (particles_receive_down_new)
+            free(particles_receive_down_new);
+        if (particles_receive_lowerright_new)
+            free(particles_receive_lowerright_new);
+        if (particles_receive_right_new)
+            free(particles_receive_right_new);
+        if (particles_receive_upperright_new)
+            free(particles_receive_upperright_new);
+        // check that the sum of local_particles_n
+
+
+        if (particles_send_up_new)
+            free(particles_send_up_new);
+        if (particles_send_upperleft_new)
+            free(particles_send_upperleft_new);
+        if (particles_send_left_new)
+            free(particles_send_left_new);
+        if (particles_send_lowerleft_new)
+            free(particles_send_lowerleft_new);
+        if (particles_send_down_new)
+            free(particles_send_down_new);
+        if (particles_send_lowerleft_new)
+            free(particles_send_lowerright_new);
+        if (particles_send_right_new)
+            free(particles_send_right_new);
+        if (particles_send_upperright_new)
+            free(particles_send_upperright_new);
+
+
+           // std::cout << "I am the end of step: " << step << std::endl;
+
+
+
+        }
+
 
 
 
@@ -965,76 +1494,7 @@ int main( int argc, char **argv )
         fprintf(fsum,"%d %d %g\n",n,number_of_processors,simulation_time);
     }
   
-    //
-    //  release resources
-    //
-    // if (receive_size_up)
-    //     free( receive_size_up );
-    // if (receive_size_upperleft)
-    //     free( receive_size_upperleft );
-    // if (receive_size_left)
-    //     free( receive_size_left );
-    // if (receive_size_lowerleft)
-    //     free( receive_size_lowerleft );
-    // if (receive_size_down)
-    //     free( receive_size_down );
-    // if (receive_size_lowerright)
-    //     free( receive_size_lowerright );
-    // if (receive_size_right)
-    //     free( receive_size_right );
-    // if (receive_size_upperright)
-    //     free(receive_size_upperright);
 
-    // if (send_size_up)
-    //     free( send_size_up );
-    // if (send_size_upperleft)
-    //     free( send_size_upperleft );
-    // if (send_size_left)
-    //     free( send_size_left );
-    // if (send_size_lowerleft)
-    //     free( receive_size_lowerleft );
-    // if (send_size_down)
-    //     free( send_size_down );
-    // if (send_size_lowerright)
-    //     free( send_size_lowerright );
-    // if (send_size_right)
-    //     free( receive_size_right );
-    // if (send_size_upperright)
-    //     free(receive_size_upperright);
-
-    // if (particles_receive_up)
-    //     free( particles_receive_up );
-    // if (particles_receive_upperleft)
-    //     free( particles_receive_upperleft );
-    // if (particles_receive_left)
-    //     free( particles_receive_left );
-    // if (particles_receive_lowerleft)
-    //     free( particles_receive_lowerleft );
-    // if (particles_receive_down)
-    //     free( particles_receive_down );
-    // if (particles_receive_lowerright)
-    //     free( particles_receive_lowerright );
-    // if (particles_receive_right)
-    //     free( particles_receive_right );
-    // if (particles_receive_upperright)
-    //     free(particles_receive_upperright);
-
-    // if (particles_send_up)
-    //     free( particles_send_up );
-    // if (particles_send_upperleft)
-    //     free( particles_send_upperleft );
-    // if (particles_send_left)
-    //     free( particles_send_left );
-    // if (particles_send_lowerleft)
-    //     free( particles_send_lowerleft );
-    // if (particles_send_down)
-    //     free( particles_send_down );
-    // if (particles_send_lowerright)
-    //     free( particles_send_lowerright );
-    // if (particles_send_right)
-    //     free( particles_send_right );
-    // if (particles_send_upperright)
-    //     free(particles_send_upperright);
     if ( fsum )
         fclose( fsum );
     if (partition_offsets)
