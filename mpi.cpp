@@ -405,7 +405,7 @@ int main( int argc, char **argv )
              //
              // if flag !=2 it is a native/edge bin
              //
-             if (true) {//(local_bins[idx].flag != 2){
+             if (local_bins[idx].flag != 2){
                  //
                  // store map of particles in this bin
                  //
@@ -441,6 +441,10 @@ int main( int argc, char **argv )
 
         std::map<double, particle_t>::iterator tmp;
         for (tmp = local_particles_native_map.begin(); tmp != local_particles_native_map.end(); ++tmp){
+            if (tmp == NULL)
+            {
+                std::cout<<"*********TMP IS NULL"<<std::endl;
+            }
             std::cout<<"Step, Particle ID, X, Y"<<step<<" "<<tmp->first<<" "<<(tmp->second).x<<" "<<(tmp->second).y<<std::endl;
         }
 
