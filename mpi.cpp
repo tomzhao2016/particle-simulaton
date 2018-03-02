@@ -386,7 +386,7 @@ int main( int argc, char **argv )
 
                 if (rank == 0)
                 {
-                    std::cout<<"I am rank 0, in step "<<step<<" and in line 388 with idx "<<idx<<std::endl;
+//                    std::cout<<"I am rank 0, in step "<<step<<" and in line 388 with idx "<<idx<<std::endl;
                 }
                 //
                 // if flag !=2 it is a native/edge bin
@@ -394,7 +394,7 @@ int main( int argc, char **argv )
                 if (local_bins[idx].flag != 2) {
                     if (rank == 0)
                     {
-                        std::cout<<"I am rank 0, in step "<<step<<" and in line 396"<<std::endl;
+//                        std::cout<<"I am rank 0, in step "<<step<<" and in line 396"<<std::endl;
                     }
                     //
                     // store map of particles in this bin
