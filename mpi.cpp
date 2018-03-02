@@ -296,9 +296,9 @@ int main( int argc, char **argv )
                 //
                 // iterate over all the particles in this map
                 //
-                if (rank == 4 && step < 3){
-                   std::cout<<"this bin's particle num is : "<<p1_map.size()<<std::endl;
-                }
+                // if (rank == 4 && step < 3){
+                //    std::cout<<"this bin's particle num is : "<<p1_map.size()<<std::endl;
+                // }
                 for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
                     //  
                     // store set of neighbor index of this bin
@@ -348,7 +348,9 @@ int main( int argc, char **argv )
                 }   
             }     
         }
-
+        if (rank == 4 && step < 3){
+                   std::cout<<"I am step here: "<<step<<std::endl;
+        }
         // NOT SURE how to change avg and min
         if( find_option( argc, argv, "-no" ) == -1 )
         {
