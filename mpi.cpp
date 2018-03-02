@@ -454,7 +454,7 @@ int main( int argc, char **argv )
            std::cout<<"I am step here local_particles_native_map size is : "<<*local_size_native<<std::endl;
         }
 
-        particle_t *local_particles_native = new particle[*local_size_native];
+        particle_t *local_particles_native = new particle_t[*local_size_native];
         if (rank == 4 && step < 3){
            std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
         }
