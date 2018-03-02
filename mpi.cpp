@@ -406,6 +406,7 @@ int main( int argc, char **argv )
              // if flag !=2 it is a native/edge bin
              //
 //             if (local_bins[idx].flag != 2){
+             if (true) {
                  //
                  // store map of particles in this bin
                  //
@@ -420,7 +421,7 @@ int main( int argc, char **argv )
                      std::cout<<"Old Info, Step, ID, X, Y "<<step<<" "<<p1->second.id<<" "<<p1->second.x<<" "<<p1->second.y<<std::endl;
                      move(p1->second);
                      local_particles_native_map.insert({p1->second.id, p1->second});
-//                 }
+                 }
              }
          }
 //
