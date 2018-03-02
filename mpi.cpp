@@ -92,6 +92,8 @@ int main( int argc, char **argv )
     MPI_Type_contiguous( 7, MPI_DOUBLE, &PARTICLE );
     MPI_Type_commit( &PARTICLE );
 
+    MPI::COMM_WORLD.Set_errhandler ( MPI::ERRORS_THROW_EXCEPTIONS );
+
     set_size( n );
     if( rank == 0 )
     {
@@ -710,6 +712,7 @@ int main( int argc, char **argv )
         // lowerright
         if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
             MPI_Irecv(receive_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request5);
+
             checkMPIError(recv_request5, *receive_size_lowerright, 713);
         }
         // right
@@ -723,6 +726,7 @@ int main( int argc, char **argv )
             checkMPIError(recv_request7, *receive_size_upperright, 723);
         }
         MPI_Barrier(MPI_COMM_WORLD);
+
 
         /*
           then send the 8 arrays of particles, MPI can send empty messages, so always send
