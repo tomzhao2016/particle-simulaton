@@ -454,7 +454,7 @@ int main( int argc, char **argv )
            std::cout<<"I am step here local_particles_native_map size is : "<<*local_size_native<<std::endl;
         }
 
-        particle_t *local_particles_native = (particle_t*) malloc (*local_size_native * sizeof(particle_t));
+        particle_t *local_particles_native = new particle[*local_size_native];
         if (rank == 4 && step < 3){
            std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
         }
@@ -1020,8 +1020,8 @@ int main( int argc, char **argv )
 
         if (local_size_native)
             free(local_size_native);
-        if (local_particles_native)
-            free(local_particles_native);
+        // if (local_particles_native)
+        //     free(local_particles_native);
         std::cout<<"I am the end of step: "<<step<<std::endl;
 
 
