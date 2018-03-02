@@ -1304,69 +1304,7 @@ int main( int argc, char **argv )
         }
 
 
-//        //
-//        // reassign each particles in each bins
-//        //
-
-        update_local_bins(local_bins, local_particles_native_map_new,
-            local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
-//
-//
-//
-//        // barrier
-//
-//        //
-//        // 5.1 send edge bins to neighbor processor
-//        //
-//
-//        //
-//        // 5.2 receive from edge processor
-//        //
-//
-//        //
-//        // free all variables
-//        //
-//         if (particles_receive_up)
-//             free( particles_receive_up );
-//         if (particles_receive_upperleft)
-//             free( particles_receive_upperleft );
-//         if (particles_receive_left)
-//             free( particles_receive_left );
-//         if (particles_receive_lowerleft)
-//             free( particles_receive_lowerleft );
-//         if (particles_receive_down)
-//             free( particles_receive_down );
-//         if (particles_receive_lowerright)
-//             free( particles_receive_lowerright );
-//         if (particles_receive_right)
-//             free( particles_receive_right );
-//         if (particles_receive_upperright)
-//             free(particles_receive_upperright);
-//
-//         if (particles_send_up)
-//             free( particles_send_up );
-//         if (particles_send_upperleft)
-//             free( particles_send_upperleft );
-//         if (particles_send_left)
-//             free( particles_send_left );
-//         if (particles_send_lowerleft)
-//             free( particles_send_lowerleft );
-//         if (particles_send_down)
-//             free( particles_send_down );
-//         if (particles_send_lowerright)
-//             free( particles_send_lowerright );
-//         if (particles_send_right)
-//             free( particles_send_right );
-//         if (particles_send_upperright)
-//             free(particles_send_upperright);
-//
-//         if (local_size_native)
-//             free(local_size_native);
-//         if (local_particles_native)
-//             free(local_particles_native);
-//
         MPI_Barrier(MPI_COMM_WORLD);
-        // std::cout<<"I am the end of step: "<<step<<std::endl;
 
         update_local_bins(local_bins, local_particles_nb_map,
                           local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
@@ -1408,8 +1346,6 @@ int main( int argc, char **argv )
         if (particles_send_upperright_new)
             free(particles_send_upperright_new);
 
-
-           // std::cout << "I am the end of step: " << step << std::endl;
 
 
 

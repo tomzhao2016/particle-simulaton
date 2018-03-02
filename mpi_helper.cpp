@@ -338,21 +338,6 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 			
 		//}
 		local_bins[cur_bin].native_particle.insert({ local_particles[idx].id,local_particles[idx]});
-		// Debug
-		// if( rank == 0){
-		// 	std::cout<<"This particle x is "<<local_particles[idx].x<<std::endl;
-		// 	std::cout<<"This particle y is "<<local_particles[idx].y<<std::endl;
-		// 	std::cout<<"This particle local_row is "<<local_row<<std::endl;
-		// 	std::cout<<"This particle local_col is "<<local_col<<std::endl;
-		// 	std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
-		// 	std::cout<<"This idx_row  is "<<idx_row<<std::endl;
-		// 	std::cout<<"This idx_col is "<<idx_col<<std::endl;
-		// 	std::cout<<"This global_row is "<<global_row<<std::endl;
-		// 	std::cout<<"This global_col is "<<global_col<<std::endl;
-		// 	std::cout<<"This bin_width is "<<bin_width<<std::endl;
-		// 	std::cout<<"This bin_len is "<<bin_len<<std::endl;
-		// 	std::cout<<"The size is "<<get_size()<<std::endl;
-		// }
 
 	}
 
@@ -572,27 +557,10 @@ void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_parti
 		// find cur_bin index
 		//
 		int cur_bin = local_col * local_row_size + local_row;
-		//if( rank == 4 ){
-			// std::cout<<"This particle is "<<it_p->first<<std::endl;
-			// std::cout<<"This particle x is "<<it_p->second.x<<std::endl;
-			// std::cout<<"This particle y is "<<it_p->second.y<<std::endl;
-			// std::cout<<"This particle local_row is "<<local_row<<std::endl;
-			// std::cout<<"This particle local_col is "<<local_col<<std::endl;
-			// std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
-			// std::cout<<"This idx_row  is "<<idx_row<<std::endl;
-			// std::cout<<"This idx_col is "<<idx_col<<std::endl;
-			// std::cout<<"This global_row is "<<global_row<<std::endl;
-			// std::cout<<"This global_col is "<<global_col<<std::endl;
-			// std::cout<<"This bin_width is "<<bin_width<<std::endl;
-			// std::cout<<"This bin_len is "<<bin_len<<std::endl;
-			// std::cout<<"This local_bin_size is "<<local_row_size*local_col_size<<std::endl;
-			// std::cout<<"The size is "<<get_size()<<std::endl;
-//			std::cout<<"Ima do it using "<<cur_bin<<std::endl;
-//			local_bins[cur_bin];
-//			std::cout<<"I did it"<<std::endl;
 
-			local_bins[cur_bin].native_particle.insert({it_p->second.id, it_p->second});
-		//}
+
+		local_bins[cur_bin].native_particle.insert({it_p->second.id, it_p->second});
+
 		
 		
 	}
