@@ -748,7 +748,7 @@ int main( int argc, char **argv )
           receive the 8 arrays of particles
         */
         // up
-        if(proc_y_current - 1 >= 0 < num_proc_y){
+        if(proc_y_current - 1 >= 0){
             MPI_Irecv(particles_receive_up, *receive_size_up, PARTICLE, rank - num_proc_x, 0, MPI_COMM_WORLD, &recv_request0);
         }
         // upperleft
