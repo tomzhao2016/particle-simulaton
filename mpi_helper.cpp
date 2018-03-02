@@ -520,9 +520,9 @@ void clean_local_bins(bin_t *local_bins, int local_bin_size){
 	}
 }
 
-void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_particles_native_map,
+int update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_particles_native_map,
 	int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len){
-
+    int cnt;
 	//
 	// This method assign each particle into bins in this processor
 	// local_bins: is empty array of bins needed to be updated
@@ -598,6 +598,22 @@ void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_parti
 		
 		
 	}
+
+	for (int idx = 0; idx<local_col_size*local_row_size; idx++){
+		 if(local_bins[idx].flag != 2){
+			for (std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin();it_p != local_bins[idx].native_particle.end();++it_p){
+				cnt++;
+			}
+	    } else{
+	    	for (std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin();it_p != local_bins[idx].native_particle.end();++it_p){
+				// std::cout<<"rank "<< rank <<"**************** x of lost bin "<<(it_p -> second).x<<std::endl;
+				// std::cout<<"rank "<< rank <<"**************** y of lost bin "<<(it_p -> second).y<<std::endl;
+			}
+	    }
+	}
+	return cnt;
+
+
 
 }
 
