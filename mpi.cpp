@@ -433,6 +433,9 @@ int main( int argc, char **argv )
         }
 
         
+        if (rank == 4 && step < 3){
+           std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
+        }
         //
         // 3.1 send and receove particles to/from other processor
         // for processor_id,particle_t in M:
