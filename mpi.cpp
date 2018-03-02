@@ -19,11 +19,11 @@ void checkError(particle_t *ptr, int index, int line_number, int size)
 void checkMPIError(MPI_Request status, int expected, int line)
 {
     int real;
-    MPI_Get_count(&status, MPI_INT, &real);
-    if (real != expected)
-    {
-        std::cout<<"Real not equal to expected in line "<<line<<std::endl;
-    }
+//    MPI_Get_count(&status, MPI_INT, &real);
+//    if (real != expected)
+//    {
+//        std::cout<<"Real not equal to expected in line "<<line<<std::endl;
+//    }
 }
 
 
