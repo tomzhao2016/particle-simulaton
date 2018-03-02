@@ -262,6 +262,7 @@ int main( int argc, char **argv )
     //
     //  simulate a number of time steps
     //
+    particle_t *local_particles_native;
     double simulation_time = read_timer();
     //for( int step = 0; step < NSTEPS; step++ )
     for( int step = 0; step < 5; step++ )
@@ -454,7 +455,7 @@ int main( int argc, char **argv )
            std::cout<<rank<<" 3. I am step here local_particles_native_map size is : "<<*local_size_native<<std::endl;
         }
 
-        particle_t local_particles_native[*local_size_native] = {};
+        *local_particles_native = (particle_t *)malloc(*local_size_native*sizeof(particle_t));
         if (step < 3){
            std::cout<<rank<<" 4. I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
         }
@@ -1020,8 +1021,8 @@ int main( int argc, char **argv )
 
         if (local_size_native)
             free(local_size_native);
-        // if (local_particles_native)
-        //     free(local_particles_native);
+        if (local_particles_native)
+            free(local_particles_native);
         std::cout<<"I am the end of step: "<<step<<std::endl;
 
 
