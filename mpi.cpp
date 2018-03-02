@@ -405,7 +405,7 @@ int main( int argc, char **argv )
              //
              // if flag !=2 it is a native/edge bin
              //
-             if (local_bins[idx].flag != 2){
+             if (true) {//(local_bins[idx].flag != 2){
                  //
                  // store map of particles in this bin
                  //
