@@ -367,6 +367,7 @@ int main( int argc, char **argv )
                 }
             }
 
+            std::cout<<"I finished doing statistics in step, rank "<<step<<" "<<rank<<std::endl;
 
             //
             // 2.move particles and save all the native particles to a map
