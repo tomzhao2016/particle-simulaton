@@ -283,15 +283,15 @@ int main( int argc, char **argv )
             //
             // if flag !=2 it is a native/edge bin
             //
-            if ((sizeof(local_bins)/sizeof(local_bins[0])) <= idx)
-            {
-                std::cout<<"Problem in line 278"<<std::endl;
-                std::cout<<"IDX is "<<idx<<std::endl;
-                std::cout<<"local bin row is "<<local_bin_row<<std::endl;
-                std::cout<<"local bin col is"<<local_bin_col<<std::endl;
-                std::cout<<"Size of local bins is "<<(sizeof(local_bins))<<std::endl;
-                std::cout<<"Size of local bins[0] is"<<sizeof(local_bins[0])<<std::endl;
-            }
+//            if ((sizeof(local_bins)/sizeof(local_bins[0])) <= idx)
+//            {
+//                std::cout<<"Problem in line 278"<<std::endl;
+//                std::cout<<"IDX is "<<idx<<std::endl;
+//                std::cout<<"local bin row is "<<local_bin_row<<std::endl;
+//                std::cout<<"local bin col is"<<local_bin_col<<std::endl;
+//                std::cout<<"Size of local bins is "<<(sizeof(local_bins))<<std::endl;
+//                std::cout<<"Size of local bins[0] is"<<sizeof(local_bins[0])<<std::endl;
+//            }
 
             if (local_bins[idx].flag != 2){
                 //  
@@ -451,10 +451,10 @@ int main( int argc, char **argv )
         */
         for (int i = 0; i < *local_size_native; i++)
         {
-                if (i >= (sizeof(local_particles_native)/sizeof(local_particles_native[0])))
-                {
-                    std::cout<<"Problem in line 441"<<std::endl;
-                }
+//                if (i >= (sizeof(local_particles_native)/sizeof(local_particles_native[0])))
+//                {
+//                    std::cout<<"Problem in line 441"<<std::endl;
+//                }
 
                 proc_x_new =  get_proc_x(local_particles_native[i].x, num_proc_x);
                 proc_y_new =  get_proc_y(local_particles_native[i].y, num_proc_y);
