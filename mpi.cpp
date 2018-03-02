@@ -441,7 +441,7 @@ int main( int argc, char **argv )
 
         std::map<double, particle_t>::iterator tmp;
         for (tmp = local_particles_native_map.begin(); tmp != local_particles_native_map.end(); ++tmp){
-            if (tmp == NULL)
+            if (tmp->second == NULL)
             {
                 std::cout<<"*********TMP IS NULL"<<std::endl;
             }
