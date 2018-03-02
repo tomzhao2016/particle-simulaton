@@ -433,9 +433,7 @@ int main( int argc, char **argv )
         }
 
         
-        if (rank == 4 && step < 3){
-           std::cout<<"1. I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
-        }
+
         //
         // 3.1 send and receove particles to/from other processor
         // for processor_id,particle_t in M:
@@ -458,10 +456,6 @@ int main( int argc, char **argv )
             local_particles_native[index_temp0++] = it_particle -> second;
         }
 
-        if (rank == 4 && step < 3){
-           std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
-
-        }
         std::cout<<"rank"<<rank<<"local_size_native "<<*local_size_native <<std::endl;
 
         // assuming that I know the native particles, the number of native particles, and their new x and y in each processor
@@ -924,7 +918,7 @@ int main( int argc, char **argv )
         //     } 
 
         // barrier
-        // MPI_Barrier(MPI_COMM_WORLD);
+ 
         //
         // 5.1 send edge bins to neighbor processor
         // 
@@ -1009,6 +1003,7 @@ int main( int argc, char **argv )
             free(local_size_native);
         if (local_particles_native)
             free(local_particles_native);
+        MPI_Barrier(MPI_COMM_WORLD);
         std::cout<<"I am the end of step: "<<step<<std::endl;
 
 
