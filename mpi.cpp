@@ -828,32 +828,32 @@ int main( int argc, char **argv )
             local_particles_native_map_new.insert(std::pair<double, particle_t>(local_particles_native[*it_indexkeep].id, local_particles_native[*it_indexkeep]));
         }
 //        // insert particles from "8" directions
-//        for(int i = 0; i < *receive_size_up; i++){
-//            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_up[i].id, particles_receive_up[i]));
-//        }
-//        for(int i = 0; i < *receive_size_upperleft; i++){
-//            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_upperleft[i].id, particles_receive_upperleft[i]));
-//        }
-//        for(int i = 0; i < *receive_size_left; i++){
-//            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_left[i].id, particles_receive_left[i]));
-//        }
-//        for(int i = 0; i < *receive_size_lowerleft; i++){
-//            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_lowerleft[i].id, particles_receive_lowerleft[i]));
-//        }
-//        for(int i = 0; i < *receive_size_down; i++){
-//            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_down[i].id, particles_receive_down[i]));
-//        }
-//        for(int i = 0; i < *receive_size_lowerright; i++){
-//            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_lowerright[i].id, particles_receive_lowerright[i]));
-//        }
-//        for(int i = 0; i < *receive_size_right; i++){
-//            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_right[i].id, particles_receive_right[i]));
-//        }
-//        for(int i = 0; i < *receive_size_upperright; i++){
-//            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_upperright[i].id, particles_receive_upperright[i]));
-//        }
-//        // check that the sum of local_particles_native_map_new.size()equal to 500
-//
+        for(int i = 0; i < *receive_size_up; i++){
+            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_up[i].id, particles_receive_up[i]));
+        }
+        for(int i = 0; i < *receive_size_upperleft; i++){
+            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_upperleft[i].id, particles_receive_upperleft[i]));
+        }
+        for(int i = 0; i < *receive_size_left; i++){
+            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_left[i].id, particles_receive_left[i]));
+        }
+        for(int i = 0; i < *receive_size_lowerleft; i++){
+            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_lowerleft[i].id, particles_receive_lowerleft[i]));
+        }
+        for(int i = 0; i < *receive_size_down; i++){
+            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_down[i].id, particles_receive_down[i]));
+        }
+        for(int i = 0; i < *receive_size_lowerright; i++){
+            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_lowerright[i].id, particles_receive_lowerright[i]));
+        }
+        for(int i = 0; i < *receive_size_right; i++){
+            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_right[i].id, particles_receive_right[i]));
+        }
+        for(int i = 0; i < *receive_size_upperright; i++){
+            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_upperright[i].id, particles_receive_upperright[i]));
+        }
+        // check that the sum of local_particles_native_map_new.size()equal to 500
+
 //        //
 //        // clean native particles in bins
 //        //
