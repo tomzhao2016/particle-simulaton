@@ -566,80 +566,78 @@ int main( int argc, char **argv )
         int index_right = 0;
         int index_upperright = 0;
 //
-//        for (it2 = index_send.begin(); it2 != index_send.end(); ++it2){
-//
-//            proc_x_new =  get_proc_x(local_particles_native[*it2].x, num_proc_x);
-//            proc_y_new =  get_proc_y(local_particles_native[*it2].y, num_proc_y);
-//
-//            if(proc_x_new == num_proc_x)
-//            {
-//                proc_x_new--;
-//            }
-//            if(proc_y_new == num_proc_y)
-//            {
-//                proc_y_new--;
-//            }
-//
-//
-//
-//            // up
-//            if(proc_x_new == proc_x_current && proc_y_new == proc_y_current - 1){
-//
-//                checkError(particles_send_up, index_up, 571, *send_size_up);
-//                particles_send_up[index_up++] = local_particles_native[*it2];
-//            }
-//            // upper left
-//            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1){
-//                checkError(particles_send_upperleft, index_upperleft, 576, *send_size_upperleft);
-//                particles_send_upperleft[index_upperleft++] = local_particles_native[*it2];
-//            }
-//            // left
-//            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current){
-//                checkError(particles_send_left, index_left, 581, *send_size_left);
-//                particles_send_left[index_left++] = local_particles_native[*it2];
-//            }
-//            // lower left
-//            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1){
-//                checkError(particles_send_lowerleft, index_lowerleft, 586, *send_size_lowerleft);
-//                particles_send_lowerleft[index_lowerleft++] = local_particles_native[*it2];
-//            }
-//            // down
-//            if(proc_x_new == proc_x_current && proc_y_new == proc_y_current + 1){
-//                checkError(particles_send_down, index_down, 591, *send_size_down);
-//                particles_send_down[index_down++] = local_particles_native[*it2];
-//            }
-//            // lower right
-//            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1){
-//                checkError(particles_send_lowerright, index_lowerright, 596, *send_size_lowerright);
-//                particles_send_lowerright[index_lowerright++] = local_particles_native[*it2];
-//            }
-//            // right
-//            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current){
-//                checkError(particles_send_right, index_right, 601, *send_size_right);
-//                particles_send_right[index_right++] = local_particles_native[*it2];
-//            }
-//            // upper right
-//            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1){
-//                checkError(particles_send_upperright, index_upperright, 606, *send_size_upperright);
-//                particles_send_upperright[index_upperright++] = local_particles_native[*it2];
-//            }
-//        }
+        for (it2 = index_send.begin(); it2 != index_send.end(); ++it2){
+
+            proc_x_new =  get_proc_x(local_particles_native[*it2].x, num_proc_x);
+            proc_y_new =  get_proc_y(local_particles_native[*it2].y, num_proc_y);
+
+            if(proc_x_new == num_proc_x)
+            {
+                proc_x_new--;
+            }
+            if(proc_y_new == num_proc_y)
+            {
+                proc_y_new--;
+            }
+
+
+
+            // up
+            if(proc_x_new == proc_x_current && proc_y_new == proc_y_current - 1){
+
+                checkError(particles_send_up, index_up, 571, *send_size_up);
+                particles_send_up[index_up++] = local_particles_native[*it2];
+            }
+            // upper left
+            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1){
+                checkError(particles_send_upperleft, index_upperleft, 576, *send_size_upperleft);
+                particles_send_upperleft[index_upperleft++] = local_particles_native[*it2];
+            }
+            // left
+            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current){
+                checkError(particles_send_left, index_left, 581, *send_size_left);
+                particles_send_left[index_left++] = local_particles_native[*it2];
+            }
+            // lower left
+            if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1){
+                checkError(particles_send_lowerleft, index_lowerleft, 586, *send_size_lowerleft);
+                particles_send_lowerleft[index_lowerleft++] = local_particles_native[*it2];
+            }
+            // down
+            if(proc_x_new == proc_x_current && proc_y_new == proc_y_current + 1){
+                checkError(particles_send_down, index_down, 591, *send_size_down);
+                particles_send_down[index_down++] = local_particles_native[*it2];
+            }
+            // lower right
+            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1){
+                checkError(particles_send_lowerright, index_lowerright, 596, *send_size_lowerright);
+                particles_send_lowerright[index_lowerright++] = local_particles_native[*it2];
+            }
+            // right
+            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current){
+                checkError(particles_send_right, index_right, 601, *send_size_right);
+                particles_send_right[index_right++] = local_particles_native[*it2];
+            }
+            // upper right
+            if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1){
+                checkError(particles_send_upperright, index_upperright, 606, *send_size_upperright);
+                particles_send_upperright[index_upperright++] = local_particles_native[*it2];
+            }
+        }
 //
 //
 //        /*
 //          first send the 8 integer of number of particles, MPI can send empty messages, so always send
 //        */
-//        // up
-//        // if(proc_y_current + 1 < num_proc_y){
+        // up
 //        if(proc_y_current - 1 >= 0){
 //            MPI_Isend(send_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&send_request0);
 //        }
 //        // upperleft
-//        // if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
 //        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
 //            MPI_Isend(send_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request1);
 //        }
-//        // left
+        // left
 //        if( proc_x_current - 1 >=0){
 //            MPI_Isend(send_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD,&send_request2);
 //        }
@@ -692,7 +690,7 @@ int main( int argc, char **argv )
 //        // upperleft
 //        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
 //            MPI_Irecv(receive_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request1);
-////            checkMPIError(recv_request1, *receive_size_upperleft, 693);
+////           checkMPIError(recv_request1, *receive_size_upperleft, 693);
 //        }
 //        // left
 //        if( proc_x_current - 1 >=0){
