@@ -556,6 +556,10 @@ void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_parti
 			// std::cout<<"This bin_len is "<<bin_len<<std::endl;
 			// std::cout<<"This local_bin_size is "<<local_row_size*local_col_size<<std::endl;
 			// std::cout<<"The size is "<<get_size()<<std::endl;
+			std::cout<<"Ima do it"<<std::endl;
+			local_bins[cur_bin];
+			std::cout<<"I did it"<<std::endl;
+
 			local_bins[cur_bin].native_particle.insert({it_p->second.id, it_p->second});
 		//}
 		
