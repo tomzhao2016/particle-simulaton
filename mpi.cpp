@@ -445,11 +445,19 @@ int main( int argc, char **argv )
          convert a map to an array, assuming I receive a map named local_particles_native_map
          */
         int *local_size_native = (int *)malloc(sizeof(int)); 
-
-
+        if (rank == 4 && step < 3){
+           std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
+        }
 
         *local_size_native = local_particles_native_map.size();
+        if (rank == 4 && step < 3){
+           std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
+        }
+
         particle_t *local_particles_native = (particle_t*) malloc (*local_size_native * sizeof(particle_t));
+        if (rank == 4 && step < 3){
+           std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
+        }
         int index_temp0 = 0;
 
 
