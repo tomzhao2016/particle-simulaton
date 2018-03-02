@@ -541,7 +541,7 @@ int main( int argc, char **argv )
             particle_t *particles_send_lowerright = (particle_t *) malloc(*send_size_lowerright * sizeof(particle_t));
             particle_t *particles_send_right = (particle_t *) malloc(*send_size_right * sizeof(particle_t));
             particle_t *particles_send_upperright = (particle_t *) malloc(*send_size_upperright * sizeof(particle_t));
-//
+      std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 544"<<std::endl;
 //        // /*
 //        //   populate these 8 arrays of particles to be sent
 //        // */
@@ -554,7 +554,7 @@ int main( int argc, char **argv )
             int index_lowerright = 0;
             int index_right = 0;
             int index_upperright = 0;
-//
+      std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 557"<<std::endl;
             for (it2 = index_send.begin(); it2 != index_send.end(); ++it2) {
 
                 proc_x_new = get_proc_x(local_particles_native[*it2].x, num_proc_x);
@@ -612,7 +612,7 @@ int main( int argc, char **argv )
                 }
             }
 //
-//
+          std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 615"<<std::endl;
 //        /*
 //          first send the 8 integer of number of particles, MPI can send empty messages, so always send
 //        */
