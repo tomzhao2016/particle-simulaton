@@ -873,7 +873,7 @@ int main( int argc, char **argv )
 //        // reassign each particles in each bins
 //        //
         int temp;
-        temp update_local_bins(local_bins, local_particles_native_map_new,
+        temp = update_local_bins(local_bins, local_particles_native_map_new,
             local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
         std::cout << "rank "<<rank << "step "<< step << "lupdate_local_bins "<<temp<<std::endl;
 
