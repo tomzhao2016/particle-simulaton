@@ -444,16 +444,21 @@ int main( int argc, char **argv )
          */
         int *local_size_native = (int *)malloc(sizeof(int)); 
 
-        if (rank == 4 && step < 3){
-                   std::cout<<"I am step here: "<<step<<std::endl;
-        }
+
 
         *local_size_native = local_particles_native_map.size();
         particle_t *local_particles_native = (particle_t*) malloc (*local_size_native * sizeof(particle_t));
         int index_temp0 = 0;
+
+        if (rank == 4 && step < 3){
+           std::cout<<"I am step here: "<<step<<std::endl;
+        }
         std::map<double, particle_t>::iterator it_particle;
         for (it_particle = local_particles_native_map.begin(); it_particle != local_particles_native_map.end(); ++it_particle){
             local_particles_native[index_temp0++] = it_particle -> second;
+        }
+        if (rank == 4 && step < 3){
+           std::cout<<"I am step here: "<<step<<std::endl;
         }
         std::cout<<"rank"<<rank<<"local_size_native "<<*local_size_native <<std::endl;
 
