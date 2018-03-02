@@ -263,7 +263,8 @@ int main( int argc, char **argv )
     //  simulate a number of time steps
     //
     double simulation_time = read_timer();
-    for( int step = 0; step < NSTEPS; step++ )
+    //for( int step = 0; step < NSTEPS; step++ )
+    for( int step = 0; step < 1; step++ )
     {
         navg = 0;
         dmin = 1.0;
