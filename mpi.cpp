@@ -283,7 +283,7 @@ int main( int argc, char **argv )
         dmin = 1.0;
         davg = 0.0;
 
-        std::cout<<"I am beginning of step: "<<step<<std::endl;
+        //std::cout<<"I am beginning of step: "<<step<<std::endl;
         //
         //  save current step if necessary (slightly different semantics than in other codes)
         //
@@ -440,7 +440,7 @@ int main( int argc, char **argv )
 
         std::map<double, particle_t>::iterator tmp;
         for (tmp = local_particles_native_map.begin(); tmp != local_particles_native_map.end(); ++tmp){
-            std::cout<<"Step, Particle ID, X, Y"<<step<<" "<<tmp->first<<" "<<(tmp->second).x<<" "<<(tmp->second).y<<std::endl;
+            //std::cout<<"Step, Particle ID, X, Y"<<step<<" "<<tmp->first<<" "<<(tmp->second).x<<" "<<(tmp->second).y<<std::endl;
         }
 
 
@@ -929,7 +929,7 @@ int main( int argc, char **argv )
 //             free(local_particles_native);
 //
         MPI_Barrier(MPI_COMM_WORLD);
-        std::cout<<"I am the end of step: "<<step<<std::endl;
+        //std::cout<<"I am the end of step: "<<step<<std::endl;
 
 
     }

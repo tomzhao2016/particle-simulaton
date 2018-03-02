@@ -409,7 +409,6 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 				}
 
 		}
-		  
 	}
 	else{
 	if (idx_col == num_proc_y - 1){
@@ -501,6 +500,9 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 				}
 			}
 		}
+	}
+	for (int i = 0; i<local_col_size*local_row_size; i++){
+		std::cout<<"flag "<<local_bins[i].flag<<endl;
 	}
 
 	
