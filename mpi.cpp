@@ -821,12 +821,12 @@ int main( int argc, char **argv )
 //            collect the particles remained in the processor as well as the particles from the
 //            "8" directions to a map called local_particles_native_map_new
 //        */
-//        std::map<double, particle_t> local_particles_native_map_new;
-//        std::set<int>::iterator it_indexkeep;
-//        // insert particles kept in the current processor
-//        for (it_indexkeep = index_keep.begin(); it_indexkeep != index_keep.end(); ++it_indexkeep){
-//            local_particles_native_map_new.insert(std::pair<double, particle_t>(local_particles_native[*it_indexkeep].id, local_particles_native[*it_indexkeep]));
-//        }
+        std::map<double, particle_t> local_particles_native_map_new;
+        std::set<int>::iterator it_indexkeep;
+        // insert particles kept in the current processor
+        for (it_indexkeep = index_keep.begin(); it_indexkeep != index_keep.end(); ++it_indexkeep){
+            local_particles_native_map_new.insert(std::pair<double, particle_t>(local_particles_native[*it_indexkeep].id, local_particles_native[*it_indexkeep]));
+        }
 //        // insert particles from "8" directions
 //        for(int i = 0; i < *receive_size_up; i++){
 //            local_particles_native_map_new.insert(std::pair<double, particle_t>(particles_receive_up[i].id, particles_receive_up[i]));
