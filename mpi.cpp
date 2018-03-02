@@ -259,6 +259,7 @@ int main( int argc, char **argv )
     init_local_bins(local_bins, local_particles, *local_size,
         local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
     
+    particle_t *local_particles_native = new particle_t[*local_size_native];
     //
     //  simulate a number of time steps
     //
@@ -454,7 +455,7 @@ int main( int argc, char **argv )
            std::cout<<"3. I am step here local_particles_native_map size is : "<<*local_size_native<<std::endl;
         }
 
-        particle_t *local_particles_native = new particle_t[*local_size_native];
+        *local_particles_native = new particle_t[*local_size_native];
         if (rank == 4 && step < 3){
            std::cout<<"4. I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
         }
