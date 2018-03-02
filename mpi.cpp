@@ -270,6 +270,7 @@ int main( int argc, char **argv )
         dmin = 1.0;
         davg = 0.0;
 
+        std::cout<<"I am beginning of step: "<<step<<std::endl;
         //
         //  save current step if necessary (slightly different semantics than in other codes)
         //
@@ -911,7 +912,7 @@ int main( int argc, char **argv )
         //     } 
 
         // barrier
-        MPI_Barrier(MPI_COMM_WORLD);
+        // MPI_Barrier(MPI_COMM_WORLD);
         //
         // 5.1 send edge bins to neighbor processor
         // 
@@ -994,7 +995,7 @@ int main( int argc, char **argv )
 
         if (local_size_native)
             free(local_size_native);
-        
+        std::cout<<"I am the end of step: "<<step<<std::endl;
 
 
     }
