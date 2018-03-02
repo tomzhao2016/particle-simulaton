@@ -275,6 +275,10 @@ int main( int argc, char **argv )
     for( int step = 0; step < NSTEPS; step++ )
     //for( int step = 0; step < 5; step++ )
     {
+
+
+
+
         navg = 0;
         dmin = 1.0;
         davg = 0.0;
@@ -433,6 +437,12 @@ int main( int argc, char **argv )
 
 
         *local_size_native = local_particles_native_map.size();
+
+        std::map<double, particle_t>::iterator tmp;
+        for (tmp = local_particles_native_map.begin(); tmp != local_particles_native_map.end(); ++tmp){
+            cout<<"Step, Particle ID, X, Y"<<step<<" "<<tmp->first<<" "<<(tmp->second).x>>" "<<(tmp->second).y>>std::endl;
+        }
+
 
 
         particle_t *local_particles_native = (particle_t*)malloc(*local_size_native*sizeof(particle_t));
@@ -918,7 +928,7 @@ int main( int argc, char **argv )
 //         if (local_particles_native)
 //             free(local_particles_native);
 //
-//        MPI_Barrier(MPI_COMM_WORLD);
+        MPI_Barrier(MPI_COMM_WORLD);
         std::cout<<"I am the end of step: "<<step<<std::endl;
 
 
