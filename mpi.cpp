@@ -617,17 +617,21 @@ int main( int argc, char **argv )
 //          first send the 8 integer of number of particles, MPI can send empty messages, so always send
 //        */
             // up
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 620"<<std::endl;
             if (proc_y_current - 1 >= 0) {
                 MPI_Isend(send_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD, &send_request0);
             }
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 624"<<std::endl;
             // upperleft
             if (proc_y_current - 1 >= 0 && proc_x_current - 1 >= 0) {
                 MPI_Isend(send_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD, &send_request1);
             }
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 629"<<std::endl;
 //         left
             if (proc_x_current - 1 >= 0) {
                 MPI_Isend(send_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, &send_request2);
             }
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 633"<<std::endl;
             // lowerleft
             if (proc_y_current + 1 < num_proc_y && proc_x_current - 1 >= 0) {
                 MPI_Isend(send_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD, &send_request3);
@@ -636,11 +640,13 @@ int main( int argc, char **argv )
             if (proc_y_current + 1 < num_proc_y) {
                 MPI_Isend(send_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD, &send_request4);
             }
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 643"<<std::endl;
             // lowerright
             if (proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x) {
                 MPI_Isend(send_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD, &send_request5);
             }
             // right
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 649"<<std::endl;
             if (proc_x_current + 1 < num_proc_x) {
                 MPI_Isend(send_size_right, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD, &send_request6);
             }
