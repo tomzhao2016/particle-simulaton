@@ -406,6 +406,10 @@ int main( int argc, char **argv )
         //      move(p); 
         //
         std::map<double, particle_t> local_particles_native_map;
+        if (rank == 4 && step < 3){
+           std::cout<<"I am step here: "<<step<<std::endl;
+
+        }
         for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
             //
             // if flag !=2 it is a native/edge bin
@@ -450,18 +454,12 @@ int main( int argc, char **argv )
         particle_t *local_particles_native = (particle_t*) malloc (*local_size_native * sizeof(particle_t));
         int index_temp0 = 0;
 
-        if (rank == 4 && step < 3){
-           std::cout<<"I am step here: "<<step<<std::endl;
-           std::cout<<"Particle size: "<<*local_size_native<<std::endl;
-        }
+
 
 
         std::map<double, particle_t>::iterator it_particle;
         for (it_particle = local_particles_native_map.begin(); it_particle != local_particles_native_map.end(); ++it_particle){
             local_particles_native[index_temp0++] = it_particle -> second;
-        }
-        if (rank == 4 && step < 3){
-           std::cout<<"I am step here: "<<step<<std::endl;
         }
         std::cout<<"rank"<<rank<<"local_size_native "<<*local_size_native <<std::endl;
 
