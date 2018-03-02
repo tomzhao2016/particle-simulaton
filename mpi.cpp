@@ -630,101 +630,101 @@ int main( int argc, char **argv )
 //          first send the 8 integer of number of particles, MPI can send empty messages, so always send
 //        */
         // up
-//        if(proc_y_current - 1 >= 0){
-//            MPI_Isend(send_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&send_request0);
-//        }
-//        // upperleft
-//        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
-//            MPI_Isend(send_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request1);
-//        }
+        if(proc_y_current - 1 >= 0){
+            MPI_Isend(send_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&send_request0);
+        }
+        // upperleft
+        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
+            MPI_Isend(send_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request1);
+        }
+//         left
+        if( proc_x_current - 1 >=0){
+            MPI_Isend(send_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD,&send_request2);
+        }
+        // lowerleft
+        if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
+            MPI_Isend(send_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request3);
+        }
+        // down
+        if(proc_y_current + 1 < num_proc_y){
+            MPI_Isend(send_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&send_request4);
+        }
+        // lowerright
+        if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
+            MPI_Isend(send_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request5);
+        }
+        // right
+        if(proc_x_current + 1 < num_proc_x){
+            MPI_Isend(send_size_right, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD,&send_request6);
+        }
+        // upperright
+        if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
+            MPI_Isend(send_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
+        }
+        MPI_Barrier(MPI_COMM_WORLD); //
+
+        /*
+          first receive the 8 integer of number of particles
+        */
+        // int *receive_size_up = (int *)malloc(sizeof(int));
+         *receive_size_up = 0;
+        // int *receive_size_upperleft = (int *)malloc(sizeof(int));
+         *receive_size_upperleft = 0;
+        // int *receive_size_left = (int *)malloc(sizeof(int));
+         *receive_size_left = 0;
+        // int *receive_size_lowerleft = (int *)malloc(sizeof(int));
+         *receive_size_lowerleft = 0;
+        // int *receive_size_down = (int *)malloc(sizeof(int));
+         *receive_size_down = 0;
+        // int *receive_size_lowerright = (int *)malloc(sizeof(int));
+         *receive_size_lowerright = 0;
+        // int *receive_size_right = (int *)malloc(sizeof(int));
+         *receive_size_right = 0;
+        // int *receive_size_upperright = (int *)malloc(sizeof(int));
+         *receive_size_upperright = 0;
+        // up
+        if(proc_y_current - 1 >= 0){
+            MPI_Irecv(receive_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&recv_request0);
+//            checkMPIError(recv_request0, *receive_size_up, 688);
+        }
+        // upperleft
+        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
+            MPI_Irecv(receive_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request1);
+//           checkMPIError(recv_request1, *receive_size_upperleft, 693);
+        }
         // left
-//        if( proc_x_current - 1 >=0){
-//            MPI_Isend(send_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD,&send_request2);
-//        }
-//        // lowerleft
-//        if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
-//            MPI_Isend(send_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request3);
-//        }
-//        // down
-//        if(proc_y_current + 1 < num_proc_y){
-//            MPI_Isend(send_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&send_request4);
-//        }
-//        // lowerright
-//        if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
-//            MPI_Isend(send_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request5);
-//        }
-//        // right
-//        if(proc_x_current + 1 < num_proc_x){
-//            MPI_Isend(send_size_right, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD,&send_request6);
-//        }
-//        // upperright
-//        if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
-//            MPI_Isend(send_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
-//        }
-//        MPI_Barrier(MPI_COMM_WORLD); //
-//
-//        /*
-//          first receive the 8 integer of number of particles
-//        */
-//        // int *receive_size_up = (int *)malloc(sizeof(int));
-//         *receive_size_up = 0;
-//        // int *receive_size_upperleft = (int *)malloc(sizeof(int));
-//         *receive_size_upperleft = 0;
-//        // int *receive_size_left = (int *)malloc(sizeof(int));
-//         *receive_size_left = 0;
-//        // int *receive_size_lowerleft = (int *)malloc(sizeof(int));
-//         *receive_size_lowerleft = 0;
-//        // int *receive_size_down = (int *)malloc(sizeof(int));
-//         *receive_size_down = 0;
-//        // int *receive_size_lowerright = (int *)malloc(sizeof(int));
-//         *receive_size_lowerright = 0;
-//        // int *receive_size_right = (int *)malloc(sizeof(int));
-//         *receive_size_right = 0;
-//        // int *receive_size_upperright = (int *)malloc(sizeof(int));
-//         *receive_size_upperright = 0;
-//        // up
-//        if(proc_y_current - 1 >= 0){
-//            MPI_Irecv(receive_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&recv_request0);
-////            checkMPIError(recv_request0, *receive_size_up, 688);
-//        }
-//        // upperleft
-//        if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
-//            MPI_Irecv(receive_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request1);
-////           checkMPIError(recv_request1, *receive_size_upperleft, 693);
-//        }
-//        // left
-//        if( proc_x_current - 1 >=0){
-//            MPI_Irecv(receive_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD,&recv_request2);
-////            checkMPIError(recv_request2, *receive_size_left, 698);
-//        }
-//        // lowerleft
-//       if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
-//            MPI_Irecv(receive_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request3);
-////           checkMPIError(recv_request3, *receive_size_lowerleft, 702);
-//        }
-//        // down
-//        if(proc_y_current + 1 < num_proc_y){
-//            MPI_Irecv(receive_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&recv_request4);
-////            checkMPIError(recv_request4, *receive_size_down, 708);
-//        }
-//        // lowerright
-//        if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
-//            MPI_Irecv(receive_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request5);
-//
-////            checkMPIError(recv_request5, *receive_size_lowerright, 713);
-//        }
-//        // right
-//        if(proc_x_current + 1 < num_proc_x){
-//            MPI_Irecv(receive_size_right, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD,&recv_request6);
-////            checkMPIError(recv_request6, *receive_size_right, 718);
-//        }
-//        // upperright
-//        if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
-//            MPI_Irecv(receive_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request7);
-////            checkMPIError(recv_request7, *receive_size_upperright, 723);
-//        }
-//        MPI_Barrier(MPI_COMM_WORLD);
-//
+        if( proc_x_current - 1 >=0){
+            MPI_Irecv(receive_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD,&recv_request2);
+//            checkMPIError(recv_request2, *receive_size_left, 698);
+        }
+        // lowerleft
+       if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
+            MPI_Irecv(receive_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request3);
+//           checkMPIError(recv_request3, *receive_size_lowerleft, 702);
+        }
+        // down
+        if(proc_y_current + 1 < num_proc_y){
+            MPI_Irecv(receive_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&recv_request4);
+//            checkMPIError(recv_request4, *receive_size_down, 708);
+        }
+        // lowerright
+        if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
+            MPI_Irecv(receive_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request5);
+
+//            checkMPIError(recv_request5, *receive_size_lowerright, 713);
+        }
+        // right
+        if(proc_x_current + 1 < num_proc_x){
+            MPI_Irecv(receive_size_right, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD,&recv_request6);
+//            checkMPIError(recv_request6, *receive_size_right, 718);
+        }
+        // upperright
+        if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
+            MPI_Irecv(receive_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request7);
+//            checkMPIError(recv_request7, *receive_size_upperright, 723);
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
+
 //
 //        /*
 //          then send the 8 arrays of particles, MPI can send empty messages, so always send
