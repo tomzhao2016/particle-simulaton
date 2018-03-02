@@ -348,9 +348,7 @@ int main( int argc, char **argv )
                 }   
             }     
         }
-        if (rank == 4 && step < 3){
-                   std::cout<<"I am step here: "<<step<<std::endl;
-        }
+        
         // NOT SURE how to change avg and min
         if( find_option( argc, argv, "-no" ) == -1 )
         {
@@ -431,6 +429,9 @@ int main( int argc, char **argv )
                     local_particles_native_map.insert({p1->second.id, p1->second});
                 }   
             }     
+        }
+        if (rank == 4 && step < 3){
+                   std::cout<<"I am step here: "<<step<<std::endl;
         }
 
         
