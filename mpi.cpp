@@ -403,7 +403,7 @@ int main( int argc, char **argv )
             }
 
 
-            cout<<"I finished moving in step, rank "<<step<<" "<<rank<<std::endl;
+           std::cout<<"I finished moving in step, rank "<<step<<" "<<rank<<std::endl;
 //        // 3.1 send and receive particles to/from other processor
 //        // for processor_id,particle_t in M:
 //        //   MPI_send(particle_t to native/edge)
