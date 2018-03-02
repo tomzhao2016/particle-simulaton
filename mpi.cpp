@@ -857,7 +857,7 @@ int main( int argc, char **argv )
 //        //
 //        // clean native particles in bins
 //        //
-//        clean_local_bins(local_bins, local_bin_row*local_bin_col);
+        clean_local_bins(local_bins, local_bin_row*local_bin_col);
 //        //
 //        // reassign each particles in each bins
 //        //
