@@ -861,8 +861,8 @@ int main( int argc, char **argv )
 //        //
 //        // reassign each particles in each bins
 //        //
-//        update_local_bins(local_bins, local_particles_native_map_new,
-//            local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+        update_local_bins(local_bins, local_particles_native_map_new,
+            local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
 //
 //
 //
