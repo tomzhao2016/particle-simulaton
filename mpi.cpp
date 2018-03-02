@@ -289,7 +289,7 @@ int main( int argc, char **argv )
         dmin = 1.0;
         davg = 0.0;
 
-        std::cout << "I am beginning of step: " << step << std::endl;
+        std::cout << "I am beginning of step, in rank " << step << " " << rank << std::endl;
         //
         //  save current step if necessary (slightly different semantics than in other codes)
         //
@@ -343,7 +343,7 @@ int main( int argc, char **argv )
             }
         }
 
-
+            std::cout<<"I finished updating forces in step, rank "<<step<<" "<<rank<<std::endl;
             /****************************
              * Statistical data
              *************************/
@@ -402,7 +402,9 @@ int main( int argc, char **argv )
                 }
             }
 
-//        // 3.1 send and receove particles to/from other processor
+
+            cout<<"I finished moving in step, rank "<<step<<" "<<rank<<std::endl;
+//        // 3.1 send and receive particles to/from other processor
 //        // for processor_id,particle_t in M:
 //        //   MPI_send(particle_t to native/edge)
 //        //
