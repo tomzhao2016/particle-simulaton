@@ -382,10 +382,19 @@ int main( int argc, char **argv )
             std::map<double, particle_t> local_particles_native_map;
             // Move the particles.
             for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
+
+                if (rank == 0)
+                {
+                    std::cout<<"I am rank 0, in step "<<step<<" and in line 388 with idx "<<idx<<std::endl;
+                }
                 //
                 // if flag !=2 it is a native/edge bin
                 //
                 if (local_bins[idx].flag != 2) {
+                    if (rank == 0)
+                    {
+                        std::cout<<"I am rank 0, in step "<<step<<" and in line 396"<<std::endl;
+                    }
                     //
                     // store map of particles in this bin
                     //
