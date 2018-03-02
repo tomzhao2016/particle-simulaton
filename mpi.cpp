@@ -289,7 +289,7 @@ int main( int argc, char **argv )
                 std::cout<<"IDX is "<<idx<<std::endl;
                 std::cout<<"local bin row is "<<local_bin_row<<std::endl;
                 std::cout<<"local bin col is"<<local_bin_col<<std::endl;
-                std::cout<<"Size of local bins is "<<(sizeof(local_bins)/sizeof(local_bins[0])<<std::endl;
+                std::cout<<"Size of local bins is "<<(sizeof(local_bins)/sizeof(local_bins[0]))<<std::endl;
             }
 
             if (local_bins[idx].flag != 2){
