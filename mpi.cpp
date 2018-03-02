@@ -436,16 +436,6 @@ int main( int argc, char **argv )
             *local_size_native = local_particles_native_map.size();
 
 
-            std::map<double, particle_t>::iterator tmp;
-            for (tmp = local_particles_native_map.begin(); tmp != local_particles_native_map.end(); ++tmp) {
-//            std::cout<<"Trying to print individually"<<step;
-//            std::cout<<"Trying to print individually first"<<tmp->first;
-//            std::cout<<"Trying to print individually second id"<<tmp->second.id;
-//
-//            std::cout<<"Step, Particle ID, X, Y"<<step<<" "<<tmp->first<<" "<<(tmp->second).x<<" "<<(tmp->second).y<<std::endl;
-            }
-
-
             particle_t *local_particles_native = (particle_t *) malloc(*local_size_native * sizeof(particle_t));
             int index_temp0 = 0;
 
