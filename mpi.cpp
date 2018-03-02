@@ -7,6 +7,16 @@
 #include "mpi_helper.h"
 #include <iostream>
 
+void checkError(particle_t *ptr, int index, int line_number)
+{
+    if (index >= sizeof(ptr)/sizeof(ptr[0]))
+    {
+        std::cout<<"Error in line "<<line_number<<std::endl;
+    }
+}
+
+
+
 //
 //  benchmarking program
 //
@@ -171,6 +181,15 @@ int main( int argc, char **argv )
         int proc_y_current = rank/num_proc_x;
         int proc_x_current = rank%num_proc_x;
 
+        if (proc_y_current < 0 || proc_y_current >= num_proc_y)
+        {
+            std::cout<<"Problem in line 176."<<std::endl;
+        }
+        if (proc_x_current < 0 || proc_x_current >= num_proc_x)
+        {
+            std::cout<<"Problem in line 180."<<std::endl;
+        }
+
         // The new processor of the particle.
         int proc_x_new, proc_y_new;
 
@@ -215,6 +234,7 @@ int main( int argc, char **argv )
     // bin_len is the total number of bins
     //
     int bin_len = bin_length(num_proc_x, num_proc_y);
+
 
     //
     // local_bin_size is the an array, first elements being row bin number in local processor
@@ -263,6 +283,11 @@ int main( int argc, char **argv )
             //
             // if flag !=2 it is a native/edge bin
             //
+            if ((sizeof(local_bins)/sizeof(local_bins[0])) <= idx)
+            {
+                std::cout<<"Problem in line 278"<<std::endl;
+            }
+
             if (local_bins[idx].flag != 2){
                 //  
                 // store map of particles in this bin
@@ -421,6 +446,11 @@ int main( int argc, char **argv )
         */
         for (int i = 0; i < *local_size_native; i++)
         {
+                if (i >= (sizeof(local_particles_native)/sizeof(local_particles_native[0])))
+                {
+                    std::cout<<"Problem in line 441"<<std::endl;
+                }
+
                 proc_x_new =  get_proc_x(local_particles_native[i].x, num_proc_x);
                 proc_y_new =  get_proc_y(local_particles_native[i].y, num_proc_y);
                 if(proc_x_new == num_proc_x)
@@ -432,12 +462,31 @@ int main( int argc, char **argv )
                     proc_y_new--;
                 }
 
+                if (proc_y_current < 0 || proc_y_current >= num_proc_y)
+                {
+                    std::cout<<"Problem in line 457"<<std::endl;
+                }
+                if (proc_x_current < 0 || proc_x_current >= num_proc_x)
+                {
+                    std::cout<<"Problem in line 461"<<std::endl;
+                }
+
+                if (proc_x_new < 0 || proc_x_new >= num_proc_x)
+                {
+                    std::cout<<"Problem in line 466"<<std::endl;
+                }
+                if (proc_y_new < 0 || proc_y_new >= num_proc_y)
+                {
+                    std::cout<<"Problem in line 470"<<std::endl;
+                }
+
                 if ( proc_y_new != proc_y_current ||  proc_x_new != proc_x_current )
                 { // if the native particles moves to another processor
 
                     index_send.insert(i);
                     // up
                     if(proc_x_new == proc_x_current && proc_y_new == proc_y_current - 1){
+
                         *send_size_up += 1;
                     }
                     // upper left
@@ -515,36 +564,46 @@ int main( int argc, char **argv )
             }
 
 
+
             // up
             if(proc_x_new == proc_x_current && proc_y_new == proc_y_current - 1){
+
+                checkError(particles_send_up, index_up, 571);
                 particles_send_up[index_up++] = local_particles_native[*it2];
             }
             // upper left
             if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1){
+                checkError(particles_send_upperleft, index_upperleft, 576);
                 particles_send_upperleft[index_upperleft++] = local_particles_native[*it2];
             }
             // left
             if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current){
+                checkError(particles_send_left, index_left, 581);
                 particles_send_left[index_left++] = local_particles_native[*it2];
             }
             // lower left
             if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1){
+                checkError(particles_send_lowerleft, index_lowerleft, 586);
                 particles_send_lowerleft[index_lowerleft++] = local_particles_native[*it2];
             }
             // down
             if(proc_x_new == proc_x_current && proc_y_new == proc_y_current + 1){
+                checkError(particles_send_down, index_down, 591);
                 particles_send_down[index_down++] = local_particles_native[*it2];
             }
             // lower right
             if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1){
+                checkError(particles_send_lowerright, index_lowerright, 596);
                 particles_send_lowerright[index_lowerright++] = local_particles_native[*it2];
             }
             // right
             if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current){
+                checkError(particles_send_right, index_right, 601);
                 particles_send_right[index_right++] = local_particles_native[*it2];
             }
             // upper right
             if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1){
+                checkError(particles_send_upperright, index_upperright, 606);
                 particles_send_upperright[index_upperright++] = local_particles_native[*it2];
             }
         }
