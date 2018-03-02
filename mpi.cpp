@@ -295,6 +295,7 @@ int main( int argc, char **argv )
         //  1.Update forces 
         //  iterate over each native bins
         //
+        int temp2 = 0;
         for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
             //
             // if flag !=2 it is a native/edge bin
@@ -321,6 +322,7 @@ int main( int argc, char **argv )
                 //    std::cout<<"this bin's particle num is : "<<p1_map.size()<<std::endl;
                 // }
                 for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
+                    temp2++;
                     //  
                     // store set of neighbor index of this bin
                     //
@@ -370,6 +372,7 @@ int main( int argc, char **argv )
             }     
         }
         
+        std::cout << "rank "<<rank << "step "<< step << "apply_force "<<temp2<<std::endl;
         // NOT SURE how to change avg and min
         if( find_option( argc, argv, "-no" ) == -1 )
         {
