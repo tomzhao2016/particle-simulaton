@@ -479,6 +479,12 @@ int main( int argc, char **argv )
         for (int i = 0; i < *local_size_native; i++){
                 proc_x_new =  get_proc_x(local_particles_native[i].x, num_proc_x);
                 proc_y_new =  get_proc_y(local_particles_native[i].y, num_proc_y);
+                if(proc_x_new == num_proc_x){
+                    proc_x_new--;
+                }
+                if(proc_y_new == num_proc_y){
+                    proc_y_new--;
+                }
                 // if(i < 10){
                 //         std::cout<<"rank "<<rank<< " size of board is "<<get_size()<<std::endl;
                 //         std::cout<<"rank "<<rank<< " y of top 10 particles are "<<local_particles_native[i].y<<std::endl;
