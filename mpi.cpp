@@ -262,7 +262,6 @@ int main( int argc, char **argv )
     //
     //  simulate a number of time steps
     //
-    particle_t *local_particles_native;
     double simulation_time = read_timer();
     //for( int step = 0; step < NSTEPS; step++ )
     for( int step = 0; step < 5; step++ )
@@ -446,26 +445,13 @@ int main( int argc, char **argv )
          convert a map to an array, assuming I receive a map named local_particles_native_map
          */
         int *local_size_native = (int *)malloc(sizeof(int)); 
-        if (step < 3){
-           std::cout<<rank<<" 2. I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
-        }
 
         *local_size_native = local_particles_native_map.size();
-        if (step < 3){
-           std::cout<<rank<<" 3. I am step here local_particles_native_map size is : "<<*local_size_native<<std::endl;
-        }
 
-        local_particles_native = new particle_t[*local_size_native];
-        if (step < 3){
-           std::cout<<rank<<" 4. I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
-        }
+
+        particle_t *local_particles_native = （particle_t*）malloc(*local_size_native*sizeof(particle_t));
         int index_temp0 = 0;
 
-
-        if (rank == 4 && step < 3){
-           std::cout<<rank<<" 5, I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
-
-        }
 
         std::map<double, particle_t>::iterator it_particle;
         for (it_particle = local_particles_native_map.begin(); it_particle != local_particles_native_map.end(); ++it_particle){
