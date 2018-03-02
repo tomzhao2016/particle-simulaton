@@ -434,7 +434,7 @@ int main( int argc, char **argv )
 
         
         if (rank == 4 && step < 3){
-           std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
+           std::cout<<"1. I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
         }
         //
         // 3.1 send and receove particles to/from other processor
@@ -446,23 +446,23 @@ int main( int argc, char **argv )
          */
         int *local_size_native = (int *)malloc(sizeof(int)); 
         if (rank == 4 && step < 3){
-           std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
+           std::cout<<"2. I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
         }
 
         *local_size_native = local_particles_native_map.size();
         if (rank == 4 && step < 3){
-           std::cout<<"I am step here local_particles_native_map size is : "<<*local_size_native<<std::endl;
+           std::cout<<"3. I am step here local_particles_native_map size is : "<<*local_size_native<<std::endl;
         }
 
         particle_t *local_particles_native = new particle_t[*local_size_native];
         if (rank == 4 && step < 3){
-           std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
+           std::cout<<"4. I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
         }
         int index_temp0 = 0;
 
 
         if (rank == 4 && step < 3){
-           std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
+           std::cout<<"5, I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
 
         }
 
