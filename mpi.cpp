@@ -429,20 +429,20 @@ int main( int argc, char **argv )
 //        /*
 //         convert a map to an array, assuming I receive a map named local_particles_native_map
 //         */
-//        int *local_size_native = (int *)malloc(sizeof(int));
-//
-//
-//        *local_size_native = local_particles_native_map.size();
-//
-//
-//        particle_t *local_particles_native = (particle_t*)malloc(*local_size_native*sizeof(particle_t));
-//        int index_temp0 = 0;
-//
-//
-//        std::map<double, particle_t>::iterator it_particle;
-//        for (it_particle = local_particles_native_map.begin(); it_particle != local_particles_native_map.end(); ++it_particle){
-//            local_particles_native[index_temp0++] = it_particle -> second;
-//        }
+        int *local_size_native = (int *)malloc(sizeof(int));
+
+
+        *local_size_native = local_particles_native_map.size();
+
+
+        particle_t *local_particles_native = (particle_t*)malloc(*local_size_native*sizeof(particle_t));
+        int index_temp0 = 0;
+
+
+        std::map<double, particle_t>::iterator it_particle;
+        for (it_particle = local_particles_native_map.begin(); it_particle != local_particles_native_map.end(); ++it_particle){
+            local_particles_native[index_temp0++] = it_particle -> second;
+        }
 //
 //        // assuming that I know the native particles, the number of native particles, and their new x and y in each processor
 //        // size of array of particles to be sent to 8 neighboring processors
