@@ -441,9 +441,13 @@ int main( int argc, char **argv )
 
         std::map<double, particle_t>::iterator tmp;
         for (tmp = local_particles_native_map.begin(); tmp != local_particles_native_map.end(); ++tmp){
-            if (tmp->second == NULL)
+            if (!tmp)
             {
-                std::cout<<"*********TMP IS NULL"<<std::endl;
+                std::cout<<"***********TMP is null"<<std::endl;
+            }
+            if (!tmp->second)
+            {
+                std::cout<<"*********TMP->SECOND IS NULL"<<std::endl;
             }
             std::cout<<"Step, Particle ID, X, Y"<<step<<" "<<tmp->first<<" "<<(tmp->second).x<<" "<<(tmp->second).y<<std::endl;
         }
