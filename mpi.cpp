@@ -406,10 +406,7 @@ int main( int argc, char **argv )
         //      move(p); 
         //
         std::map<double, particle_t> local_particles_native_map;
-        if (rank == 4 && step < 3){
-           std::cout<<"I am step here: "<<step<<std::endl;
-
-        }
+        
         for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
             //
             // if flag !=2 it is a native/edge bin
@@ -434,7 +431,10 @@ int main( int argc, char **argv )
                 }   
             }     
         }
+        if (rank == 4 && step < 3){
+           std::cout<<"I am step here: "<<step<<std::endl;
 
+        }
         
 
 
