@@ -609,12 +609,12 @@ int main( int argc, char **argv )
         // up
         // if(proc_y_current + 1 < num_proc_y){
         if(proc_y_current - 1 >= 0){
-            MPI_Isend(send_size_up, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&send_request0);
+            MPI_Isend(send_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&send_request0);
         }
         // upperleft
         // if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
         if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
-            MPI_Isend(send_size_upperleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request1);
+            MPI_Isend(send_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request1);
         }
         // left
         if( proc_x_current - 1 >=0){
@@ -622,15 +622,15 @@ int main( int argc, char **argv )
         }
         // lowerleft
         if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
-            MPI_Isend(send_size_lowerleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request3);
+            MPI_Isend(send_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request3);
         }
         // down
         if(proc_y_current + 1 < num_proc_y){
-            MPI_Isend(send_size_down, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&send_request4);
+            MPI_Isend(send_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&send_request4);
         }
         // lowerright
         if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
-            MPI_Isend(send_size_lowerright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request5);
+            MPI_Isend(send_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request5);
         }
         // right
         if(proc_x_current + 1 < num_proc_x){
@@ -638,7 +638,7 @@ int main( int argc, char **argv )
         }
         // upperright
         if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
-            MPI_Isend(send_size_upperright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
+            MPI_Isend(send_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
         }
         MPI_Barrier(MPI_COMM_WORLD); //
 
@@ -663,11 +663,11 @@ int main( int argc, char **argv )
         *receive_size_upperright = 0;
         // up
         if(proc_y_current - 1 >= 0){
-            MPI_Irecv(receive_size_up, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&recv_request0);
+            MPI_Irecv(receive_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&recv_request0);
         }
         // upperleft
         if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
-            MPI_Irecv(receive_size_upperleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request1);
+            MPI_Irecv(receive_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request1);
         }
         // left
         if( proc_x_current - 1 >=0){
@@ -675,15 +675,15 @@ int main( int argc, char **argv )
         }
         // lowerleft
        if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
-            MPI_Irecv(receive_size_lowerleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request3);
+            MPI_Irecv(receive_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request3);
         }
         // down
         if(proc_y_current + 1 < num_proc_y){
-            MPI_Irecv(receive_size_down, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&recv_request4);
+            MPI_Irecv(receive_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&recv_request4);
         }
         // lowerright
         if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
-            MPI_Irecv(receive_size_lowerright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request5);
+            MPI_Irecv(receive_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request5);
         }
         // right
         if(proc_x_current + 1 < num_proc_x){
@@ -691,7 +691,7 @@ int main( int argc, char **argv )
         }
         // upperright
         if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
-            MPI_Irecv(receive_size_upperright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request7);
+            MPI_Irecv(receive_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request7);
         }
         MPI_Barrier(MPI_COMM_WORLD);
 
@@ -700,11 +700,11 @@ int main( int argc, char **argv )
         */  
         // up
         if(proc_y_current - 1 >= 0){
-            MPI_Isend(particles_send_up, *send_size_up, PARTICLE, rank + num_proc_x, 0, MPI_COMM_WORLD,&send_request0);
+            MPI_Isend(particles_send_up, *send_size_up, PARTICLE, rank - num_proc_x, 0, MPI_COMM_WORLD,&send_request0);
         }
         // upperleft
         if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
-            MPI_Isend(particles_send_upperleft, *send_size_upperleft, PARTICLE, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request1);
+            MPI_Isend(particles_send_upperleft, *send_size_upperleft, PARTICLE, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request1);
         }
         // left
         if( proc_x_current - 1 >=0){
@@ -712,15 +712,15 @@ int main( int argc, char **argv )
         }
         // lowerleft
         if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
-            MPI_Isend(particles_send_lowerleft, *send_size_lowerleft, PARTICLE, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request3);
+            MPI_Isend(particles_send_lowerleft, *send_size_lowerleft, PARTICLE, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&send_request3);
         }
         // down
         if(proc_y_current + 1 < num_proc_y){
-            MPI_Isend(particles_send_down, *send_size_down, PARTICLE, rank - num_proc_x, 0, MPI_COMM_WORLD,&send_request4);
+            MPI_Isend(particles_send_down, *send_size_down, PARTICLE, rank + num_proc_x, 0, MPI_COMM_WORLD,&send_request4);
         }
         // lowerright
         if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
-            MPI_Isend(particles_send_lowerright, *send_size_lowerright, PARTICLE, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request5);
+            MPI_Isend(particles_send_lowerright, *send_size_lowerright, PARTICLE, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request5);
         }
         // right
         if(proc_x_current + 1 < num_proc_x){
@@ -728,7 +728,7 @@ int main( int argc, char **argv )
         }
         // upperright
         if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
-            MPI_Isend(particles_send_upperright, *send_size_upperright, PARTICLE, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
+            MPI_Isend(particles_send_upperright, *send_size_upperright, PARTICLE, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
         }
         MPI_Barrier(MPI_COMM_WORLD); //
 
@@ -749,11 +749,11 @@ int main( int argc, char **argv )
         */
         // up
         if(proc_y_current - 1 >= 0 < num_proc_y){
-            MPI_Irecv(particles_receive_up, *receive_size_up, PARTICLE, rank + num_proc_x, 0, MPI_COMM_WORLD, &recv_request0);
+            MPI_Irecv(particles_receive_up, *receive_size_up, PARTICLE, rank - num_proc_x, 0, MPI_COMM_WORLD, &recv_request0);
         }
         // upperleft
         if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
-            MPI_Irecv(particles_receive_upperleft, *receive_size_upperleft, PARTICLE, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request1);
+            MPI_Irecv(particles_receive_upperleft, *receive_size_upperleft, PARTICLE, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request1);
         }
         // left
         if( proc_x_current - 1 >=0){
@@ -761,15 +761,15 @@ int main( int argc, char **argv )
         }
         // lowerleft
         if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
-            MPI_Irecv(particles_receive_lowerleft, *receive_size_lowerleft, PARTICLE, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request3);
+            MPI_Irecv(particles_receive_lowerleft, *receive_size_lowerleft, PARTICLE, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request3);
         }
         // down
         if(proc_y_current + 1 < num_proc_y){
-            MPI_Irecv(particles_receive_down, *receive_size_down, PARTICLE, rank - num_proc_x, 0, MPI_COMM_WORLD,&recv_request4);
+            MPI_Irecv(particles_receive_down, *receive_size_down, PARTICLE, rank + num_proc_x, 0, MPI_COMM_WORLD,&recv_request4);
         }
         // lowerright
         if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
-            MPI_Irecv(particles_receive_lowerright, *receive_size_lowerright, PARTICLE, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request5);
+            MPI_Irecv(particles_receive_lowerright, *receive_size_lowerright, PARTICLE, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request5);
         }
         // right
         if(proc_x_current + 1 < num_proc_x){
@@ -777,7 +777,7 @@ int main( int argc, char **argv )
         }
         // upperright
         if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
-            MPI_Irecv(particles_receive_upperright, *receive_size_upperright, PARTICLE, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request7);
+            MPI_Irecv(particles_receive_upperright, *receive_size_upperright, PARTICLE, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request7);
         }
         MPI_Barrier(MPI_COMM_WORLD); //
 
