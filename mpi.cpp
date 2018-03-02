@@ -296,9 +296,9 @@ int main( int argc, char **argv )
                 //
                 // iterate over all the particles in this map
                 //
-                // if (rank == 0 && step < 3){
-                //    std::cout<<"this bin's particle num is : "<<p1_map.size()<<std::endl;
-                // }
+                if (rank == 0 && step < 3){
+                   std::cout<<"this bin's particle num is : "<<p1_map.size()<<std::endl;
+                }
                 for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
                     //  
                     // store set of neighbor index of this bin
@@ -329,12 +329,12 @@ int main( int argc, char **argv )
 
                                 // DEBUG - print acceleration before applying force
                                 // if (step == 0){
-                                   std::cout<<"I am "<<rank<<" before p1 acceleration x "<<p1->second.ax<<std::endl;
-                                    std::cout<<"I am "<<rank<<" before p1 acceleration y "<<p1->second.ay<<std::endl;
-                                    std::cout<<"I am "<<rank<<" My x is"<<p1->second.x<<std::endl;
-                                    std::cout<<"I am "<<rank<<" My y is"<<p1->second.y<<std::endl;
-                                    std::cout<<"I am "<<rank<<" My neighbour x is "<<p2->second.x<<std::endl;
-                                    std::cout<<"I am "<<rank<<" My neighbour y is "<<p2->second.y<<std::endl;
+                                   // std::cout<<"I am "<<rank<<" before p1 acceleration x "<<p1->second.ax<<std::endl;
+                                   //  std::cout<<"I am "<<rank<<" before p1 acceleration y "<<p1->second.ay<<std::endl;
+                                   //  std::cout<<"I am "<<rank<<" My x is"<<p1->second.x<<std::endl;
+                                   //  std::cout<<"I am "<<rank<<" My y is"<<p1->second.y<<std::endl;
+                                   //  std::cout<<"I am "<<rank<<" My neighbour x is "<<p2->second.x<<std::endl;
+                                   //  std::cout<<"I am "<<rank<<" My neighbour y is "<<p2->second.y<<std::endl;
                                 // }
                                 apply_force( p1->second, p2->second,&dmin,&davg,&navg);
                                 // DEBUG - print acceleration after applying force
