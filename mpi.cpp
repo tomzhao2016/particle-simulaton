@@ -83,12 +83,6 @@ int main( int argc, char **argv )
     // The total number of processes available to us are n_proc.
     int num_proc_x = (int) floor(sqrt(number_of_processors)); // The number of processors along the x-axis.
     int num_proc_y = (int) floor(number_of_processors) / num_proc_x; // The number of processors along the y-axis.
-    printf("Number of total processes %d", number_of_processors);
-    fflush(stdout);
-    printf("Number of processes_x %d\n", num_proc_x);
-    fflush(stdout);
-    printf("Number of processes_y %d\n", num_proc_y);
-    fflush(stdout);
 
 
     /*****************************************
@@ -201,14 +195,6 @@ int main( int argc, char **argv )
     int proc_y_current = rank/num_proc_x;
     int proc_x_current = rank%num_proc_x;
 
-    if (proc_y_current < 0 || proc_y_current >= num_proc_y)
-    {
-        std::cout<<"Problem in line 176."<<std::endl;
-    }
-    if (proc_x_current < 0 || proc_x_current >= num_proc_x)
-    {
-        std::cout<<"Problem in line 180."<<std::endl;
-    }
 
     // The new processor of the particle.
     int proc_x_new, proc_y_new;
@@ -347,7 +333,6 @@ int main( int argc, char **argv )
             }
         }
 
-            std::cout<<"I finished updating forces in step, rank "<<step<<" "<<rank<<std::endl;
             /****************************
              * Statistical data
              *************************/
@@ -370,8 +355,6 @@ int main( int argc, char **argv )
                     if (rdmin < absmin) absmin = rdmin;
                 }
             }
-
-            std::cout<<"I finished doing statistics in step, rank "<<step<<" "<<rank<<std::endl;
 
             //
             // 2.move particles and save all the native particles to a map
@@ -416,8 +399,6 @@ int main( int argc, char **argv )
                 }
             }
 
-
-           std::cout<<"I finished moving in step, rank "<<step<<" "<<rank<<std::endl;
 //        // 3.1 send and receive particles to/from other processor
 //        // for processor_id,particle_t in M:
 //        //   MPI_send(particle_t to native/edge)
@@ -428,10 +409,8 @@ int main( int argc, char **argv )
             int *local_size_native = (int *) malloc(sizeof(int));
 
 
-        std::map<double, particle_t>::iterator tmp;
-        // for (tmp = local_particles_native_map.begin(); tmp != local_particles_native_map.end(); ++tmp){
-        //     //std::cout<<"Step, Particle ID, X, Y"<<step<<" "<<tmp->first<<" "<<(tmp->second).x<<" "<<(tmp->second).y<<std::endl;
-        // }
+            std::map<double, particle_t>::iterator tmp;
+
 
             *local_size_native = local_particles_native_map.size();
 
@@ -471,20 +450,6 @@ int main( int argc, char **argv )
                 }
                 if (proc_y_new == num_proc_y) {
                     proc_y_new--;
-                }
-
-                if (proc_y_current < 0 || proc_y_current >= num_proc_y) {
-                    std::cout << "Problem in line 457" << std::endl;
-                }
-                if (proc_x_current < 0 || proc_x_current >= num_proc_x) {
-                    std::cout << "Problem in line 461" << std::endl;
-                }
-
-                if (proc_x_new < 0 || proc_x_new >= num_proc_x) {
-                    std::cout << "Problem in line 466" << std::endl;
-                }
-                if (proc_y_new < 0 || proc_y_new >= num_proc_y) {
-                    std::cout << "Problem in line 470" << std::endl;
                 }
 
                 if (proc_y_new != proc_y_current ||
@@ -529,7 +494,7 @@ int main( int argc, char **argv )
                     index_keep.insert(i); // indices of particles kept in the current processor
                 }
             }
-        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 532"<<std::endl;
+        //std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 532"<<std::endl;
 //        /*
 //          assign memory for 8 arrays of particles to be sent
 //        */
@@ -541,7 +506,7 @@ int main( int argc, char **argv )
             particle_t *particles_send_lowerright = (particle_t *) malloc(*send_size_lowerright * sizeof(particle_t));
             particle_t *particles_send_right = (particle_t *) malloc(*send_size_right * sizeof(particle_t));
             particle_t *particles_send_upperright = (particle_t *) malloc(*send_size_upperright * sizeof(particle_t));
-      std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 544"<<std::endl;
+      //std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 544"<<std::endl;
 //        // /*
 //        //   populate these 8 arrays of particles to be sent
 //        // */
@@ -554,7 +519,7 @@ int main( int argc, char **argv )
             int index_lowerright = 0;
             int index_right = 0;
             int index_upperright = 0;
-      std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 557"<<std::endl;
+      //std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 557"<<std::endl;
             for (it2 = index_send.begin(); it2 != index_send.end(); ++it2) {
 
                 proc_x_new = get_proc_x(local_particles_native[*it2].x, num_proc_x);
@@ -612,26 +577,26 @@ int main( int argc, char **argv )
                 }
             }
 //
-          std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 615"<<std::endl;
+
 //        /*
 //          first send the 8 integer of number of particles, MPI can send empty messages, so always send
 //        */
             // up
-        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 620"<<std::endl;
+
             if (proc_y_current - 1 >= 0) {
                 MPI_Isend(send_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD, &send_request0);
             }
-        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 624"<<std::endl;
+
             // upperleft
             if (proc_y_current - 1 >= 0 && proc_x_current - 1 >= 0) {
                 MPI_Isend(send_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD, &send_request1);
             }
-        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 629"<<std::endl;
+
 //         left
             if (proc_x_current - 1 >= 0) {
                 MPI_Isend(send_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, &send_request2);
             }
-        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 633"<<std::endl;
+
             // lowerleft
             if (proc_y_current + 1 < num_proc_y && proc_x_current - 1 >= 0) {
                 MPI_Isend(send_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD, &send_request3);
@@ -640,13 +605,13 @@ int main( int argc, char **argv )
             if (proc_y_current + 1 < num_proc_y) {
                 MPI_Isend(send_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD, &send_request4);
             }
-        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 643"<<std::endl;
+
             // lowerright
             if (proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x) {
                 MPI_Isend(send_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD, &send_request5);
             }
             // right
-        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 649"<<std::endl;
+
             if (proc_x_current + 1 < num_proc_x) {
                 MPI_Isend(send_size_right, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD, &send_request6);
             }
@@ -654,9 +619,9 @@ int main( int argc, char **argv )
             if (proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x) {
                 MPI_Isend(send_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD, &send_request7);
             }
-        std::cout<<"I am in line 657.."<<std::endl;
+
             MPI_Barrier(MPI_COMM_WORLD); //
-        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 652"<<std::endl;
+       
             /*
               first receive the 8 integer of number of particles
             */
@@ -679,48 +644,48 @@ int main( int argc, char **argv )
             // up
             if (proc_y_current - 1 >= 0) {
                 MPI_Irecv(receive_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD, &recv_request0);
-//            checkMPIError(recv_request0, *receive_size_up, 688);
+
             }
             // upperleft
             if (proc_y_current - 1 >= 0 && proc_x_current - 1 >= 0) {
                 MPI_Irecv(receive_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD, &recv_request1);
-//           checkMPIError(recv_request1, *receive_size_upperleft, 693);
+
             }
             // left
             if (proc_x_current - 1 >= 0) {
                 MPI_Irecv(receive_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, &recv_request2);
-//            checkMPIError(recv_request2, *receive_size_left, 698);
+
             }
             // lowerleft
             if (proc_y_current + 1 < num_proc_y && proc_x_current - 1 >= 0) {
                 MPI_Irecv(receive_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD, &recv_request3);
-//           checkMPIError(recv_request3, *receive_size_lowerleft, 702);
+
             }
             // down
             if (proc_y_current + 1 < num_proc_y) {
                 MPI_Irecv(receive_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD, &recv_request4);
-//            checkMPIError(recv_request4, *receive_size_down, 708);
+
             }
             // lowerright
             if (proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x) {
                 MPI_Irecv(receive_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,
                           &recv_request5);
 
-//            checkMPIError(recv_request5, *receive_size_lowerright, 713);
+
             }
             // right
             if (proc_x_current + 1 < num_proc_x) {
                 MPI_Irecv(receive_size_right, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD, &recv_request6);
-//            checkMPIError(recv_request6, *receive_size_right, 718);
+
             }
             // upperright
             if (proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x) {
                 MPI_Irecv(receive_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,
                           &recv_request7);
-//            checkMPIError(recv_request7, *receive_size_upperright, 723);
+
             }
             MPI_Barrier(MPI_COMM_WORLD);
-        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 716"<<std::endl;
+ 
 //
 //        /*
 //          then send the 8 arrays of particles, MPI can send empty messages, so always send
@@ -765,7 +730,7 @@ int main( int argc, char **argv )
                           MPI_COMM_WORLD, &send_request7);
             }
             MPI_Barrier(MPI_COMM_WORLD); //
-        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 761"<<std::endl;
+
             /*
               assign memory for 8 arrays of particles to be received
             */
@@ -1100,8 +1065,6 @@ int main( int argc, char **argv )
             }
 
         }
-
-        std::cout<<"rank "<<rank<<" index_send_size_new: " <<index_send_new.size()<<std::endl;
 
         /*
           assign memory for 8 arrays of neighboring particles to be sent
