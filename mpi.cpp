@@ -395,29 +395,29 @@ int main( int argc, char **argv )
         //      move(p); 
         //
 
-//        std::map<double, particle_t> local_particles_native_map;
-//        // Move the particles.
-//         for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
-//             //
-//             // if flag !=2 it is a native/edge bin
-//             //
-//             if (local_bins[idx].flag != 2){
-//                 //
-//                 // store map of particles in this bin
-//                 //
-//                 std::map<double,particle_t> p1_map = local_bins[idx].native_particle;
-//                 //
-//                 // iterate over all the particles in this map
-//                 //
-//                 for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
-//                     //
-//                     // move particles
-//                     //
-//                     move(p1->second);
-//                     local_particles_native_map.insert({p1->second.id, p1->second});
-//                 }
-//             }
-//         }
+        std::map<double, particle_t> local_particles_native_map;
+        // Move the particles.
+         for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
+             //
+             // if flag !=2 it is a native/edge bin
+             //
+             if (local_bins[idx].flag != 2){
+                 //
+                 // store map of particles in this bin
+                 //
+                 std::map<double,particle_t> p1_map = local_bins[idx].native_particle;
+                 //
+                 // iterate over all the particles in this map
+                 //
+                 for(std::map<double,particle_t>::iterator p1 = p1_map.begin(); p1!=p1_map.end(); ++p1){
+                     //
+                     // move particles
+                     //
+                     move(p1->second);
+                     local_particles_native_map.insert({p1->second.id, p1->second});
+                 }
+             }
+         }
 //
 //
 //
