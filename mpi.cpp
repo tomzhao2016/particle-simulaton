@@ -417,6 +417,7 @@ int main( int argc, char **argv )
                      //
                      // move particles
                      //
+                     std::cout<<"Old Info, Step, ID, X, Y "<<step<<" "<<p1->second.id<<" "<<p1->second.x<<" "<<second.y<<std::endl;
                      move(p1->second);
                      local_particles_native_map.insert({p1->second.id, p1->second});
                  }
