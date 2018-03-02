@@ -1005,6 +1005,8 @@ int main( int argc, char **argv )
 
         if (local_size_native)
             free(local_size_native);
+        if (local_particles_native)
+            free(local_particles_native);
         std::cout<<"I am the end of step: "<<step<<std::endl;
 
 
