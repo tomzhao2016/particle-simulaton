@@ -306,7 +306,7 @@ int main( int argc, char **argv )
          ****************************************************************/
         for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
             // if flag !=2 it is a native/edge bin
-            if (local_bins[idx].flag != 2) {
+            if (true) {//(local_bins[idx].flag != 2) {
                 //  
                 // store map of particles in this bin
                 //
@@ -385,7 +385,7 @@ int main( int argc, char **argv )
                 //
                 // if flag !=2 it is a native/edge bin
                 //
-                if (local_bins[idx].flag != 2) {
+                if (true) {//(local_bins[idx].flag != 2) {
                     //
                     // store map of particles in this bin
                     //
