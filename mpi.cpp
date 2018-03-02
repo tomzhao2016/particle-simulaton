@@ -452,7 +452,10 @@ int main( int argc, char **argv )
 
         if (rank == 4 && step < 3){
            std::cout<<"I am step here: "<<step<<std::endl;
+           std::cout<<"Particle size: "<<*local_size_native<<std::endl;
         }
+
+
         std::map<double, particle_t>::iterator it_particle;
         for (it_particle = local_particles_native_map.begin(); it_particle != local_particles_native_map.end(); ++it_particle){
             local_particles_native[index_temp0++] = it_particle -> second;
