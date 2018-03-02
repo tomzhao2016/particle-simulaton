@@ -7,9 +7,9 @@
 #include "mpi_helper.h"
 #include <iostream>
 
-void checkError(particle_t *ptr, int index, int line_number)
+void checkError(particle_t *ptr, int index, int line_number, int size)
 {
-    if (index >= sizeof(ptr)/sizeof(ptr[0]))
+    if (index >= size)
     {
         std::cout<<"Error in line "<<line_number<<std::endl;
     }
@@ -573,42 +573,42 @@ int main( int argc, char **argv )
             // up
             if(proc_x_new == proc_x_current && proc_y_new == proc_y_current - 1){
 
-                checkError(particles_send_up, index_up, 571);
+                checkError(particles_send_up, index_up, 571, *send_size_up);
                 particles_send_up[index_up++] = local_particles_native[*it2];
             }
             // upper left
             if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current - 1){
-                checkError(particles_send_upperleft, index_upperleft, 576);
+                checkError(particles_send_upperleft, index_upperleft, 576, *send_size_upperleft);
                 particles_send_upperleft[index_upperleft++] = local_particles_native[*it2];
             }
             // left
             if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current){
-                checkError(particles_send_left, index_left, 581);
+                checkError(particles_send_left, index_left, 581, *send_size_left);
                 particles_send_left[index_left++] = local_particles_native[*it2];
             }
             // lower left
             if(proc_x_new == proc_x_current - 1 && proc_y_new == proc_y_current + 1){
-                checkError(particles_send_lowerleft, index_lowerleft, 586);
+                checkError(particles_send_lowerleft, index_lowerleft, 586, *send_size_lowerleft);
                 particles_send_lowerleft[index_lowerleft++] = local_particles_native[*it2];
             }
             // down
             if(proc_x_new == proc_x_current && proc_y_new == proc_y_current + 1){
-                checkError(particles_send_down, index_down, 591);
+                checkError(particles_send_down, index_down, 591, *send_size_down);
                 particles_send_down[index_down++] = local_particles_native[*it2];
             }
             // lower right
             if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current + 1){
-                checkError(particles_send_lowerright, index_lowerright, 596);
+                checkError(particles_send_lowerright, index_lowerright, 596, *send_size_lowerright);
                 particles_send_lowerright[index_lowerright++] = local_particles_native[*it2];
             }
             // right
             if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current){
-                checkError(particles_send_right, index_right, 601);
+                checkError(particles_send_right, index_right, 601, *send_size_right);
                 particles_send_right[index_right++] = local_particles_native[*it2];
             }
             // upper right
             if(proc_x_new == proc_x_current + 1 && proc_y_new == proc_y_current - 1){
-                checkError(particles_send_upperright, index_upperright, 606);
+                checkError(particles_send_upperright, index_upperright, 606, *send_size_upperright);
                 particles_send_upperright[index_upperright++] = local_particles_native[*it2];
             }
         }
