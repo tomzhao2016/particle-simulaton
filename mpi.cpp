@@ -431,13 +431,8 @@ int main( int argc, char **argv )
                 }   
             }     
         }
-        if (rank == 4 && step < 3){
-           std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
 
-        }
         
-
-
         //
         // 3.1 send and receove particles to/from other processor
         // for processor_id,particle_t in M:
@@ -455,11 +450,19 @@ int main( int argc, char **argv )
         int index_temp0 = 0;
 
 
+        if (rank == 4 && step < 3){
+           std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
 
+        }
 
         std::map<double, particle_t>::iterator it_particle;
         for (it_particle = local_particles_native_map.begin(); it_particle != local_particles_native_map.end(); ++it_particle){
             local_particles_native[index_temp0++] = it_particle -> second;
+        }
+
+        if (rank == 4 && step < 3){
+           std::cout<<"I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
+
         }
         std::cout<<"rank"<<rank<<"local_size_native "<<*local_size_native <<std::endl;
 
