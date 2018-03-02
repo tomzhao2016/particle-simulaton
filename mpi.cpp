@@ -16,6 +16,16 @@ void checkError(particle_t *ptr, int index, int line_number, int size)
 }
 
 
+void checkMPIError(MPI_Request status, int expected, int line)
+{
+    int real;
+    MPI_Get_count(&status, MPI_INT, &real);
+    if (real != expected)
+    {
+        std::cout<<"Real not equal to expected in line "<<line<<std::endl;
+    }
+}
+
 
 //
 //  benchmarking program
@@ -675,34 +685,42 @@ int main( int argc, char **argv )
         // up
         if(proc_y_current - 1 >= 0){
             MPI_Irecv(receive_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&recv_request0);
+            checkMPIError(recv_request0, *receive_size_up, 688);
         }
         // upperleft
         if(proc_y_current - 1 >= 0 && proc_x_current - 1 >=0){
             MPI_Irecv(receive_size_upperleft, 1, MPI_INT, rank - num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request1);
+            checkMPIError(recv_request1, *receive_size_upperleft, 693);
         }
         // left
         if( proc_x_current - 1 >=0){
             MPI_Irecv(receive_size_left, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD,&recv_request2);
+            checkMPIError(recv_request2, *receive_size_left, 698);
         }
         // lowerleft
        if(proc_y_current + 1 < num_proc_y && proc_x_current - 1 >=0){
             MPI_Irecv(receive_size_lowerleft, 1, MPI_INT, rank + num_proc_x - 1, 0, MPI_COMM_WORLD,&recv_request3);
+           checkMPIError(recv_request3, *receive_size_lowerleft, 702);
         }
         // down
         if(proc_y_current + 1 < num_proc_y){
             MPI_Irecv(receive_size_down, 1, MPI_INT, rank + num_proc_x, 0, MPI_COMM_WORLD,&recv_request4);
+            checkMPIError(recv_request4, *receive_size_down, 708);
         }
         // lowerright
         if(proc_y_current + 1 < num_proc_y && proc_x_current + 1 < num_proc_x){
             MPI_Irecv(receive_size_lowerright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request5);
+            checkMPIError(recv_request5, *receive_size_lowerright, 713);
         }
         // right
         if(proc_x_current + 1 < num_proc_x){
             MPI_Irecv(receive_size_right, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD,&recv_request6);
+            checkMPIError(recv_request6, *receive_size_right, 718);
         }
         // upperright
         if(proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x){
             MPI_Irecv(receive_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD,&recv_request7);
+            checkMPIError(recv_request7, *receive_size_upperright, 723);
         }
         MPI_Barrier(MPI_COMM_WORLD);
 
