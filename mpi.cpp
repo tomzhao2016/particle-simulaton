@@ -296,6 +296,7 @@ int main( int argc, char **argv )
         //  iterate over each native bins
         //
         int temp2 = 0;
+        std::cout << "rank "<<rank << "step "<< step << "we can get here"<<std::endl;
         for(int idx = 0; idx < local_bin_row*local_bin_col ; idx++){
             //
             // if flag !=2 it is a native/edge bin
