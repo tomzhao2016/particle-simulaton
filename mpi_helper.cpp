@@ -522,7 +522,7 @@ void clean_local_bins(bin_t *local_bins, int local_bin_size){
 
 int update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_particles_native_map,
 	int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len){
-    int cnt;
+    int cnt = 0;
 	//
 	// This method assign each particle into bins in this processor
 	// local_bins: is empty array of bins needed to be updated
