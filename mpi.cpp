@@ -455,7 +455,7 @@ int main( int argc, char **argv )
            std::cout<<rank<<" 3. I am step here local_particles_native_map size is : "<<*local_size_native<<std::endl;
         }
 
-        *local_particles_native = (particle_t *)malloc(*local_size_native*sizeof(particle_t));
+        local_particles_native = new particle_t[*local_size_native];
         if (step < 3){
            std::cout<<rank<<" 4. I am step here local_particles_native_map size is : "<<local_particles_native_map.size()<<std::endl;
         }
