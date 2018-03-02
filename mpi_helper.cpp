@@ -60,7 +60,7 @@ int* get_bin_size(int num_proc_x, int num_proc_y, int rank, int bin_len){
 		num_bin[0] += 1;
 	else if (idx_row == 0 && idx_row != num_proc_x - 1)
 		num_bin[0] += 1;
-	else if(idx_row > 0 && idx_row < num_proc_x - 1)
+	else if (idx_row > 0 && idx_row < num_proc_x - 1)
 		num_bin[0] += 2;
 	return num_bin;
 
@@ -382,23 +382,23 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 
 
 
-	if(num_proc_x == 1 || num_proc_y == 1){
+	if (num_proc_x == 1 || num_proc_y == 1) {
 		// bottom
-		if (num_proc_x == 1 && num_proc_y != 1){
-			if(idx_col>0 && idx_col<num_proc_y-1){
-				for(int i = 0; i<local_row_size;i++){
+		if (num_proc_x == 1 && num_proc_y != 1) {
+			if (idx_col>0 && idx_col<num_proc_y-1) {
+				for (int i = 0; i<local_row_size;i++) {
 					local_bins[i].flag = 2;
 					local_bins[i + local_row_size].flag = 1;
 					local_bins[(local_col_size-1)*local_row_size + i].flag = 2;
 					local_bins[(local_col_size-2)*local_row_size + i].flag = 1;
 				}
 			}
-			else if(idx_col == num_proc_y - 1）
+			else if(idx_col == num_proc_y - 1)
 			for(int i = 0; i<local_row_size;i++){
 				local_bins[i].flag = 2;
 				local_bins[i + local_row_size].flag = 1;
 			}
-			else if(idx_col == 0）
+			else if(idx_col == 0)
 			for(int i = 0; i<local_row_size;i++){
 				local_bins[(local_col_size-1)*local_row_size + i].flag = 2;
 				local_bins[(local_col_size-2)*local_row_size + i].flag = 1;
