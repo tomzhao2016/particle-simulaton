@@ -449,7 +449,7 @@ int main( int argc, char **argv )
         *local_size_native = local_particles_native_map.size();
 
 
-        particle_t *local_particles_native = （particle_t*）malloc(*local_size_native*sizeof(particle_t));
+        particle_t *local_particles_native = (particle_t*)malloc(*local_size_native*sizeof(particle_t));
         int index_temp0 = 0;
 
 
