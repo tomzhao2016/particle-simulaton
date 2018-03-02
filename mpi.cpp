@@ -529,7 +529,7 @@ int main( int argc, char **argv )
                     index_keep.insert(i); // indices of particles kept in the current processor
                 }
             }
-//
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 532"<<std::endl;
 //        /*
 //          assign memory for 8 arrays of particles to be sent
 //        */
@@ -649,7 +649,7 @@ int main( int argc, char **argv )
                 MPI_Isend(send_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD, &send_request7);
             }
             MPI_Barrier(MPI_COMM_WORLD); //
-
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 652"<<std::endl;
             /*
               first receive the 8 integer of number of particles
             */
@@ -713,7 +713,7 @@ int main( int argc, char **argv )
 //            checkMPIError(recv_request7, *receive_size_upperright, 723);
             }
             MPI_Barrier(MPI_COMM_WORLD);
-
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 716"<<std::endl;
 //
 //        /*
 //          then send the 8 arrays of particles, MPI can send empty messages, so always send
@@ -758,7 +758,7 @@ int main( int argc, char **argv )
                           MPI_COMM_WORLD, &send_request7);
             }
             MPI_Barrier(MPI_COMM_WORLD); //
-
+        std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 761"<<std::endl;
             /*
               assign memory for 8 arrays of particles to be received
             */
