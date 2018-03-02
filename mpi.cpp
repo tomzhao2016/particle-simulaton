@@ -234,6 +234,69 @@ int main( int argc, char **argv )
     int proc_x, proc_y;
     int proc_x_new, proc_y_new;
 
+    /*
+      assign memory for 8 arrays of particles to be received
+    */ 
+    particle_t *particles_receive_up = (particle_t*) malloc (*receive_size_up * sizeof(particle_t));
+    particle_t *particles_receive_upperleft = (particle_t*) malloc (*receive_size_upperleft * sizeof(particle_t));
+    particle_t *particles_receive_left = (particle_t*) malloc (*receive_size_left * sizeof(particle_t));
+    particle_t *particles_receive_lowerleft = (particle_t*) malloc (*receive_size_lowerleft * sizeof(particle_t));
+    particle_t *particles_receive_down = (particle_t*) malloc (*receive_size_down * sizeof(particle_t));
+    particle_t *particles_receive_lowerright = (particle_t*) malloc (*receive_size_lowerright * sizeof(particle_t));
+    particle_t *particles_receive_right = (particle_t*) malloc (*receive_size_right * sizeof(particle_t));
+    particle_t *particles_receive_upperright = (particle_t*) malloc (*receive_size_upperright * sizeof(particle_t));
+    /*
+      assign memory for 8 arrays of particles to be sent
+    */
+    particle_t *particles_send_up = (particle_t*) malloc (*send_size_up * sizeof(particle_t));
+    particle_t *particles_send_upperleft = (particle_t*) malloc (*send_size_upperleft * sizeof(particle_t));
+    particle_t *particles_send_left = (particle_t*) malloc (*send_size_left * sizeof(particle_t));
+    particle_t *particles_send_lowerleft = (particle_t*) malloc (*send_size_lowerleft * sizeof(particle_t));
+    particle_t *particles_send_down = (particle_t*) malloc (*send_size_down * sizeof(particle_t));
+    particle_t *particles_send_lowerright = (particle_t*) malloc (*send_size_lowerright * sizeof(particle_t));
+    particle_t *particles_send_right = (particle_t*) malloc (*send_size_right * sizeof(particle_t));
+    particle_t *particles_send_upperright = (particle_t*) malloc (*send_size_upperright * sizeof(particle_t));
+    /*
+      first receive the 8 integer of number of particles
+    */
+    int *receive_size_up = (int *)malloc(sizeof(int));
+    *receive_size_up = 0;
+    int *receive_size_upperleft = (int *)malloc(sizeof(int));
+    *receive_size_upperleft = 0;
+    int *receive_size_left = (int *)malloc(sizeof(int));
+    *receive_size_left = 0;
+    int *receive_size_lowerleft = (int *)malloc(sizeof(int));
+    *receive_size_lowerleft = 0;
+    int *receive_size_down = (int *)malloc(sizeof(int));
+    *receive_size_down = 0;
+    int *receive_size_lowerright = (int *)malloc(sizeof(int));
+    *receive_size_lowerright = 0;
+    int *receive_size_right = (int *)malloc(sizeof(int));
+    *receive_size_right = 0;
+    int *receive_size_upperright = (int *)malloc(sizeof(int));
+    *receive_size_upperright = 0;
+    // assuming that I know the native particles, the number of native particles, and their new x and y in each processor
+    // size of array of particles to be sent to 8 neighboring processors
+    int *send_size_up = (int *)malloc(sizeof(int));
+    *send_size_up = 0;
+    int *send_size_upperleft = (int *)malloc(sizeof(int));
+    *send_size_upperleft = 0;
+    int *send_size_left = (int *)malloc(sizeof(int));
+    *send_size_left = 0;
+    int *send_size_lowerleft = (int *)malloc(sizeof(int));
+    *send_size_lowerleft = 0;
+    int *send_size_down = (int *)malloc(sizeof(int));
+    *send_size_down = 0;
+    int *send_size_lowerright = (int *)malloc(sizeof(int));
+    *send_size_lowerright = 0;
+    int *send_size_right = (int *)malloc(sizeof(int));
+    *send_size_right = 0;
+    int *send_size_upperright = (int *)malloc(sizeof(int));
+    *send_size_upperright = 0;
+
+
+
+
 
     //
     // bin_len is the total number of bins before divide into local processors
@@ -458,23 +521,23 @@ int main( int argc, char **argv )
 
         std::cout<<"rank"<<rank<<"local_size_native "<<*local_size_native <<std::endl;
 
-        // assuming that I know the native particles, the number of native particles, and their new x and y in each processor
-        // size of array of particles to be sent to 8 neighboring processors
-        int *send_size_up = (int *)malloc(sizeof(int));
+        // // assuming that I know the native particles, the number of native particles, and their new x and y in each processor
+        // // size of array of particles to be sent to 8 neighboring processors
+        // int *send_size_up = (int *)malloc(sizeof(int));
         *send_size_up = 0;
-        int *send_size_upperleft = (int *)malloc(sizeof(int));
+        // int *send_size_upperleft = (int *)malloc(sizeof(int));
         *send_size_upperleft = 0;
-        int *send_size_left = (int *)malloc(sizeof(int));
+        // int *send_size_left = (int *)malloc(sizeof(int));
         *send_size_left = 0;
-        int *send_size_lowerleft = (int *)malloc(sizeof(int));
+        // int *send_size_lowerleft = (int *)malloc(sizeof(int));
         *send_size_lowerleft = 0;
-        int *send_size_down = (int *)malloc(sizeof(int));
+        // int *send_size_down = (int *)malloc(sizeof(int));
         *send_size_down = 0;
-        int *send_size_lowerright = (int *)malloc(sizeof(int));
+        // int *send_size_lowerright = (int *)malloc(sizeof(int));
         *send_size_lowerright = 0;
-        int *send_size_right = (int *)malloc(sizeof(int));
+        // int *send_size_right = (int *)malloc(sizeof(int));
         *send_size_right = 0;
-        int *send_size_upperright = (int *)malloc(sizeof(int));
+        // int *send_size_upperright = (int *)malloc(sizeof(int));
         *send_size_upperright = 0;
         // store the indices of particles to be sent/ or not sent, save time
         std::set<int>  index_send; 
@@ -546,17 +609,17 @@ int main( int argc, char **argv )
             std::cout<<"rank "<<rank<<" index_keep_size: " <<index_keep.size()<<std::endl;
             std::cout<<"rank "<<rank<<" index_send_size: " <<index_send.size()<<std::endl;
 
-        /*
-          assign memory for 8 arrays of particles to be sent
-        */
-        particle_t *particles_send_up = (particle_t*) malloc (*send_size_up * sizeof(particle_t));
-        particle_t *particles_send_upperleft = (particle_t*) malloc (*send_size_upperleft * sizeof(particle_t));
-        particle_t *particles_send_left = (particle_t*) malloc (*send_size_left * sizeof(particle_t));
-        particle_t *particles_send_lowerleft = (particle_t*) malloc (*send_size_lowerleft * sizeof(particle_t));
-        particle_t *particles_send_down = (particle_t*) malloc (*send_size_down * sizeof(particle_t));
-        particle_t *particles_send_lowerright = (particle_t*) malloc (*send_size_lowerright * sizeof(particle_t));
-        particle_t *particles_send_right = (particle_t*) malloc (*send_size_right * sizeof(particle_t));
-        particle_t *particles_send_upperright = (particle_t*) malloc (*send_size_upperright * sizeof(particle_t));
+        // /*
+        //   assign memory for 8 arrays of particles to be sent
+        // */
+        // particle_t *particles_send_up = (particle_t*) malloc (*send_size_up * sizeof(particle_t));
+        // particle_t *particles_send_upperleft = (particle_t*) malloc (*send_size_upperleft * sizeof(particle_t));
+        // particle_t *particles_send_left = (particle_t*) malloc (*send_size_left * sizeof(particle_t));
+        // particle_t *particles_send_lowerleft = (particle_t*) malloc (*send_size_lowerleft * sizeof(particle_t));
+        // particle_t *particles_send_down = (particle_t*) malloc (*send_size_down * sizeof(particle_t));
+        // particle_t *particles_send_lowerright = (particle_t*) malloc (*send_size_lowerright * sizeof(particle_t));
+        // particle_t *particles_send_right = (particle_t*) malloc (*send_size_right * sizeof(particle_t));
+        // particle_t *particles_send_upperright = (particle_t*) malloc (*send_size_upperright * sizeof(particle_t));
        
         // /*
         //   populate these 8 arrays of particles to be sent
@@ -649,25 +712,25 @@ int main( int argc, char **argv )
         }
         MPI_Barrier(MPI_COMM_WORLD); //
 
-        /*
-          first receive the 8 integer of number of particles
-        */
-        int *receive_size_up = (int *)malloc(sizeof(int));
-        *receive_size_up = 0;
-        int *receive_size_upperleft = (int *)malloc(sizeof(int));
-        *receive_size_upperleft = 0;
-        int *receive_size_left = (int *)malloc(sizeof(int));
-        *receive_size_left = 0;
-        int *receive_size_lowerleft = (int *)malloc(sizeof(int));
-        *receive_size_lowerleft = 0;
-        int *receive_size_down = (int *)malloc(sizeof(int));
-        *receive_size_down = 0;
-        int *receive_size_lowerright = (int *)malloc(sizeof(int));
-        *receive_size_lowerright = 0;
-        int *receive_size_right = (int *)malloc(sizeof(int));
-        *receive_size_right = 0;
-        int *receive_size_upperright = (int *)malloc(sizeof(int));
-        *receive_size_upperright = 0;
+        // /*
+        //   first receive the 8 integer of number of particles
+        // */
+        // int *receive_size_up = (int *)malloc(sizeof(int));
+         *receive_size_up = 0;
+        // int *receive_size_upperleft = (int *)malloc(sizeof(int));
+         *receive_size_upperleft = 0;
+        // int *receive_size_left = (int *)malloc(sizeof(int));
+         *receive_size_left = 0;
+        // int *receive_size_lowerleft = (int *)malloc(sizeof(int));
+         *receive_size_lowerleft = 0;
+        // int *receive_size_down = (int *)malloc(sizeof(int));
+         *receive_size_down = 0;
+        // int *receive_size_lowerright = (int *)malloc(sizeof(int));
+         *receive_size_lowerright = 0;
+        // int *receive_size_right = (int *)malloc(sizeof(int));
+         *receive_size_right = 0;
+        // int *receive_size_upperright = (int *)malloc(sizeof(int));
+         *receive_size_upperright = 0;
         // up
         if(proc_y_current - 1 >= 0){
             MPI_Irecv(receive_size_up, 1, MPI_INT, rank - num_proc_x, 0, MPI_COMM_WORLD,&recv_request0);
@@ -739,17 +802,17 @@ int main( int argc, char **argv )
         }
         MPI_Barrier(MPI_COMM_WORLD); //
 
-        /*
-          assign memory for 8 arrays of particles to be received
-        */ 
-        particle_t *particles_receive_up = (particle_t*) malloc (*receive_size_up * sizeof(particle_t));
-        particle_t *particles_receive_upperleft = (particle_t*) malloc (*receive_size_upperleft * sizeof(particle_t));
-        particle_t *particles_receive_left = (particle_t*) malloc (*receive_size_left * sizeof(particle_t));
-        particle_t *particles_receive_lowerleft = (particle_t*) malloc (*receive_size_lowerleft * sizeof(particle_t));
-        particle_t *particles_receive_down = (particle_t*) malloc (*receive_size_down * sizeof(particle_t));
-        particle_t *particles_receive_lowerright = (particle_t*) malloc (*receive_size_lowerright * sizeof(particle_t));
-        particle_t *particles_receive_right = (particle_t*) malloc (*receive_size_right * sizeof(particle_t));
-        particle_t *particles_receive_upperright = (particle_t*) malloc (*receive_size_upperright * sizeof(particle_t));
+        // /*
+        //   assign memory for 8 arrays of particles to be received
+        // */ 
+        // particle_t *particles_receive_up = (particle_t*) malloc (*receive_size_up * sizeof(particle_t));
+        // particle_t *particles_receive_upperleft = (particle_t*) malloc (*receive_size_upperleft * sizeof(particle_t));
+        // particle_t *particles_receive_left = (particle_t*) malloc (*receive_size_left * sizeof(particle_t));
+        // particle_t *particles_receive_lowerleft = (particle_t*) malloc (*receive_size_lowerleft * sizeof(particle_t));
+        // particle_t *particles_receive_down = (particle_t*) malloc (*receive_size_down * sizeof(particle_t));
+        // particle_t *particles_receive_lowerright = (particle_t*) malloc (*receive_size_lowerright * sizeof(particle_t));
+        // particle_t *particles_receive_right = (particle_t*) malloc (*receive_size_right * sizeof(particle_t));
+        // particle_t *particles_receive_upperright = (particle_t*) malloc (*receive_size_upperright * sizeof(particle_t));
         
         /*
           receive the 8 arrays of particles
@@ -931,78 +994,11 @@ int main( int argc, char **argv )
         // free all variables
         //
 
-        // if (receive_size_up)
-        //     free( receive_size_up );
-        // if (receive_size_upperleft)
-        //     free( receive_size_upperleft );
-        // if (receive_size_left)
-        //     free( receive_size_left );
-        // if (receive_size_lowerleft)
-        //     free( receive_size_lowerleft );
-        // if (receive_size_down)
-        //     free( receive_size_down );
-        // if (receive_size_lowerright)
-        //     free( receive_size_lowerright );
-        // if (receive_size_right)
-        //     free( receive_size_right );
-        // if (receive_size_upperright)
-        //     free(receive_size_upperright);
+        if (local_size_native)
+            free(local_size_native);
+        if (local_particles_native)
+            free(local_particles_native);
 
-        // if (send_size_up)
-        //     free( send_size_up );
-        // if (send_size_upperleft)
-        //     free( send_size_upperleft );
-        // if (send_size_left)
-        //     free( send_size_left );
-        // if (send_size_lowerleft)
-        //     free( receive_size_lowerleft );
-        // if (send_size_down)
-        //     free( send_size_down );
-        // if (send_size_lowerright)
-        //     free( send_size_lowerright );
-        // if (send_size_right)
-        //     free( receive_size_right );
-        // if (send_size_upperright)
-        //     free(receive_size_upperright);
-
-        // if (particles_receive_up)
-        //     free( particles_receive_up );
-        // if (particles_receive_upperleft)
-        //     free( particles_receive_upperleft );
-        // if (particles_receive_left)
-        //     free( particles_receive_left );
-        // if (particles_receive_lowerleft)
-        //     free( particles_receive_lowerleft );
-        // if (particles_receive_down)
-        //     free( particles_receive_down );
-        // if (particles_receive_lowerright)
-        //     free( particles_receive_lowerright );
-        // if (particles_receive_right)
-        //     free( particles_receive_right );
-        // if (particles_receive_upperright)
-        //     free(particles_receive_upperright);
-
-        // if (particles_send_up)
-        //     free( particles_send_up );
-        // if (particles_send_upperleft)
-        //     free( particles_send_upperleft );
-        // if (particles_send_left)
-        //     free( particles_send_left );
-        // if (particles_send_lowerleft)
-        //     free( particles_send_lowerleft );
-        // if (particles_send_down)
-        //     free( particles_send_down );
-        // if (particles_send_lowerright)
-        //     free( particles_send_lowerright );
-        // if (particles_send_right)
-        //     free( particles_send_right );
-        // if (particles_send_upperright)
-        //     free(particles_send_upperright);
-
-        // if (local_size_native)
-        //     free(local_size_native);
-        // if (local_particles_native)
-        //     free(local_particles_native);
         MPI_Barrier(MPI_COMM_WORLD);
         std::cout<<"I am the end of step: "<<step<<std::endl;
 
@@ -1039,12 +1035,80 @@ int main( int argc, char **argv )
     //
     //  release resources
     //
+    if (receive_size_up)
+        free( receive_size_up );
+    if (receive_size_upperleft)
+        free( receive_size_upperleft );
+    if (receive_size_left)
+        free( receive_size_left );
+    if (receive_size_lowerleft)
+        free( receive_size_lowerleft );
+    if (receive_size_down)
+        free( receive_size_down );
+    if (receive_size_lowerright)
+        free( receive_size_lowerright );
+    if (receive_size_right)
+        free( receive_size_right );
+    if (receive_size_upperright)
+        free(receive_size_upperright);
+
+    if (send_size_up)
+        free( send_size_up );
+    if (send_size_upperleft)
+        free( send_size_upperleft );
+    if (send_size_left)
+        free( send_size_left );
+    if (send_size_lowerleft)
+        free( receive_size_lowerleft );
+    if (send_size_down)
+        free( send_size_down );
+    if (send_size_lowerright)
+        free( send_size_lowerright );
+    if (send_size_right)
+        free( receive_size_right );
+    if (send_size_upperright)
+        free(receive_size_upperright);
+
+    if (particles_receive_up)
+        free( particles_receive_up );
+    if (particles_receive_upperleft)
+        free( particles_receive_upperleft );
+    if (particles_receive_left)
+        free( particles_receive_left );
+    if (particles_receive_lowerleft)
+        free( particles_receive_lowerleft );
+    if (particles_receive_down)
+        free( particles_receive_down );
+    if (particles_receive_lowerright)
+        free( particles_receive_lowerright );
+    if (particles_receive_right)
+        free( particles_receive_right );
+    if (particles_receive_upperright)
+        free(particles_receive_upperright);
+
+    if (particles_send_up)
+        free( particles_send_up );
+    if (particles_send_upperleft)
+        free( particles_send_upperleft );
+    if (particles_send_left)
+        free( particles_send_left );
+    if (particles_send_lowerleft)
+        free( particles_send_lowerleft );
+    if (particles_send_down)
+        free( particles_send_down );
+    if (particles_send_lowerright)
+        free( particles_send_lowerright );
+    if (particles_send_right)
+        free( particles_send_right );
+    if (particles_send_upperright)
+        free(particles_send_upperright);
     if ( fsum )
         fclose( fsum );
     if (partition_offsets)
         free( partition_offsets );
     if (partition_sizes)
         free( partition_sizes );
+
     // // free( local );
     if (particles)
         free( particles );
