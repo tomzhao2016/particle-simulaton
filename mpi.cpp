@@ -654,6 +654,7 @@ int main( int argc, char **argv )
             if (proc_y_current - 1 >= 0 && proc_x_current + 1 < num_proc_x) {
                 MPI_Isend(send_size_upperright, 1, MPI_INT, rank - num_proc_x + 1, 0, MPI_COMM_WORLD, &send_request7);
             }
+        std::cout<<"I am in line 657.."<<std::endl;
             MPI_Barrier(MPI_COMM_WORLD); //
         std::cout<<"I am in step "<<step<<" at rank "<<rank<<" at line 652"<<std::endl;
             /*
