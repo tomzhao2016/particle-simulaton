@@ -417,7 +417,7 @@ int main( int argc, char **argv )
                      //
                      // move particles
                      //
-                     std::cout<<"Old Info, Step, ID, X, Y "<<step<<" "<<p1->second.id<<" "<<p1->second.x<<" "<<p1->second.y<<std::endl;
+//                     std::cout<<"Old Info, Step, ID, X, Y "<<step<<" "<<p1->second.id<<" "<<p1->second.x<<" "<<p1->second.y<<std::endl;
                      move(p1->second);
                      local_particles_native_map.insert({p1->second.id, p1->second});
                  }
@@ -441,11 +441,11 @@ int main( int argc, char **argv )
 
         std::map<double, particle_t>::iterator tmp;
         for (tmp = local_particles_native_map.begin(); tmp != local_particles_native_map.end(); ++tmp){
-            std::cout<<"Trying to print individually"<<step;
-            std::cout<<"Trying to print individually first"<<tmp->first;
-            std::cout<<"Trying to print individually second id"<<tmp->second.id;
-
-            std::cout<<"Step, Particle ID, X, Y"<<step<<" "<<tmp->first<<" "<<(tmp->second).x<<" "<<(tmp->second).y<<std::endl;
+//            std::cout<<"Trying to print individually"<<step;
+//            std::cout<<"Trying to print individually first"<<tmp->first;
+//            std::cout<<"Trying to print individually second id"<<tmp->second.id;
+//
+//            std::cout<<"Step, Particle ID, X, Y"<<step<<" "<<tmp->first<<" "<<(tmp->second).x<<" "<<(tmp->second).y<<std::endl;
         }
 
 
