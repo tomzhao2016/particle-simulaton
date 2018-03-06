@@ -159,8 +159,6 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 		process_ids[index++] = (down_proc * num_proc_x) + x_proc + 1;
 	}
 
-
-
 	// Debugging
 	// std::cout<<"My pos x is "<< pos_x<<" and pos y is "<<pos_y<<std::endl;
 	// std::cout<<"The processors I belong to are :::: \n\n\n";
@@ -171,16 +169,17 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 	// }
 	// std::cout<<"\n\n\n";
 	return process_ids;
-
-
-
-
-
 }
-//
-// This method map a global bin index into a local index inside the proc
-//
+
 int glob2loc_row(int global_row, int idx_row, int num_proc_x, int num_bin_row){
+	//
+	// This method map a global bin index into a local index inside the proc
+	// global_row: global row index for this bin before distributed
+	// idx_row: row index of the processor
+	// num_proc_x: row total number of processors
+	// num_bin_row: this should be the native&edge row bin number
+	// 
+
 	int local_row;
 	local_row = global_row - idx_row*num_bin_row;
 	if (idx_row > 0)
@@ -189,6 +188,13 @@ int glob2loc_row(int global_row, int idx_row, int num_proc_x, int num_bin_row){
 }
 
 int glob2loc_col(int global_col, int idx_col, int num_proc_y, int num_bin_col){
+	//
+	// This method map a global bin index into a local index inside the proc
+	// global_col: global col index for this bin before distributed
+	// idx_col: col index of the processor
+	// num_proc_y: col total number of processors
+	// num_bin_col: this should be the native&edge col bin number
+	//
 	int local_col;
 	local_col = global_col - idx_col*num_bin_col;
 	if (idx_col > 0)
@@ -470,26 +476,111 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	
 }
 
-// void clean_local_bins(bin_t *local_bins, int local_bin_size){
-// 	//
-// 	// This method cleans the particles in all local_bins
-// 	// local_bin: is array of bins in each processor
-// 	// local_bin_size: is the size of this local_bin
-// 	//
-// 	for (int idx = 0; idx<local_bin_size; idx++){
-// 		local_bins[idx].native_particle.clear();
-// 	}
-// }
+void clean_local_bins(bin_t *local_bins, int local_bin_size){
+	//
+	// This method cleans the particles in all local_bins
+	// local_bin: is array of bins in each processor
+	// local_bin_size: is the size of this local_bin
+	//
+	for (int idx = 0; idx<local_bin_size; idx++){
+		local_bins[idx].native_particle.clear();
+	}
+}
 
-// void update_local_bins(bin_t *local_bins, std::map<double,partcle_t>local_particles_native, int local_size_native){
-// 	//
-// 	// This method assign each particle into bins in this processor
-// 	//
-// 	for (std::map<double, particle_t>::iterator it_p = local_particles_native.begin() ;it_p < local_particles_native.end(); ++it_p){
-// 		// global
-// 		it_p->second
-// 	}
+int update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_particles_native,
+	int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len){
 
-// }
+	//
+	// This method assign each particle into bins in this processor
+	// local_bins: is empty array of bins needed to be updated
+	// local_particles_native: are array of new native particles(map) in current processor
+	// local_bin_size: is array[2], which is the row and col num of local bin numbers
+	// num_proc_x and num_proc_y: are x and y numbers of processors
+	// rank: is the id of current processor
+	// bin_len is the total number of bins before scattering particles
+	//
+	// index row of this processor
+	//
+
+	int cnt = 0;
+	int idx_row = rank%num_proc_x;
+	int idx_col = rank/num_proc_x;
+	
+	int local_col_size = local_bin_size[1];
+	int local_row_size = local_bin_size[0];
+	//
+	// nuber of native bins in row and col
+	//
+	int num_bin_row = bin_len/num_proc_x;
+	int num_bin_col = bin_len/num_proc_y;
+	//
+	// width of each bin
+	//
+	double bin_width = get_size()/bin_len;
+	for (std::map<double, particle_t>::iterator it_p = local_particles_native.begin() ;it_p != local_particles_native.end(); ++it_p){
+		//
+		// global index
+		//
+		int global_row = (int)floor(it_p->second.x/bin_width);
+		int global_col = (int)floor(it_p->second.y/bin_width);
+
+		//
+		// Edge case
+		//
+		if (global_row == bin_len){
+			global_row--;
+		}
+		if (global_col == bin_len){
+			global_col--;
+		}
+
+		//
+		// convert to local index
+		//
+		int local_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin_row);
+		int local_col = glob2loc_col(global_col, idx_col, num_proc_y, num_bin_col);
+		//
+		// find cur_bin index
+		//
+		int cur_bin = local_col * local_row_size + local_row;
+		// if( rank == 4 ){
+			// std::cout<<"This particle is "<<it_p->first<<std::endl;
+			// std::cout<<"This particle x is "<<it_p->second.x<<std::endl;
+			// std::cout<<"This particle y is "<<it_p->second.y<<std::endl;
+			// std::cout<<"This particle local_row is "<<local_row<<std::endl;
+			// std::cout<<"This particle local_col is "<<local_col<<std::endl;
+			// std::cout<<"This cur_bin is "<<cur_bin<<std::endl;
+			// std::cout<<"This idx_row  is "<<idx_row<<std::endl;
+			// std::cout<<"This idx_col is "<<idx_col<<std::endl;
+			// std::cout<<"This global_row is "<<global_row<<std::endl;
+			// std::cout<<"This global_col is "<<global_col<<std::endl;
+			// std::cout<<"This bin_width is "<<bin_width<<std::endl;
+			// std::cout<<"This bin_len is "<<bin_len<<std::endl;
+			// std::cout<<"This local_bin_size is "<<local_row_size*local_col_size<<std::endl;
+			// std::cout<<"The size is "<<get_size()<<std::endl;
+		local_bins[cur_bin].native_particle.insert({it_p->second.id, it_p->second});
+		// }
+
+
+		
+		
+	}
+
+	for (int idx = 0; idx<local_col_size*local_row_size; idx++){
+		 if(local_bins[idx].flag != 2){
+			for (std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin();it_p != local_bins[idx].native_particle.end();++it_p){
+				cnt++;
+			}
+	    } else{
+	    	for (std::map<double, particle_t>::iterator it_p = local_bins[idx].native_particle.begin();it_p != local_bins[idx].native_particle.end();++it_p){
+				// std::cout<<"rank "<< rank <<"**************** x of lost bin "<<(it_p -> second).x<<std::endl;
+				// std::cout<<"rank "<< rank <<"**************** y of lost bin "<<(it_p -> second).y<<std::endl;
+			}
+	    }
+	}
+	return cnt;
+
+
+}
 
 

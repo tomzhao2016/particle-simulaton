@@ -483,7 +483,11 @@ int main( int argc, char **argv )
         MPI_Isend(send_size_upperright, 1, MPI_INT, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
     }
     MPI_Barrier(MPI_COMM_WORLD); //
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> becc70092391b2312a6f9271eeb8beb007baadd1
     /*
       first receive the 8 integer of number of particles
     */
@@ -576,6 +580,17 @@ int main( int argc, char **argv )
         MPI_Isend(particles_send_upperright, *send_size_upperright, PARTICLE, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
     }
     MPI_Barrier(MPI_COMM_WORLD); //
+<<<<<<< HEAD
+=======
+    free(particles_send_up);
+    free(particles_send_upperleft);
+    free(particles_send_left);
+    free(particles_send_lowerleft);
+    free(particles_send_down);
+    free(particles_send_lowerright);
+    free(particles_send_right);
+    free(particles_send_upperright);
+>>>>>>> becc70092391b2312a6f9271eeb8beb007baadd1
 
 
     /*
@@ -718,7 +733,18 @@ int main( int argc, char **argv )
     //std::cout<<"rank "<<rank<<" " <<local_particles_native_map_new.size()<<std::endl;
     std::cout<<"rank "<<rank<<"local_particles_native_map_new.size() " <<local_particles_native_map_new.size()<<std::endl;
     //std::cout<<"finished sending receiving native particles"<<std::endl;
+<<<<<<< HEAD
 
+=======
+    free(particles_receive_up);
+    free(particles_receive_upperleft);
+    free(particles_receive_left);
+    free(particles_receive_lowerleft);
+    free(particles_receive_down);
+    free(particles_receive_lowerright);
+    free(particles_receive_right);
+    free(particles_receive_upperright);
+>>>>>>> becc70092391b2312a6f9271eeb8beb007baadd1
 
     /*
         ******************************************************************
@@ -1096,6 +1122,18 @@ int main( int argc, char **argv )
         MPI_Isend(particles_send_upperright_new, *send_size_upperright_new, PARTICLE, rank + num_proc_x + 1, 0, MPI_COMM_WORLD,&send_request7);
     }
     MPI_Barrier(MPI_COMM_WORLD); //
+<<<<<<< HEAD
+=======
+    free(particles_send_up_new);
+    free(particles_send_upperleft_new);
+    free(particles_send_left_new);
+    free(particles_send_lowerleft_new);
+    free(particles_send_down_new);
+    free(particles_send_lowerright_new);
+    free(particles_send_right_new);
+    free(particles_send_upperright_new);
+
+>>>>>>> becc70092391b2312a6f9271eeb8beb007baadd1
 
     /*
       assign memory for 8 arrays of neighboring particles to be received
@@ -1229,6 +1267,17 @@ int main( int argc, char **argv )
     for(int i = 0; i < *receive_size_upperright_new; i++){
         local_particles_nb_map.insert(std::pair<double, particle_t>(particles_receive_upperright_new[i].id, particles_receive_upperleft_new[i]));
     }
+<<<<<<< HEAD
+=======
+    free(particles_receive_up_new);
+    free(particles_receive_upperleft_new);
+    free(particles_receive_left_new);
+    free(particles_receive_lowerleft_new);
+    free(particles_receive_down_new);
+    free(particles_receive_lowerright_new);
+    free(particles_receive_right_new);
+    free(particles_receive_upperright_new);
+>>>>>>> becc70092391b2312a6f9271eeb8beb007baadd1
     // check that the sum of local_particles_nb_map, should be equal to the sum of index_send_size_new
     std::cout<<"rank "<<rank<<" nb particles received: " <<local_particles_nb_map.size()<<std::endl;
 
