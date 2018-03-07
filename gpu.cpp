@@ -35,17 +35,40 @@ __device__ void apply_force_gpu(particle_t &particle, particle_t &neighbor)
 
 }
 
-__global__ void compute_forces_gpu(particle_t * particles, int * number_neighbors, int * neighbors_indices, int max_neighbors, int n)
+__global__ void compute_forces_gpu(particle_t * particles, int n, int max_particles_per_bin, int * my_bins, int * my_bins_count, int * bin_neighbors, int * bin_neighbors_count)
 {
   // Get thread (particle) ID
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
     if(tid >= n) return;
     // 
     particles[tid].ax = particles[tid].ay = 0;
-    int temp1 = number_neighbors[tid];
+    int bin_number = particles[tid].bin_number;
+    // particles from the same bin
+    int num_par_same_bin = my_bins_count[bin_number];
+    int start_index = max_particles_per_bin * bin_number;
+    for(int i = 0; i < num_par_same_bin; i++){
+        apply_force_gpu(particles[tid], particles[my_bins[start_index + i]]);
+    }
+    // particles from the neighboring bins
+    int num_nb = bin_neighbors_count[bin_number];
+    for(int j = 0 ; j <  num_nb; j++){
+        int nb_index = bin_neighbors[8 * bin_number + j];
+        int num_par_same_bin = my_bins_count[nb_index];
+        int start_index = max_particles_per_bin * nb_index;
+        for (int k = 0; k < num_par_same_bin; k++){
+            apply_force_gpu(particles[tid], particles[my_bins[start_index + k]]);
+        }
+        
+    }
+}
 
-    for(int j = 0 ; j <  temp1; j++)
-        apply_force_gpu(particles[tid], particles[neighbors_indices[tid*max_neighbors + j]]);
+__global__ void set_zero_array(int * my_bins_count, int num_bins)
+{
+  // Get thread (particle) ID
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    if(tid >= num_bins) return;
+    // 
+    my_bins_count[tid] = 0;
 }
 
 __global__ void move_gpu (particle_t * particles, int n, double size)
@@ -81,7 +104,7 @@ __global__ void move_gpu (particle_t * particles, int n, double size)
 
 }
 
-__global__ void update_bin_number (particle_t * particles, int n, double mysize, int n_row, int n_col){
+__global__ void update_bin_number (particle_t * particles, int n, double mysize, int n_row, int n_col, int * my_bins, int * my_bins_count, int max_particles_per_bin){
     // Get thread (particle) ID
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
     if(tid >= n) return;
@@ -91,6 +114,9 @@ __global__ void update_bin_number (particle_t * particles, int n, double mysize,
     int col = (int) floor(xloc/mysize*n_col);
     int bin_index = row + col*n_row;
     particles[tid].bin_number = bin_index;
+    // atomic add ensures that only one particle can be added to my_bins at a time
+    int old_count = atomicAdd(&my_bins_count[bin_index], 1);
+    my_bins[max_particles_per_bin * bin_index + old_count] = particles[tid].id;
 }
 
 
@@ -124,17 +150,32 @@ int main( int argc, char **argv )
     set_size( n );
     double mysize = get_size();
     init_particles( n, particles );
+
     /*
-        assign all the particles to one of the n_row*n_col bins, my_bins is a pointer to the 
-        n_row * n_col array of hash sets, each set contains the indices of particle_t objects in that bin
+        assign all the particles to one of the n_row*n_col bins, my_bins is a 2d array with fixed number of rows
+        , and n_row*n_col columns, each column stores the id of particles in that bin
     */
     int n_row = (int) floor(mysize/cutoff);
     int n_col = n_row;
-    std::set<int>  *my_bins = new std::set<int>[n_row*n_col];
+    int num_bins = n_col * n_row;
+
+    // mamimum number of particles in a bin
+    int max_particles_per_bin = 5 * (int) floor(n/num_bins); 
+
+    // my_bins is a 2d array with size max_particles_per_bin by num_bins
+    int  *my_bins = (int *) malloc( max_particles_per_bin * num_bins * sizeof(int) );
+
+    // my_bins_count is a 1-d array with size 1 by num_bins
+    int  *my_bins_count = (int *) malloc(num_bins * sizeof(int) );
+    for(int i = 0; i < num_bins; i++){
+        my_bins_count[i] = 0;
+    }
+
     double xloc, yloc;
     int row, col;
     int bin_index;
-    // std::cout<<"the size of the board is "<<mysize<<std::endl;
+    //std::cout << " line 167"<< std::endl;
+    // assign each particle to bins, represented by my_bins and my_bins_count
     for( int i = 0; i < n; i++ )
         {
             // std::cout << "within init particles, i = "<<i << " line 131"<< std::endl;
@@ -142,62 +183,71 @@ int main( int argc, char **argv )
             yloc = particles[i].y;
             row = (int)floor(yloc/mysize*n_row);
             col = (int) floor(xloc/mysize*n_col);
-            bin_index = row + col*n_row;
-            // std::cout << "within init particles, i = "<<i << " xloc "<<xloc<< std::endl;
-            // std::cout << "within init particles, i = "<<i << " yloc "<<yloc<< std::endl;
-            // std::cout << "within init particles, i = "<<i << " row "<<row<< std::endl;
-            // std::cout << "within init particles, i = "<<i << " col "<<col<< std::endl;
-            // std::cout << "within init particles, i = "<<i << " mysize "<<mysize<< std::endl;
-            // std::cout << "within init particles, i = "<<i << " nrow "<<n_row<< std::endl;
-            // std::cout << "within init particles, i = "<<i << " bin_index"<<bin_index<< std::endl;
-            my_bins[bin_index].insert(i);
-            // std::cout << "within init particles, i = "<<i << " line 139"<< std::endl;
+            bin_index = row + col * n_row;
             particles[i].bin_number = bin_index;
-            // std::cout << "within init particles, i = "<<i << " line 141"<< std::endl;
+            my_bins[max_particles_per_bin * bin_index + my_bins_count[bin_index]] = i;
+            my_bins_count[bin_index]++;
         }
+    //std::cout << " line 181"<< std::endl;
     /*
-        create an array of sets, each set contains the indices of the neighboring bins of each bin,
-        this doesn't need to be updated through the simulation
+        use a 2d array of size 8 by num_bins to store the indices of neighbor bins of each bin
     */
-    std::set<int>  *bin_neighbors = new std::set<int>[n_row*n_col];
+
+    // bin_neighbors is a 2d array with size 8 by num_bins
+    int  *bin_neighbors = (int *) malloc( 8 * num_bins * sizeof(int) );
+
+    // bin_neighbors_count is a 1-d array with size 1 by num_bins
+    int  *bin_neighbors_count = (int *) malloc(num_bins * sizeof(int) );
+    for(int i = 0; i < num_bins; i++){
+        bin_neighbors_count[i] = 0;
+    }
+
     for( int j = 0; j < n_col; j++ ){
         for( int i = 0; i < n_row; i++ ){
                  // upper left
                 if (i - 1 >= 0 && j - 1 >= 0){
-                    bin_neighbors[i+j*n_row].insert((i-1)+(j-1)*n_row);
+                    bin_neighbors[(i+j*n_row) * 8 + bin_neighbors_count[i+j*n_row]] = ((i-1)+(j-1)*n_row);
+                    bin_neighbors_count[i+j*n_row]++;
                 }
                 // left
                 if (j - 1 >= 0){
-                    bin_neighbors[i+j*n_row].insert(i+(j-1)*n_row);
+                    bin_neighbors[(i+j*n_row) * 8 + bin_neighbors_count[i+j*n_row]] = (i+(j-1)*n_row);
+                    bin_neighbors_count[i+j*n_row]++;
                 }
                 // lower left
                 if (j - 1 >= 0 && i+1 < n_row){
-                    bin_neighbors[i+j*n_row].insert(i+1+(j-1)*n_row);
+                    bin_neighbors[(i+j*n_row) * 8 + bin_neighbors_count[i+j*n_row]] = (i+1+(j-1)*n_row);
+                    bin_neighbors_count[i+j*n_row]++;
                 }
                 // up
                 if (i - 1 >= 0){
-                    bin_neighbors[i+j*n_row].insert(i-1+j*n_row);
+                    bin_neighbors[(i+j*n_row) * 8 + bin_neighbors_count[i+j*n_row]] = (i-1+j*n_row);
+                    bin_neighbors_count[i+j*n_row]++;
                 }
                 // down
                 if (i + 1 < n_row){
-                    bin_neighbors[i+j*n_row].insert(i+1+j*n_row);
+                    bin_neighbors[(i+j*n_row) * 8 + bin_neighbors_count[i+j*n_row]] = (i+1+j*n_row);
+                    bin_neighbors_count[i+j*n_row]++;
                 }
                 // upper right
                 if (i - 1 >= 0 && j + 1 < n_col){
-                    bin_neighbors[i+j*n_row].insert((i-1)+(j+1)*n_row);
+                    bin_neighbors[(i+j*n_row) * 8 + bin_neighbors_count[i+j*n_row]] = ((i-1)+(j+1)*n_row);
+                    bin_neighbors_count[i+j*n_row]++;
                 }
                 // right
                 if (j + 1 < n_col){
-                    bin_neighbors[i+j*n_row].insert(i+(j+1)*n_row);
+                    bin_neighbors[(i+j*n_row) * 8 + bin_neighbors_count[i+j*n_row]] = (i+(j+1)*n_row);
+                    bin_neighbors_count[i+j*n_row]++;
                 }
                 // lower right
                 if (i + 1 < n_row && j + 1 < n_col){
-                    bin_neighbors[i+j*n_row].insert((i+1)+(j+1)*n_row);
+                    bin_neighbors[(i+j*n_row) * 8 + bin_neighbors_count[i+j*n_row]] = ((i+1)+(j+1)*n_row);
+                    bin_neighbors_count[i+j*n_row]++;
                 }
 
             }
         } 
-
+    //    std::cout << " line 240"<< std::endl;
 
     cudaThreadSynchronize();
     double copy_time = read_timer( );
@@ -208,108 +258,68 @@ int main( int argc, char **argv )
     cudaThreadSynchronize();
     copy_time = read_timer( ) - copy_time;
     
+    // copy my_bins to GPU
+    int *d_my_bins;
+    cudaMalloc((void **) &d_my_bins, max_particles_per_bin * num_bins * sizeof(int));
+
+    // copy my_bins_count to GPU
+    int *d_my_bins_count;
+    cudaMalloc((void **) &d_my_bins_count, num_bins * sizeof(int));
+
+    // copy bin_neighbors to GPU, bin_neighbors need not update
+    int *d_bin_neighbors;
+    cudaMalloc((void **) &d_bin_neighbors, 8 * num_bins * sizeof(int));
+
+    // copy bin_neighbors_count to GPU, bin_neighbors_count need not update
+    int *d_bin_neighbors_count;
+    cudaMalloc((void **) &d_bin_neighbors_count, num_bins * sizeof(int));
+    //
+    cudaMemcpy(d_my_bins, my_bins, max_particles_per_bin * num_bins * sizeof(int), cudaMemcpyHostToDevice);
+    cudaThreadSynchronize();
+    //
+    cudaMemcpy(d_my_bins_count, my_bins_count, num_bins * sizeof(int), cudaMemcpyHostToDevice);
+    cudaThreadSynchronize();
+    //
+    cudaMemcpy(d_bin_neighbors, bin_neighbors, 8 * num_bins * sizeof(int), cudaMemcpyHostToDevice);
+    cudaThreadSynchronize();
+    //
+    cudaMemcpy(d_bin_neighbors_count, bin_neighbors_count, num_bins * sizeof(int), cudaMemcpyHostToDevice);
+    cudaThreadSynchronize();
+    //std::cout << " line 278"<< std::endl;
     //
     //  simulate a number of time steps
     //
-    cudaThreadSynchronize();
     double simulation_time = read_timer( );
-    
-    std::set<int>::iterator it2;
-    std::set<int>::iterator it3;
-    std::set<int>::iterator it4;
-
-    // density is constant, use a factor of 3
-    int max_neighbors = (int) 3 * n/n_row/n_col;
-
-    // a 1-D array of size n that contains the number of effective neighbors
-    int *number_neighbors = (int *) malloc(  n * sizeof(int) );
-
-    // a 2-D array of size max_neighbors * n that contains the number of effective neighbors of n particles
-    int length_neighbors_indices = max_neighbors * n;
-    int *neighbors_indices = (int *) malloc(  length_neighbors_indices * sizeof(int) );
-    //
-    int *d_number_neighbors;
-    cudaMalloc((void **) &d_number_neighbors, n * sizeof(int));
-    // 
-    int *d_neighbors_indices;
-    cudaMalloc((void **) &d_neighbors_indices, length_neighbors_indices * sizeof(int));
-    // 
 
     for( int step = 0; step < NSTEPS; step++ )
     {
-        /*
-        store the indices of neighboring nodes in a 2-D array
-        */
-        // std::cout << "step "<< step<< "before convert bins to arrays" << std::endl;
-        for(int i = 0; i < n; i++){
-            int index_temp = 0;
-            int current_bin_number = particles[i].bin_number;
-            // first deal with particles in the same bin
-            for(it2 = my_bins[current_bin_number].begin(); it2 != my_bins[current_bin_number].end(); ++it2){   
-                if(particles[i].id != particles[*it2].id){ // not the same particle
-                    neighbors_indices[i * max_neighbors + index_temp] = *it2;
-                    index_temp++;
-                }
-            }
-            // next deal with particels in the neighboring bins
-            for (it3 = bin_neighbors[current_bin_number].begin(); it3 != bin_neighbors[current_bin_number].end(); ++it3){ 
-                for (it4 = my_bins[*it3].begin(); it4 != my_bins[*it3].end(); ++it4){   
-                        neighbors_indices[i * max_neighbors + index_temp] = *it4;
-                        index_temp++;
-                    }
-            }
-            number_neighbors[i] = index_temp;
-        }
-
-        // copy neighbors_indices, number_neighbors to GPU for fast access
-        
-        cudaMemcpy(d_number_neighbors, number_neighbors, n * sizeof(int), cudaMemcpyHostToDevice);
-        cudaThreadSynchronize();
-        //
-        cudaMemcpy(d_neighbors_indices, neighbors_indices, length_neighbors_indices * sizeof(int), cudaMemcpyHostToDevice);
-        cudaThreadSynchronize();
-
-
         //
         //  compute forces
         //
         //double  before_compute_forces = read_timer();
+        //std::cout << "step "<< step<< " line 290"<< std::endl;
 	    int blks = (n + NUM_THREADS - 1) / NUM_THREADS;
-	    compute_forces_gpu <<< blks, NUM_THREADS >>> (d_particles, d_number_neighbors, d_neighbors_indices, max_neighbors, n);
+	    compute_forces_gpu <<< blks, NUM_THREADS >>> (d_particles, n, max_particles_per_bin, d_my_bins, d_my_bins_count, d_bin_neighbors, d_bin_neighbors_count);
         //double  after_compute_forces = read_timer();
         //std::cout << "compute_forces time " << after_compute_forces - before_compute_forces << std::endl;
-        
+        //std::cout << "step "<< step<< " line 295"<< std::endl;
         //
         //  move particles
         //
 	    move_gpu <<< blks, NUM_THREADS >>> (d_particles, n, size);
-
+        //std::cout << "step "<< step<< " line 300"<< std::endl;
+        // reset d_my_bins_count
+        set_zero_array<<< blks, NUM_THREADS >>> (d_my_bins_count, num_bins);
+        //std::cout << "step "<< step<< " line 305"<< std::endl;
         // update particles' bin_number 
-        update_bin_number <<< blks, NUM_THREADS >>> (d_particles, n, mysize, n_row, n_col);
-
-        
-        // copy back to memory in each step, so as to update my_bins
-        cudaMemcpy(particles, d_particles, n * sizeof(particle_t), cudaMemcpyDeviceToHost);
-        cudaThreadSynchronize();
-        /*
-        clear the bins and reassign particles to bins
-        */
-        // first clear all the bins
-        for (int i = 0; i < n_row*n_col; i++)
-        {
-            my_bins[i].clear();
-        }
-
-        // then reassign the particles
-        for( int i = 0; i < n; i++ ){
-                my_bins[particles[i].bin_number].insert(i);
-            }
-
+        update_bin_number <<< blks, NUM_THREADS >>> (d_particles, n, mysize, n_row, n_col, d_my_bins, d_my_bins_count, max_particles_per_bin);
+        //std::cout << "step "<< step<< " line 308"<< std::endl;
         //
         //  save if necessary
         //
         if( fsave && (step%SAVEFREQ) == 0 ) {
         // Copy the particles back to the CPU
+            cudaMemcpy(particles, d_particles, n * sizeof(particle_t), cudaMemcpyDeviceToHost);
             save( fsave, n, particles);
         }
     }
