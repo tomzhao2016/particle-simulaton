@@ -45,7 +45,7 @@ __global__ void compute_forces_gpu(particle_t * particles, int * number_neighbor
     int temp1 = number_neighbors[tid];
 
     for(int j = 0 ; j <  temp1; j++)
-        apply_force_gpu(particles[tid], particles[number_neighbors[tid*max_neighbors + j]]);
+        apply_force_gpu(particles[tid], particles[neighbors_indices[tid*max_neighbors + j]]);
 }
 
 __global__ void move_gpu (particle_t * particles, int n, double size)
@@ -80,6 +80,19 @@ __global__ void move_gpu (particle_t * particles, int n, double size)
     }
 
 }
+
+__global__ void update_bin_number (particle_t * particles, int n, double mysize, int n_row, int n_col){
+    // Get thread (particle) ID
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    if(tid >= n) return;
+    double xloc = particles[tid].x;
+    double yloc = particles[tid].y;
+    int row = (int) floor(yloc/mysize*n_row);
+    int col = (int) floor(xloc/mysize*n_col);
+    int bin_index = row + col*n_row;
+    particles[tid].bin_number = bin_index;
+}
+
 
 
 
@@ -214,7 +227,13 @@ int main( int argc, char **argv )
     // a 2-D array of size max_neighbors * n that contains the number of effective neighbors of n particles
     int length_neighbors_indices = max_neighbors * n;
     int *neighbors_indices = (int *) malloc(  length_neighbors_indices * sizeof(int) );
-
+    //
+    int *d_number_neighbors;
+    cudaMalloc((void **) &d_number_neighbors, n * sizeof(int));
+    // 
+    int *d_neighbors_indices;
+    cudaMalloc((void **) &d_neighbors_indices, length_neighbors_indices * sizeof(int));
+    // 
 
     for( int step = 0; step < NSTEPS; step++ )
     {
@@ -241,17 +260,9 @@ int main( int argc, char **argv )
             }
             number_neighbors[i] = index_temp;
         }
-        if(step == 0){
-            std::cout << number_neighbors << std::endl;
-        }
 
         // copy neighbors_indices, number_neighbors to GPU for fast access
-        int *d_number_neighbors;
-        cudaMalloc((void **) &d_number_neighbors, n * sizeof(int));
-        // 
-        int *d_neighbors_indices;
-        cudaMalloc((void **) &d_neighbors_indices, length_neighbors_indices * sizeof(int));
-        // 
+        
         cudaMemcpy(d_number_neighbors, number_neighbors, n * sizeof(int), cudaMemcpyHostToDevice);
         cudaThreadSynchronize();
         //
@@ -262,14 +273,20 @@ int main( int argc, char **argv )
         //
         //  compute forces
         //
-
+        //double  before_compute_forces = read_timer();
 	    int blks = (n + NUM_THREADS - 1) / NUM_THREADS;
 	    compute_forces_gpu <<< blks, NUM_THREADS >>> (d_particles, d_number_neighbors, d_neighbors_indices, max_neighbors, n);
+        //double  after_compute_forces = read_timer();
+        //std::cout << "compute_forces time " << after_compute_forces - before_compute_forces << std::endl;
         
         //
         //  move particles
         //
 	    move_gpu <<< blks, NUM_THREADS >>> (d_particles, n, size);
+
+        // update particles' bin_number 
+        update_bin_number <<< blks, NUM_THREADS >>> (d_particles, n, mysize, n_row, n_col);
+
         
         // copy back to memory in each step, so as to update my_bins
         cudaMemcpy(particles, d_particles, n * sizeof(particle_t), cudaMemcpyDeviceToHost);
@@ -282,15 +299,10 @@ int main( int argc, char **argv )
         {
             my_bins[i].clear();
         }
+
         // then reassign the particles
         for( int i = 0; i < n; i++ ){
-                xloc = particles[i].x;
-                yloc = particles[i].y;
-                row = floor(yloc/mysize*n_row);
-                col = floor(xloc/mysize*n_col);
-                bin_index = row + col*n_row;
-                my_bins[bin_index].insert(i);
-                particles[i].bin_number = bin_index;
+                my_bins[particles[i].bin_number].insert(i);
             }
 
         //
