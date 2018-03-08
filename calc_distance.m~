@@ -1,0 +1,63 @@
+%% 
+fName = strcat('gpu.txt');
+fid = fopen(fName);
+C = textscan(fid, '%s', 'delimiter', '\n');
+
+%%
+num_time = 100;  % saved every 10 time steps
+num_particle = 2000;
+myx = zeros(num_particle, num_time);
+myy = zeros(num_particle, num_time);
+for k = 1:size(C{1,1}, 1) - 1
+    tmp = C{1, 1}{k + 1, 1};
+    tmp = strsplit(tmp);
+    current_time = ceil(k/num_particle);
+    if (mod(k, num_particle) == 0)
+        current_particle = num_particle;
+    else
+        current_particle = mod(k, num_particle);
+    end
+    myx(current_particle, current_time) = str2double(tmp{1});
+    myy(current_particle, current_time) = str2double(tmp{2});
+end
+fclose(fid);
+
+%%
+% calculate the average/min distance in each time step
+distance_avg = zeros(num_time, 1);
+distance_min = zeros(num_time, 1);
+for i = 1:num_time
+    waitbar(i/num_time);
+    temp_avg = 0;
+    temp_min = Inf;
+    count = 0;
+    for j = 1:num_particle
+        for k = j+1:num_particle
+            count = count + 1;
+            temp_dis = sqrt((myx(j, i) - myx(k, i))^2 + (myy(j, i) - myy(k, i))^2);
+            temp_avg = temp_avg + temp_dis;
+            if(temp_dis < temp_min)
+                temp_min = temp_dis;
+            end
+        end
+    end
+    if(count ~= ())
+        warning('possible errors');
+    end
+    temp_avg = temp_avg/count;
+    distance_avg(i) = temp_avg;
+    distance_min(i) = temp_min;
+end
+
+
+
+%% divide by the cutoff
+distance_avg = distance_avg/0.01;
+distance_min = distance_min/0.01;
+distance_avg_time = mean(distance_avg)
+distance_min_time = min(distance_min)
+
+
+
+
+
