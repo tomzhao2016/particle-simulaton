@@ -161,7 +161,16 @@ __global__ void update_bin_number (particle_t * particles, int n, double mysize,
     my_bins[max_particles_per_bin * bin_index + old_count] = particles[tid].id;
 }
 
-
+__global__ void test_bin_update (int n, int * my_bins, int * my_bins_count, int num_bins){
+    // Get thread (particle) ID
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    if(tid >= 1) return;
+    int tmp = 0;
+    for (int i = 0; i < num_bins; i++){
+        tmp += my_bins_count[i];
+    }
+    printf("total number of particles in bins %d\n", tmp);
+}
 
 
 int main( int argc, char **argv )
@@ -392,12 +401,16 @@ int main( int argc, char **argv )
 	    move_gpu <<< blks, NUM_THREADS >>> (d_particles, n, size);
 
         // reset d_my_bins_count
+        int blks2 = (num_bins + NUM_THREADS - 1) / NUM_THREADS;
+        set_zero_array<<< blks2, NUM_THREADS >>> (d_my_bins_count, num_bins);
 
         // update particles' bin_number 
         update_bin_number <<< blks, NUM_THREADS >>> (d_particles, n, mysize, n_row, n_col, d_my_bins, d_my_bins_count, max_particles_per_bin);
         //
         //  save if necessary
         //
+        // test_bin_update  <<< 1, 1>>> (n, d_my_bins, d_my_bins_count, num_bins);
+
         if( fsave && (step%SAVEFREQ) == 0 ) {
         // Copy the particles back to the CPU
             cudaMemcpy(particles, d_particles, n * sizeof(particle_t), cudaMemcpyDeviceToHost);
