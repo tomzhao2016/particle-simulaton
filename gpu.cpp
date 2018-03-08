@@ -41,15 +41,6 @@ __global__ void compute_forces_gpu(particle_t * particles, int n, int max_partic
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
     if(tid >= n) return;
     // 
- //    if(tid == 0){
- //    printf("before apply forces \n");
- //    printf("particles[tid].x %f\n",  particles[tid].x);
- //    printf("particles[tid].y %f\n",  particles[tid].y);
- //    printf("particles[tid].ax %f\n",  particles[tid].ax);
- //    printf("particles[tid].ay %f\n",  particles[tid].ay);
- //    printf("particles[tid].vx %f\n",  particles[tid].vx);
- //    printf("particles[tid].vy %f\n",  particles[tid].vy);
- // }
     particles[tid].ax = particles[tid].ay = 0;
     int bin_number = particles[tid].bin_number;
     // particles from the same bin
@@ -70,19 +61,6 @@ __global__ void compute_forces_gpu(particle_t * particles, int n, int max_partic
             apply_force_gpu(particles[tid], particles[my_bins[start_index + k]]);
         }
     }
-    // for(int j = 0 ; j < n ; j++)
-    // apply_force_gpu(particles[tid], particles[j]);
-
-
- //    if(tid == 0){
- //    printf("after apply forces \n");
- //    printf("particles[tid].x %f\n",  particles[tid].x);
- //    printf("particles[tid].y %f\n",  particles[tid].y);
- //    printf("particles[tid].ax %f\n",  particles[tid].ax);
- //    printf("particles[tid].ay %f\n",  particles[tid].ay);
- //    printf("particles[tid].vx %f\n",  particles[tid].vx);
- //    printf("particles[tid].vy %f\n",  particles[tid].vy);
- // }
 }
 
 __global__ void set_zero_array(int * my_bins_count, int num_bins)
@@ -100,16 +78,6 @@ __global__ void move_gpu (particle_t * particles, int n, double size)
   // Get thread (particle) ID
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
   if(tid >= n) return;
-
- //    if(tid == 0){
- //    printf("before move \n");
- //    printf("particles[tid].x %f\n",  particles[tid].x);
- //    printf("particles[tid].y %f\n",  particles[tid].y);
- //    printf("particles[tid].ax %f\n",  particles[tid].ax);
- //    printf("particles[tid].ay %f\n",  particles[tid].ay);
- //    printf("particles[tid].vx %f\n",  particles[tid].vx);
- //    printf("particles[tid].vy %f\n",  particles[tid].vy);
- // }
 
   particle_t * p = &particles[tid];
     //
@@ -134,16 +102,6 @@ __global__ void move_gpu (particle_t * particles, int n, double size)
         p->y  = p->y < 0 ? -(p->y) : 2*size-p->y;
         p->vy = -(p->vy);
     }
- //    if(tid == 0){
- //    printf("after move \n");
- //    printf("particles[tid].x %f\n",  particles[tid].x);
- //    printf("particles[tid].y %f\n",  particles[tid].y);
- //    printf("particles[tid].ax %f\n",  particles[tid].ax);
- //    printf("particles[tid].ay %f\n",  particles[tid].ay);
- //    printf("particles[tid].vx %f\n",  particles[tid].vx);
- //    printf("particles[tid].vy %f\n",  particles[tid].vy);
- // }
-
 }
 
 __global__ void update_bin_number (particle_t * particles, int n, double mysize, int n_row, int n_col, int * my_bins, int * my_bins_count, int max_particles_per_bin){
@@ -156,6 +114,7 @@ __global__ void update_bin_number (particle_t * particles, int n, double mysize,
     int col = (int) floor(xloc/mysize*n_col);
     int bin_index = row + col*n_row;
     particles[tid].bin_number = bin_index;
+
     // atomic add ensures that only one particle can be added to my_bins at a time
     int old_count = atomicAdd(&my_bins_count[bin_index], 1);
     my_bins[max_particles_per_bin * bin_index + old_count] = particles[tid].id;
@@ -202,24 +161,6 @@ int main( int argc, char **argv )
     double mysize = get_size();
     init_particles( n, particles );
 
-    // printf("after init \n");
-    // printf("particles[0].x %f\n",  particles[0].x);
-    // printf("particles[0].y %f\n",  particles[0].y);
-    // printf("particles[0].ax %f\n",  particles[0].ax);
-    // printf("particles[0].ay %f\n",  particles[0].ay);
-    // printf("particles[0].vx %f\n",  particles[0].vx);
-    // printf("particles[0].vy %f\n",  particles[0].vy);
-
-    // printf("after init \n");
-    // printf("particles[1].x %f\n",  particles[1].x);
-    // printf("particles[1].y %f\n",  particles[1].y);
-    // printf("particles[1].ax %f\n",  particles[1].ax);
-    // printf("particles[1].ay %f\n",  particles[1].ay);
-    // printf("particles[1].vx %f\n",  particles[1].vx);
-    // printf("particles[1].vy %f\n",  particles[1].vy);
-
-
-
     /*
         assign all the particles to one of the n_row*n_col bins, my_bins is a 2d array with fixed number of rows
         , and n_row*n_col columns, each column stores the id of particles in that bin
@@ -243,11 +184,9 @@ int main( int argc, char **argv )
     double xloc, yloc;
     int row, col;
     int bin_index;
-    //std::cout << " line 167"<< std::endl;
     // assign each particle to bins, represented by my_bins and my_bins_count
     for( int i = 0; i < n; i++ )
         {
-            // std::cout << "within init particles, i = "<<i << " line 131"<< std::endl;
             xloc = particles[i].x;
             yloc = particles[i].y;
             row = (int)floor(yloc/mysize*n_row);
@@ -257,9 +196,6 @@ int main( int argc, char **argv )
             my_bins[max_particles_per_bin * bin_index + my_bins_count[bin_index]] = i;
             my_bins_count[bin_index]++;
         }
-    // for(int i = 0; i < n; i++){
-    //     std::cout << " id of particle  "<< i << "is"<< particles[i].bin_number<<std::endl;
-    // }
 
     // test my_bins_count add up to n
     // int totol_particle = 0;
@@ -267,13 +203,6 @@ int main( int argc, char **argv )
     //     totol_particle += my_bins_count[i];
     // }
     // std::cout << "total number of particles is "<<totol_particle<<std::endl;
-
-    // for(int i = 0; i < num_bins; i++){
-    //     //std::cout << " # of particle in bin "<< i << "is"<< my_bins_count[i]<<std::endl;
-    //     for(int j = 0; j < my_bins_count[i]; j++){
-    //         std::cout << " id of particle in bin "<< i << "is"<< my_bins[i*max_particles_per_bin + j]<<std::endl;
-    //     }
-    // }
 
     /*
         use a 2d array of size 8 by num_bins to store the indices of neighbor bins of each bin
@@ -333,15 +262,6 @@ int main( int argc, char **argv )
 
             }
         } 
-    //    std::cout << " line 240"<< std::endl;
-    // for(int i = 0; i < num_bins; i++){
-    //         std::cout << " # of bin_neighbors in bin "<< i << "is"<< bin_neighbors_count[i]<<std::endl;
-    // }
-    // std::cout << " bin_neighbors in bin 100"<< "is "<< bin_neighbors[100 * 8 + 0]<<std::endl;
-    // std::cout << " bin_neighbors in bin 100"<< "is "<< bin_neighbors[100 * 8 + 1]<<std::endl;
-    // std::cout << " bin_neighbors in bin 100"<< "is "<< bin_neighbors[100 * 8 + 2]<<std::endl;
-    // std::cout << " bin_neighbors in bin 100"<< "is "<< bin_neighbors[100 * 8 + 3]<<std::endl;
-    // std::cout << " bin_neighbors in bin 100"<< "is "<< bin_neighbors[100 * 8 + 4]<<std::endl;
 
     cudaThreadSynchronize();
     double copy_time = read_timer( );
@@ -406,7 +326,8 @@ int main( int argc, char **argv )
 
         // update particles' bin_number 
         update_bin_number <<< blks, NUM_THREADS >>> (d_particles, n, mysize, n_row, n_col, d_my_bins, d_my_bins_count, max_particles_per_bin);
-        
+         
+        // test d_my_bins_count always add up to n
         // test_bin_update  <<< 1, 1>>> (n, d_my_bins, d_my_bins_count, num_bins);
         
         //
