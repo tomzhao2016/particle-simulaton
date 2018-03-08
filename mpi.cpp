@@ -1304,8 +1304,6 @@ int main( int argc, char **argv )
         }
 
 
-        MPI_Barrier(MPI_COMM_WORLD);
-
         update_local_bins(local_bins, local_particles_nb_map,
                           local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
 
