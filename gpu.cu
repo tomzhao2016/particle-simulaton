@@ -41,15 +41,15 @@ __global__ void compute_forces_gpu(particle_t * particles, int n, int max_partic
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
     if(tid >= n) return;
     // 
-    if(tid == 0){
-    printf("before apply forces \n");
-    printf("particles[tid].x %f\n",  particles[tid].x);
-    printf("particles[tid].y %f\n",  particles[tid].y);
-    printf("particles[tid].ax %f\n",  particles[tid].ax);
-    printf("particles[tid].ay %f\n",  particles[tid].ay);
-    printf("particles[tid].vx %f\n",  particles[tid].vx);
-    printf("particles[tid].vy %f\n",  particles[tid].vy);
- }
+ //    if(tid == 0){
+ //    printf("before apply forces \n");
+ //    printf("particles[tid].x %f\n",  particles[tid].x);
+ //    printf("particles[tid].y %f\n",  particles[tid].y);
+ //    printf("particles[tid].ax %f\n",  particles[tid].ax);
+ //    printf("particles[tid].ay %f\n",  particles[tid].ay);
+ //    printf("particles[tid].vx %f\n",  particles[tid].vx);
+ //    printf("particles[tid].vy %f\n",  particles[tid].vy);
+ // }
     particles[tid].ax = particles[tid].ay = 0;
     int bin_number = particles[tid].bin_number;
     // particles from the same bin
@@ -72,15 +72,15 @@ __global__ void compute_forces_gpu(particle_t * particles, int n, int max_partic
     // apply_force_gpu(particles[tid], particles[j]);
 
 
-    if(tid == 0){
-    printf("after apply forces \n");
-    printf("particles[tid].x %f\n",  particles[tid].x);
-    printf("particles[tid].y %f\n",  particles[tid].y);
-    printf("particles[tid].ax %f\n",  particles[tid].ax);
-    printf("particles[tid].ay %f\n",  particles[tid].ay);
-    printf("particles[tid].vx %f\n",  particles[tid].vx);
-    printf("particles[tid].vy %f\n",  particles[tid].vy);
- }
+ //    if(tid == 0){
+ //    printf("after apply forces \n");
+ //    printf("particles[tid].x %f\n",  particles[tid].x);
+ //    printf("particles[tid].y %f\n",  particles[tid].y);
+ //    printf("particles[tid].ax %f\n",  particles[tid].ax);
+ //    printf("particles[tid].ay %f\n",  particles[tid].ay);
+ //    printf("particles[tid].vx %f\n",  particles[tid].vx);
+ //    printf("particles[tid].vy %f\n",  particles[tid].vy);
+ // }
 }
 
 __global__ void set_zero_array(int * my_bins_count, int num_bins)
@@ -99,15 +99,15 @@ __global__ void move_gpu (particle_t * particles, int n, double size)
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
   if(tid >= n) return;
 
-    if(tid == 0){
-    printf("before move \n");
-    printf("particles[tid].x %f\n",  particles[tid].x);
-    printf("particles[tid].y %f\n",  particles[tid].y);
-    printf("particles[tid].ax %f\n",  particles[tid].ax);
-    printf("particles[tid].ay %f\n",  particles[tid].ay);
-    printf("particles[tid].vx %f\n",  particles[tid].vx);
-    printf("particles[tid].vy %f\n",  particles[tid].vy);
- }
+ //    if(tid == 0){
+ //    printf("before move \n");
+ //    printf("particles[tid].x %f\n",  particles[tid].x);
+ //    printf("particles[tid].y %f\n",  particles[tid].y);
+ //    printf("particles[tid].ax %f\n",  particles[tid].ax);
+ //    printf("particles[tid].ay %f\n",  particles[tid].ay);
+ //    printf("particles[tid].vx %f\n",  particles[tid].vx);
+ //    printf("particles[tid].vy %f\n",  particles[tid].vy);
+ // }
 
   particle_t * p = &particles[tid];
     //
@@ -132,15 +132,15 @@ __global__ void move_gpu (particle_t * particles, int n, double size)
         p->y  = p->y < 0 ? -(p->y) : 2*size-p->y;
         p->vy = -(p->vy);
     }
-    if(tid == 0){
-    printf("after move \n");
-    printf("particles[tid].x %f\n",  particles[tid].x);
-    printf("particles[tid].y %f\n",  particles[tid].y);
-    printf("particles[tid].ax %f\n",  particles[tid].ax);
-    printf("particles[tid].ay %f\n",  particles[tid].ay);
-    printf("particles[tid].vx %f\n",  particles[tid].vx);
-    printf("particles[tid].vy %f\n",  particles[tid].vy);
- }
+ //    if(tid == 0){
+ //    printf("after move \n");
+ //    printf("particles[tid].x %f\n",  particles[tid].x);
+ //    printf("particles[tid].y %f\n",  particles[tid].y);
+ //    printf("particles[tid].ax %f\n",  particles[tid].ax);
+ //    printf("particles[tid].ay %f\n",  particles[tid].ay);
+ //    printf("particles[tid].vx %f\n",  particles[tid].vx);
+ //    printf("particles[tid].vy %f\n",  particles[tid].vy);
+ // }
 
 }
 
