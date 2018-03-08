@@ -56,7 +56,9 @@ __global__ void compute_forces_gpu(particle_t * particles, int n, int max_partic
     int num_par_same_bin = my_bins_count[bin_number];
     int start_index = max_particles_per_bin * bin_number;
     for(int i = 0; i < num_par_same_bin; i++){
-        apply_force_gpu(particles[tid], particles[my_bins[start_index + i]]);
+        if(particles[tid].id != particles[my_bins[start_index + i]].id){
+            apply_force_gpu(particles[tid], particles[my_bins[start_index + i]]);
+        }
     }
     // particles from the neighboring bins
     int num_nb = bin_neighbors_count[bin_number];
