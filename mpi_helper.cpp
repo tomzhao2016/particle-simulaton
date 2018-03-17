@@ -262,7 +262,7 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
 
     for (int i = init_x; i < end_x; i++)
         for (int j = init_y; j < end_y; j++)
-            bins[cur_bin].neighbor_idx.insert((bin_x + i)*len_row + bin_y + j);
+            bins[cur_bin].neighbor_idx.insert((bin_y + j)*len_col + bin_x + i);
 }
 
 
