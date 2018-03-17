@@ -24,7 +24,7 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(3);
 	nidxSet.insert(4);
 	find_local_neighbors(bins, 0, len_row, len_col);
-	assert(bins[cur_bin].neighbor_idx  == nidx);
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	cur_bin = 1;
 	nidxSet.insert(0);
@@ -34,7 +34,7 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(4);
 	nidxSet.insert(5);
 	find_local_neighbors(bins, 0, len_row, len_col);
-	assert(bins[cur_bin].neighbor_idx  == nidx);
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	cur_bin = 2;
 	nidxSet.insert(1);
@@ -42,7 +42,7 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(4);
 	nidxSet.insert(5);
 	find_local_neighbors(bins, 0, len_row, len_col);
-	assert(bins[cur_bin].neighbor_idx  == nidx);
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	cur_bin = 3;
 	nidxSet.insert(0);
@@ -50,7 +50,7 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(3);
 	nidxSet.insert(4);
 	find_local_neighbors(bins, 0, len_row, len_col);
-	assert(bins[cur_bin].neighbor_idx  == nidx);
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	std::cout<<" find_local_neighbors pass tests "<<std::endl;
 
