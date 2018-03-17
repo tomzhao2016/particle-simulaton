@@ -10,7 +10,7 @@ CFLAGS = -O3
 LIBS =
 
 
-TARGETS = serial openmp mpi autograder mpi_helper common2
+TARGETS = serial openmp mpi autograder mpi_helper common2 mpi_helper_test
 
 all:	$(TARGETS)
 
@@ -22,6 +22,8 @@ openmp: openmp.o common.o
 	$(CC) -o $@ $(LIBS) $(OPENMP) openmp.o common.o
 mpi: mpi.o common2.o mpi_helper.o
 	$(MPCC) -o $@ $(LIBS) $(MPILIBS) mpi.o common2.o mpi_helper.o
+mpi_helper_test: mpi_helper_test.o common2.0 mpi_helper.o
+	$(MPCC) -o $@ $(LIBS) $(MPILIBS) mpi_helper_test.o common2.o mpi_helper.o
 
 autograder.o: autograder.cpp common.h
 	$(CC) -c $(CFLAGS) autograder.cpp
@@ -37,7 +39,7 @@ common2.o: common2.cpp common2.h
 	$(CC) -c $(CFLAGS) common2.cpp
 mpi_helper.o: mpi_helper.cpp mpi_helper.h
 	$(MPCC) -c $(CFLAGS) mpi_helper.cpp
-
-
+mpi_helper_test.o: mpi_helper_test.cpp mpi_helper.h common2.h
+	$(MPCC) -c $(CFLAGS) mpi_helper_test.cpp
 clean:
 	rm -f *.o $(TARGETS) *.stdout *.txt
