@@ -14,8 +14,8 @@ void findLocalNeighborsTest(){
 
 	bin_t *bins = (bin_t*)malloc(6 * sizeof(bin_t));
 	int cur_bin;
-	int len_row = 2;
-	int len_col = 3;
+	int len_row = 3;
+	int len_col = 2;
 	std::set<int> nidxSet; 
 
 	cur_bin = 0;
@@ -24,7 +24,9 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(1);
 	nidxSet.insert(3);
 	nidxSet.insert(4);
+	std::cout<< " I am here Line 27 "<< std::endl;
 	find_local_neighbors(bins, 0, len_row, len_col);
+
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	cur_bin = 1;
@@ -36,7 +38,7 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(4);
 	nidxSet.insert(5);
 	find_local_neighbors(bins, 1, len_row, len_col);
-	std::cout<< " I am here Line 39 "<< std::endl;
+
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	cur_bin = 2;
