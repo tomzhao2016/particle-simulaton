@@ -12,7 +12,8 @@
 
 void findLocalNeighborsTest(){
 
-	bin_t *bins = (bin_t*)malloc(6 * sizeof(bin_t));
+	bin_t *bins = new bin_t[6];
+
 	int cur_bin;
 	int len_row = 3;
 	int len_col = 2;
