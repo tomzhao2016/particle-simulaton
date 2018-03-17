@@ -12,7 +12,7 @@
 
 void findLocalNeighborsSimpleTest(){
 
-	bin_t bins = new bins[1];
+	bin_t bins = new bin_t[1];
 
 	int cur_bin;
 	int len_row = 1;
