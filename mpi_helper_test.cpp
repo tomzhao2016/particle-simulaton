@@ -27,7 +27,7 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(4);
 
 	find_local_neighbors(bins, 0, len_row, len_col);
-	for (std::set<int>:iterator it = bins[cur_bin].neighbor_idx.begin(); it != bins[cur_bin].neighbor_idx.end(); ++it ){
+	for (std::set<int>::iterator it = bins[cur_bin].neighbor_idx.begin(); it != bins[cur_bin].neighbor_idx.end(); ++it ){
 		std::cout<< *it <<std::endl;
 	}
 
