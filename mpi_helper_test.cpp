@@ -39,6 +39,10 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(5);
 	find_local_neighbors(bins, 1, len_row, len_col);
 	std::cout << " I am here Line 41" << std::endl;
+	for (std::set<int>::iterator it = bins[cur_bin].neighbor_idx.begin(); it != bins[cur_bin].neighbor_idx.end(); ++it ){
+		std::cout<< *it <<std::endl;
+	}
+
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	cur_bin = 2;
@@ -62,9 +66,6 @@ void findLocalNeighborsTest(){
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	std::cout<<" find_local_neighbors pass tests "<<std::endl;
-	for (std::set<int>::iterator it = bins[cur_bin].neighbor_idx.begin(); it != bins[cur_bin].neighbor_idx.end(); ++it ){
-		std::cout<< *it <<std::endl;
-	}
 
 }
 void main(){
