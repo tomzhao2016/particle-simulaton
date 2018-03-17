@@ -15,8 +15,8 @@ void findLocalNeighborsTest(){
 	bin_t *bins = new bin_t[6];
 
 	int cur_bin;
-	int len_row = 3;
-	int len_col = 2;
+	int len_row = 2;
+	int len_col = 3;
 	std::set<int> nidxSet; 
 
 	cur_bin = 0;
