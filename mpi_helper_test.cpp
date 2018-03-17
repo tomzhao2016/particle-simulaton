@@ -24,11 +24,11 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(1);
 	nidxSet.insert(3);
 	nidxSet.insert(4);
-	std::cout<< " I am here Line 27 "<< std::endl;
+
 	find_local_neighbors(bins, 0, len_row, len_col);
 
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
-
+	std::cout<< " I am here Line 31 "<< std::endl;
 	cur_bin = 1;
 	nidxSet.clear();
 	nidxSet.insert(0);
