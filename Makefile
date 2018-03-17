@@ -22,7 +22,7 @@ openmp: openmp.o common.o
 	$(CC) -o $@ $(LIBS) $(OPENMP) openmp.o common.o
 mpi: mpi.o common2.o mpi_helper.o
 	$(MPCC) -o $@ $(LIBS) $(MPILIBS) mpi.o common2.o mpi_helper.o
-mpi_helper_test: mpi_helper_test.o common2.0 mpi_helper.o
+mpi_helper_test: mpi_helper_test.o common2.o mpi_helper.o
 	$(MPCC) -o $@ $(LIBS) $(MPILIBS) mpi_helper_test.o common2.o mpi_helper.o
 
 autograder.o: autograder.cpp common.h
