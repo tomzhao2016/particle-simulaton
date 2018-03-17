@@ -231,7 +231,7 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
         end_x = 2;
     }
     // x most right only -1:1
-    else if(bin_x == len_row - 1) {
+    else if(bin_x == len_col - 1) {
         init_x = -1;
         end_x = 1;
     }
@@ -246,7 +246,7 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
         end_y = 2;
     }
     // y bottom only -1:1
-    else if(bin_y == len_col - 1) {
+    else if(bin_y == len_row - 1) {
         end_y = 1;
         init_y = -1;
     }
