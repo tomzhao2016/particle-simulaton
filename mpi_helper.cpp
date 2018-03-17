@@ -217,7 +217,45 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
     int init_x, init_y, end_x, end_y;
     int bin_x = cur_bin%len_col;
     int bin_y = cur_bin/len_col;  
-    
+    if (len_col == 1 && len_row == 1){
+    	bins[cur_bin].neighbor_idx.insert(0);
+    }
+    else if(len_col == 1){
+    	init_x = 0;
+	    end_x = 1;
+	    if (bin_y == 0) {
+	        init_y = 0;
+	        end_y = 2;
+	    }
+	    // y bottom only -1:1
+	    else if(bin_y == len_row - 1) {
+	        end_y = 1;
+	        init_y = -1;
+	    }
+	    // x most right only -1:2
+	    else{
+	        init_y = -1;
+	        end_y = 2;
+	    }
+    }
+    else if(len_row == 1){
+    	init_y = 0;
+	    end_y = 1;
+	    if (bin_x == 0) {
+	        init_x = 0;
+	        end_x = 2;
+	    }
+	    // x most right only -1:1
+	    else if(bin_x == len_col - 1) {
+	        init_x = -1;
+	        end_x = 1;
+	    }
+	    // x most right only -1:2
+	    else {
+	        init_x = -1;
+	        end_x = 2;
+	    }
+    }
     //
     // set offset for three cases top/bottom/middle
     // for both x and y 
@@ -226,35 +264,39 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
     // neighbor_idx = cur_bin + offset
     //
     // x most left only 0:2
-    if (bin_x == 0) {
-        init_x = 0;
-        end_x = 2;
-    }
-    // x most right only -1:1
-    else if(bin_x == len_col - 1) {
-        init_x = -1;
-        end_x = 1;
-    }
-    // x most right only -1:2
-    else {
-        init_x = -1;
-        end_x = 2;
-    }
-    // y top only 0:2
-    if (bin_y == 0) {
-        init_y = 0;
-        end_y = 2;
-    }
-    // y bottom only -1:1
-    else if(bin_y == len_row - 1) {
-        end_y = 1;
-        init_y = -1;
-    }
-    // x most right only -1:2
     else{
-        init_y = -1;
-        end_y = 2;
+	    if (bin_x == 0) {
+	        init_x = 0;
+	        end_x = 2;
+	    }
+	    // x most right only -1:1
+	    else if(bin_x == len_col - 1) {
+	        init_x = -1;
+	        end_x = 1;
+	    }
+	    // x most right only -1:2
+	    else {
+	        init_x = -1;
+	        end_x = 2;
+	    }
+	    // y top only 0:2
+	    if (bin_y == 0) {
+	        init_y = 0;
+	        end_y = 2;
+	    }
+	    // y bottom only -1:1
+	    else if(bin_y == len_row - 1) {
+	        end_y = 1;
+	        init_y = -1;
+	    }
+	    // x most right only -1:2
+	    else{
+	        init_y = -1;
+	        end_y = 2;
+	    }
+
     }
+    
 
     //
     // find neighbors in x and y direction

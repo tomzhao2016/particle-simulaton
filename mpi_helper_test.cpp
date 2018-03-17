@@ -25,7 +25,75 @@ void findLocalNeighborsSimpleTest(){
 
 	find_local_neighbors(bins, 0, len_row, len_col);
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
-	std::cout<<" find_local_neighbors pass tests "<<std::endl;
+	std::cout<<" find_local_neighbors pass simple tests "<<std::endl;
+	
+}
+
+void findLocalNeighborsEdgeTest(){
+
+	bin_t *bins = new bin_t[2];
+
+	int cur_bin;
+	int len_row = 1;
+	int len_col = 2;
+	std::set<int> nidxSet; 
+
+	cur_bin = 0;
+	nidxSet.clear();
+	nidxSet.insert(0);
+	nidxSet.insert(1);
+	find_local_neighbors(bins, 0, len_row, len_col);
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
+
+	cur_bin = 1;
+	nidxSet.clear();
+	nidxSet.insert(0);
+	nidxSet.insert(1);
+	find_local_neighbors(bins, 1, len_row, len_col);
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
+	std::cout<<" find_local_neighbors other edge tests "<<std::endl;
+	
+}
+
+void findLocalNeighborsEdge2Test(){
+
+	bin_t *bins = new bin_t[4];
+
+	int cur_bin;
+	int len_row = 1;
+	int len_col = 4;
+	std::set<int> nidxSet; 
+
+	cur_bin = 0;
+	nidxSet.clear();
+	nidxSet.insert(0);
+	nidxSet.insert(1);
+	find_local_neighbors(bins, 0, len_row, len_col);
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
+
+	cur_bin = 1;
+	nidxSet.clear();
+	nidxSet.insert(0);
+	nidxSet.insert(1);
+	nidxSet.insert(2);
+	find_local_neighbors(bins, 1, len_row, len_col);
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
+
+	cur_bin = 2;
+	nidxSet.clear();
+	nidxSet.insert(1);
+	nidxSet.insert(2);
+	nidxSet.insert(3);
+	find_local_neighbors(bins, 2, len_row, len_col);
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
+
+	cur_bin = 3;
+	nidxSet.clear();
+	nidxSet.insert(2);
+	nidxSet.insert(3);
+	find_local_neighbors(bins, 3, len_row, len_col);
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
+	std::cout<<" find_local_neighbors other edge 2 tests "<<std::endl;
 	
 }
 
@@ -57,7 +125,7 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(4);
 	nidxSet.insert(5);
 	find_local_neighbors(bins, 1, len_row, len_col);
-	std::cout << " I am here Line 41" << std::endl;
+	//std::cout << " I am here Line 41" << std::endl;
 	for (std::set<int>::iterator it = bins[cur_bin].neighbor_idx.begin(); it != bins[cur_bin].neighbor_idx.end(); ++it ){
 		std::cout<< *it <<std::endl;
 	}
@@ -71,7 +139,7 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(4);
 	nidxSet.insert(5);
 	find_local_neighbors(bins, 2, len_row, len_col);
-	std::cout << " I am here Line 51" << std::endl;
+	//std::cout << " I am here Line 51" << std::endl;
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	cur_bin = 3;
@@ -81,10 +149,10 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(3);
 	nidxSet.insert(4);
 	find_local_neighbors(bins, 3, len_row, len_col);
-	std::cout << " I am here Line 61" << std::endl;
+	//std::cout << " I am here Line 61" << std::endl;
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
-	std::cout<<" find_local_neighbors pass general tests "<<std::endl;
+	std::cout<<" find_local_neighbors pass tests "<<std::endl;
 
 }
 void findLocalNeighborsGeneralTest(){
@@ -102,7 +170,7 @@ void findLocalNeighborsGeneralTest(){
 	nidxSet.insert(1);
 	nidxSet.insert(4);
 	nidxSet.insert(5);
-	std::cout << " I am here Line 105 " << std::endl;
+	//std::cout << " I am here Line 105 " << std::endl;
 	find_local_neighbors(bins, 0, len_row, len_col);
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
@@ -115,7 +183,7 @@ void findLocalNeighborsGeneralTest(){
 	nidxSet.insert(10);
 	nidxSet.insert(11);
 	find_local_neighbors(bins, 7, len_row, len_col);
-	std::cout << " I am here Line 118 " << std::endl;
+	//std::cout << " I am here Line 118 " << std::endl;
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	cur_bin = 10;
@@ -130,7 +198,7 @@ void findLocalNeighborsGeneralTest(){
 	nidxSet.insert(14);
 	nidxSet.insert(15);
 	find_local_neighbors(bins, 10, len_row, len_col);
-	std::cout << " I am here Line 137 " << std::endl;
+	//std::cout << " I am here Line 137 " << std::endl;
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	cur_bin = 12;
@@ -142,7 +210,7 @@ void findLocalNeighborsGeneralTest(){
 	nidxSet.insert(16);
 	nidxSet.insert(17);
 	find_local_neighbors(bins, 12, len_row, len_col);
-	std::cout << " I am here Line 152 " << std::endl;
+	//std::cout << " I am here Line 152 " << std::endl;
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	cur_bin = 23;
@@ -152,14 +220,19 @@ void findLocalNeighborsGeneralTest(){
 	nidxSet.insert(22);
 	nidxSet.insert(23);
 	find_local_neighbors(bins, 23, len_row, len_col);
-	std::cout << " I am here Line162" << std::endl;
+	//std::cout << " I am here Line162" << std::endl;
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
-	std::cout<<" find_local_neighbors pass tests "<<std::endl;
+	std::cout<<" find_local_neighbors pass general tests "<<std::endl;
 
 }
 
 void main(){
+	
 	findLocalNeighborsTest();
 	findLocalNeighborsGeneralTest();
+	findLocalNeighborsSimpleTest();
+	findLocalNeighborsEdgeTest();
+	findLocalNeighborsEdge2Test()
+
 }
