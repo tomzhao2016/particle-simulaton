@@ -228,11 +228,11 @@ void findLocalNeighborsGeneralTest(){
 }
 
 void main(){
-	
+
 	findLocalNeighborsTest();
 	findLocalNeighborsGeneralTest();
 	findLocalNeighborsSimpleTest();
 	findLocalNeighborsEdgeTest();
-	findLocalNeighborsEdge2Test()
+	findLocalNeighborsEdge2Test();
 
 }
