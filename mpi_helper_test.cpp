@@ -26,9 +26,9 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(4);
 
 	find_local_neighbors(bins, 0, len_row, len_col);
-
-	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 	std::cout<< " I am here Line 31 "<< std::endl;
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
+
 	cur_bin = 1;
 	nidxSet.clear();
 	nidxSet.insert(0);
