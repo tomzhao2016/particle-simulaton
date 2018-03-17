@@ -177,40 +177,6 @@ int main( int argc, char **argv )
     /*************************************************************
      * Variable initialization
      *********************************************************/
-    // Number of particles received from above, and so on.
-    int *receive_size_up = (int *)malloc(sizeof(int));
-     *receive_size_up = 0;
-    int *receive_size_upperleft = (int *)malloc(sizeof(int));
-     *receive_size_upperleft = 0;
-    int *receive_size_left = (int *)malloc(sizeof(int));
-     *receive_size_left = 0;
-    int *receive_size_lowerleft = (int *)malloc(sizeof(int));
-     *receive_size_lowerleft = 0;
-    int *receive_size_down = (int *)malloc(sizeof(int));
-     *receive_size_down = 0;
-    int *receive_size_lowerright = (int *)malloc(sizeof(int));
-     *receive_size_lowerright = 0;
-    int *receive_size_right = (int *)malloc(sizeof(int));
-     *receive_size_right = 0;
-    int *receive_size_upperright = (int *)malloc(sizeof(int));
-     *receive_size_upperright = 0;
-
-    int *send_size_up = (int *)malloc(sizeof(int));
-    *send_size_up = 0;
-    int *send_size_upperleft = (int *)malloc(sizeof(int));
-    *send_size_upperleft = 0;
-    int *send_size_left = (int *)malloc(sizeof(int));
-    *send_size_left = 0;
-    int *send_size_lowerleft = (int *)malloc(sizeof(int));
-    *send_size_lowerleft = 0;
-    int *send_size_down = (int *)malloc(sizeof(int));
-    *send_size_down = 0;
-    int *send_size_lowerright = (int *)malloc(sizeof(int));
-    *send_size_lowerright = 0;
-    int *send_size_right = (int *)malloc(sizeof(int));
-    *send_size_right = 0;
-    int *send_size_upperright = (int *)malloc(sizeof(int));
-    *send_size_upperright = 0;
 
 
 
@@ -361,10 +327,31 @@ int main( int argc, char **argv )
                     // move particles
                     // std::cout<<"Old Info, Step, ID, X, Y "<<step<<" "<<p1->second.id<<" "<<p1->second.x<<" "<<p1->second.y<<std::endl;
                     move(p1->second);
-                    local_particles_native_map.insert({p1->second.id, p1->second});
+                    local_bins[idx].native_particle.erase(p1->first);
+
+                    int proc_x_next = get_proc_x(p1->second.x);
+                    int proc_y_next = get_proc_y(p1->second.y);
+
+                    if(proc_x_next != proc_x_current || proc_y_next != proc_y_current){
+
+                        int target = num_proc_x * proc_y_next + proc_x_next;
+
+                        
+                        MPI_Request request;
+                        MPI_Isend(p1->second ,1 , PARTICLE, target, target, MPI_COMM_WORLD, &request);
+                        continue;
+                    }
+
+                    update_local_bins(local_bins, p1, 1, num_proc_x, num_proc_y, rank, bin_len);
                 }
             }
         }
+
+        // send edges to neigbours
+        MPI_Request request;
+        
+
+
 
        // 3.1 send and receive particles to/from other processor
        // for processor_id,particle_t in M:
