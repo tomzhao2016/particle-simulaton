@@ -12,7 +12,7 @@
 
 void findLocalNeighborsSimpleTest(){
 
-	bin_t bins;
+	bin_t bins = new bins[1];
 
 	int cur_bin;
 	int len_row = 1;
@@ -23,7 +23,7 @@ void findLocalNeighborsSimpleTest(){
 	nidxSet.clear();
 	nidxSet.insert(0);
 
-	find_local_neighbors(&bins, 0, len_row, len_col);
+	find_local_neighbors(bins, 0, len_row, len_col);
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 	std::cout<<" find_local_neighbors pass tests "<<std::endl;
 	
