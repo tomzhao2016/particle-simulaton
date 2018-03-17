@@ -215,8 +215,8 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
 	// len_col: number of bins in col
 	//
     int init_x, init_y, end_x, end_y;
-    int bin_x = cur_bin/len_row;
-    int bin_y = cur_bin%len_row;  
+    int bin_x = cur_bin%len_col;
+    int bin_y = cur_bin/len_col;  
     
     //
     // set offset for three cases top/bottom/middle
