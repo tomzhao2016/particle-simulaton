@@ -259,11 +259,11 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
     //
     // find neighbors in x and y direction
     //
-    std::cout<< " I am here Line 31 "<< std::endl;
+
     for (int i = init_x; i < end_x; i++)
         for (int j = init_y; j < end_y; j++)
             bins[cur_bin].neighbor_idx.insert((bin_x + i)*len_row + bin_y + j);
-    
+    std::cout<< " I am here Line 31 "<< std::endl;
 }
 
 
