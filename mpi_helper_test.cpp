@@ -34,8 +34,8 @@ void findLocalNeighborsEdgeTest(){
 	bin_t *bins = new bin_t[2];
 
 	int cur_bin;
-	int len_row = 1;
-	int len_col = 2;
+	int len_row = 2;
+	int len_col = 1;
 	std::set<int> nidxSet; 
 
 	cur_bin = 0;
@@ -102,8 +102,8 @@ void findLocalNeighborsTest(){
 	bin_t *bins = new bin_t[6];
 
 	int cur_bin;
-	int len_row = 2;
-	int len_col = 3;
+	int len_row = 3;
+	int len_col = 2;
 	std::set<int> nidxSet; 
 
 	cur_bin = 0;
@@ -126,9 +126,9 @@ void findLocalNeighborsTest(){
 	nidxSet.insert(5);
 	find_local_neighbors(bins, 1, len_row, len_col);
 	//std::cout << " I am here Line 41" << std::endl;
-	for (std::set<int>::iterator it = bins[cur_bin].neighbor_idx.begin(); it != bins[cur_bin].neighbor_idx.end(); ++it ){
-		std::cout<< *it <<std::endl;
-	}
+	// for (std::set<int>::iterator it = bins[cur_bin].neighbor_idx.begin(); it != bins[cur_bin].neighbor_idx.end(); ++it ){
+	// 	std::cout<< *it <<std::endl;
+	// }
 
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
@@ -160,8 +160,8 @@ void findLocalNeighborsGeneralTest(){
 	bin_t *bins = new bin_t[24];
 
 	int cur_bin;
-	int len_row = 6;
-	int len_col = 4;
+	int len_row = 4;
+	int len_col = 6;
 	std::set<int> nidxSet; 
 
 	cur_bin = 0;
