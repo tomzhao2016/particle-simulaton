@@ -213,20 +213,47 @@ int main( int argc, char **argv )
     double simulation_time = read_timer();
     for( int step = 0; step < NSTEPS; step++ ) {
 
-
+        //
+        // put barrier at start of each loop
+        //
         MPI_Barrier(MPI_COMM_WORLD);
+
+        //
+        // initialize stats
+        //
         navg = 0;
         dmin = 1.0;
         davg = 0.0;
+
+        //
+        // The last particle we send to neighbors
+        //
         particle_t end;
         end.id = -1;
+
+        //
+        // init_x, end_x, init_y, end_y is the offset between current proc position and
+        // its neighbor 
+        //
         int init_x, init_y;
         int end_x, end_y;
+
+        //
+        // initialize init)_x, init_y, end_x, end_y
+        // and number of neighbors of this proc
+        //
         int num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
+        
+        //
+        // rec_cnt counts how many processors have been done received from
+        //
         MPI_Request request;
         int rec_cnt = 0;
         particle_t new_particle;
 
+        //
+        // only runs on a valid rank
+        //
         if (rank < num_proc_x*num_proc_y){
            //
             //  save current step if necessary (slightly different semantics than in other codes)
@@ -339,6 +366,7 @@ int main( int argc, char **argv )
                         int proc_x_next = get_proc_x(p1->second.x, num_proc_x);
                         int proc_y_next = get_proc_y(p1->second.y, num_proc_y);
 
+                        // if it is not in this proc send to where it belongs
                         if(proc_x_next != proc_x_current || proc_y_next != proc_y_current){
 
                             int target = num_proc_x * proc_y_next + proc_x_next;
@@ -349,13 +377,15 @@ int main( int argc, char **argv )
                             }
                             continue;             
                         }
+                        // otherwise assign it to local bins
                         addto_local_bins(local_bins, p1->second, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
                     }
                 }
             }
 
-            // Tell neighbors finish sending
- 
+            //
+            // Tell neighbors finish sending bby sending particel 'end'
+            //
             for (int offset_x = init_x; offset_x <= end_x; offset_x++){
                 for(int offset_y = init_y; offset_y <= end_y; offset_y++){
                     int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
@@ -364,8 +394,10 @@ int main( int argc, char **argv )
                 }
             }
 
-            // receive new particles from neighbors
-
+            //
+            // receive new particles from neighbors until there is an end
+            // and after receive from 'num_neighbors' processors stop receiving
+            //
             while(rec_cnt < num_neighbors){
                 MPI_Status stat;
                 MPI_Recv(&new_particle, 1, PARTICLE,MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &stat);
@@ -375,25 +407,35 @@ int main( int argc, char **argv )
                 }
                 addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
             }
-
         }
-
+        //
+        // Make sure every proc finish updating native bins 
+        //
         MPI_Barrier(MPI_COMM_WORLD);
 
         if (rank < num_proc_x*num_proc_y){
 
+            //
+            // clear edge particles 
+            //
             for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
                 if (local_bins[idx].flag == 2) {
                     local_bins[idx].native_particle.clear();
                 }
             }
 
-            // send neighbors 
+            //
+            // send particles in edge bins to neighbor procs
+            // 
             for (int offset_x = init_x; offset_x <= end_x; offset_x++){
                 for(int offset_y = init_y; offset_y <= end_y; offset_y++){
+                    
+                    // the te=a=rget processor
                     int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
                     if (offset_x == 0 && offset_y == 0) continue;
                     else {
+
+                        // find the index set of edge bins in local_bins 
                         std::set<int> neighbor_idx = find_idx(offset_x, offset_y, local_bin_size);
                         for (std::set<int>::iterator p= neighbor_idx.begin(); p != neighbor_idx.end(); ++p){
                             std::map<double, particle_t> p1_map = local_bins[*p].native_particle;
@@ -405,7 +447,7 @@ int main( int argc, char **argv )
                 }
             }
 
-            // end 
+            // sendnig end particles
             for (int offset_x = init_x; offset_x <= end_x; offset_x++){
                 for(int offset_y = init_y; offset_y <= end_y; offset_y++){
                     int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
@@ -414,6 +456,7 @@ int main( int argc, char **argv )
                 }
             }
 
+            // receiving particles
             rec_cnt = 0;
             while(rec_cnt < num_neighbors){
                 MPI_Status stat;

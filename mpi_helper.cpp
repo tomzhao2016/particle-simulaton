@@ -27,6 +27,7 @@ int get_proc_y(double pos_y, int num_proc_y)
 
 // pass test
 int* get_bin_size(int num_proc_x, int num_proc_y, int rank, int bin_len){
+
 	//
 	// col and row for each processor
 	//
@@ -640,11 +641,21 @@ int find_proc_neighbors(int rank, int num_proc_x, int num_proc_y, int *init_x, i
 	return num_neighbors;
 }
 
-std::set<int> find_idx(int offset_x, int offset_y,int *local_bin_size){
 
+std::set<int> find_idx(int offset_x, int offset_y,int *local_bin_size){
+	/*
+	offset_x: offset from current proc_x_current
+	offset_y: offset from current proc_y_current
+	local_bin_size: number of bins in row/col
+
+	return: a set of indices need to send
+	*/
 	int local_col_size = local_bin_size[1];
 	int local_row_size = local_bin_size[0];
 	std::set<int> neighbor_idx;
+	//
+	// 8 cases
+	//   
 	if (offset_x == -1 && offset_y == -1){
 		neighbor_idx.insert(local_row_size+1);
 	}
@@ -682,41 +693,23 @@ std::set<int> find_idx(int offset_x, int offset_y,int *local_bin_size){
 		neighbor_idx.insert(local_row_size*(local_col_size-1) - 2);
 	}
 
-
-	//
-	// local col and row bin num,
-	//
-
-
-
 	return neighbor_idx;
 }
 
 
-
-
-void clean_local_bins(bin_t *local_bins, int local_bin_size){
-	//
-	// This method cleans the particles in all local_bins
-	// local_bin: is array of bins in each processor
-	// local_bin_size: is the size of this local_bin
-	//
-	for (int idx = 0; idx<local_bin_size; idx++){
-		local_bins[idx].native_particle.clear();
-	}
-}
-
 void addto_local_bins(bin_t *local_bins, particle_t new_particle,
 	int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len){
 
-	//
-	// This method assign each particle into bins in this processor
-	// local_bins: is empty array of bins needed to be updated
-	// local_particles_native_map: are array of new native particles(map) in current processor
-	// local_bin_size: is array[2], which is the row and col num of local bin numbers
-	// num_proc_x and num_proc_y: are x and y numbers of processors
-	// rank: is the id of current processor
-	// bin_len is the total number of bins before scattering particles
+	/*
+	 * This method assign a particle into bins in this processor
+	 * local_bins: is empty array of bins needed to be updated
+	 * new_particle: particle we need to insert
+	 * local_bin_size: is array[2], which is the row and col num of local bin numbers
+	 * num_proc_x and num_proc_y: are x and y numbers of processors
+	 * rank: is the id of current processor
+	 * bin_len is the total number of bins before scattering particles
+	 *
+	*/
 	//
 	// index row of this processor
 	//
@@ -759,69 +752,6 @@ void addto_local_bins(bin_t *local_bins, particle_t new_particle,
 	int cur_bin = local_col * local_row_size + local_row;
 	local_bins[cur_bin].native_particle.insert({new_particle.id, new_particle});
 	
-
-}
-void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_particles_native_map,
-	int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len){
-
-	//
-	// This method assign each particle into bins in this processor
-	// local_bins: is empty array of bins needed to be updated
-	// local_particles_native_map: are array of new native particles(map) in current processor
-	// local_bin_size: is array[2], which is the row and col num of local bin numbers
-	// num_proc_x and num_proc_y: are x and y numbers of processors
-	// rank: is the id of current processor
-	// bin_len is the total number of bins before scattering particles
-	//
-	// index row of this processor
-	//
-	int idx_row = rank%num_proc_x;
-	int idx_col = rank/num_proc_x;
-	
-	int local_col_size = local_bin_size[1];
-	int local_row_size = local_bin_size[0];
-	//
-	// nuber of native bins in row and col
-	//
-	int num_bin_row = bin_len/num_proc_x;
-	int num_bin_col = bin_len/num_proc_y;
-	//
-	// width of each bin
-	//
-	double bin_width = get_size()/bin_len;
-	for (std::map<double, particle_t>::iterator it_p = local_particles_native_map.begin() ;it_p != local_particles_native_map.end(); ++it_p){
-		//
-		// global index
-		//
-		int global_row = (int)floor(it_p->second.x/bin_width);
-		int global_col = (int)floor(it_p->second.y/bin_width);
-
-		//
-		// Edge case
-		//
-		if (global_row == bin_len){
-			global_row--;
-		}
-		if (global_col == bin_len){
-			global_col--;
-		}
-
-		//
-		// convert to local index
-		//
-		int local_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin_row);
-		int local_col = glob2loc_col(global_col, idx_col, num_proc_y, num_bin_col);
-		//
-		// find cur_bin index
-		//
-		int cur_bin = local_col * local_row_size + local_row;
-
-
-		local_bins[cur_bin].native_particle.insert({it_p->second.id, it_p->second});
-
-		
-		
-	}
 
 }
 
