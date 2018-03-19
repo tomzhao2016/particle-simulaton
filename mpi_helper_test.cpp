@@ -308,19 +308,19 @@ void initLocalBinsTest(){
 	for (int x = 0; x< 25; i++){
 		for (int y = 0; y < 18; y++){
 			if(x == 0 || y == 0 || y = local_bin_size[1] - 1){
-				assert(local_bins[y*25+x].glag==2);
+				assert(local_bins[y*25+x].flag==2);
 			}
 			else if(x == 1 && y > 0 && y< 17){
-				assert(local_bins[y*25+x].glag==1);
+				assert(local_bins[y*25+x].flag==1);
 			}
 			else if(y == 1 && x > 0){
-				assert(local_bins[y*25+x].glag==1);
+				assert(local_bins[y*25+x].flag==1);
 			}
 			else if(y == 16 && x > 0){
-				assert(local_bins[y*25+x].glag==1);
+				assert(local_bins[y*25+x].flag==1);
 			}
 			else{
-				assert(local_bins[y*25+x].glag==0);
+				assert(local_bins[y*25+x].flag==0);
 			}
 		}
 
@@ -337,5 +337,6 @@ void main(){
 	findLocalNeighborsEdge2Test();
 	getBinSizeTest();
 	glob2locTest();
+	initLocalBinsTest();
 
 }
