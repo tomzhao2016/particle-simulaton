@@ -396,7 +396,7 @@ int main( int argc, char **argv )
                     for (std::set<int>::iterator p= neighbor_idx.begin(); p != neighbor_idx.end(); ++p){
                         std::map<double, particle_t> p1_map = local_bins[*p].native_particle;
                         for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1){
-                            MPI_Isend(&end, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
+                            MPI_Isend(&p1->second, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
                         }
                     } 
                 }
