@@ -332,8 +332,8 @@ int main( int argc, char **argv )
                     move(p1->second);
                     local_bins[idx].native_particle.erase(p1->first);
 
-                    int proc_x_next = get_proc_x(p1->second.x);
-                    int proc_y_next = get_proc_y(p1->second.y);
+                    int proc_x_next = get_proc_x(p1->second.x, num_proc_x);
+                    int proc_y_next = get_proc_y(p1->second.y, num_proc_y);
 
                     if(proc_x_next != proc_x_current || proc_y_next != proc_y_current){
 
@@ -341,12 +341,11 @@ int main( int argc, char **argv )
                         // assume all go to neighbors
                         if(abs(proc_x_next - proc_x_current)<=1 &&abs(proc_y_next-proc_y_current)<=1){
                             MPI_Request request;
-                            MPI_Isend(p1->second ,1 , PARTICLE, target, target, MPI_COMM_WORLD, &request);
+                            MPI_Isend(&p1->second ,1 , PARTICLE, target, target, MPI_COMM_WORLD, &request);
                         }
                         continue;             
                     }
-
-                    update_local_bins(local_bins, p1, 1, num_proc_x, num_proc_y, rank, bin_len);
+                    addto_local_bins(local_bins, p1->second, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
                 }
             }
         }
@@ -360,8 +359,8 @@ int main( int argc, char **argv )
         MPI_Request request;
         for (int offset_x = init_x; offset_x <= end_x; offset_x++){
             for(int offset_y = init_y; offset_y <= end_y; offset_y++){
-                send_to_idx = (prox_y + offset_y) * num_proc_x + prox_x + offset_x;
-                if (offset_x == 0 && offset_y = 0) continue;
+                int send_to_idx = (proc_y_current + offset_y) * num_proc_x + prox_x_current + offset_x;
+                if (offset_x == 0 && offset_y == 0) continue;
                 else MPI_Isend(&end, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
             }
         }
@@ -370,13 +369,13 @@ int main( int argc, char **argv )
         int rec_cnt = 0;
         particle_t new_particle;
         while(rec_cnt < num_neighbors){
-            MPI_status stat;
+            MPI_Status stat;
             MPI_Recv(&new_particle, 1, PARTICLE,MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &stat);
             if(new_particle.id == -1){
                 rec_cnt++;
                 continue;
             }
-            update_local_bins(local_bins, {new_particle.id, new_particle}, 1, num_proc_x, num_proc_y, rank, bin_len);
+            addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
         }
 
 
