@@ -293,7 +293,7 @@ void glob2locTest(){
 void initLocalBinsTest(){
 	// rank = 3 proc_x = 2 proc_y = 3
 	bin_t* local_bins = new bin_t[25*18];
-	particle_t* local_particles;
+	particle_t* local_particles = new particle_t[1];
 	int local_size = 0;
 	int *local_bin_size;
 	local_bin_size[0] = 25;
