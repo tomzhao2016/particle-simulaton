@@ -27,5 +27,5 @@ int find_proc_neighbors(int rank, int num_proc_x, int num_proc_y, int *init_x, i
 void clean_local_bins(bin_t *local_bins, int local_bin_size);
 void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_particles_native_map,
 	int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len);
-void addto_local_bins(bin_t *local_bins, paticle_t new_particle,
+void addto_local_bins(bin_t *local_bins, particle_t new_particle,
 	int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len);
