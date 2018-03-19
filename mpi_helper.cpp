@@ -555,7 +555,7 @@ int find_proc_neighbors(int rank, int num_proc_x, int num_proc_y, int *init_x, i
 
     if (num_proc_y == 1 && num_proc_x == 1){
     	*init_x = 0;
-    	*init_y = 0
+    	*init_y = 0;
     	*end_x = 0;
     	*end_y = 0;
     }
@@ -635,7 +635,7 @@ int find_proc_neighbors(int rank, int num_proc_x, int num_proc_y, int *init_x, i
 	    }
 
     }
-    num_neighbors = (*end_y - *init_y + 1)*(*end_x - *init_x + 1) - 1
+    num_neighbors = (*end_y - *init_y + 1)*(*end_x - *init_x + 1) - 1;
 	return num_neighbors;
 }
 
