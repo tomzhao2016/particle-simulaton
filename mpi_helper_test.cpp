@@ -484,7 +484,7 @@ void initLocalBins12Test(){
 
 
 void findProcNeighborsTest(){
-	
+
 	int rank = 0;
 	int num_proc_x = 2;
 	int num_proc_y = 3;
@@ -494,7 +494,7 @@ void findProcNeighborsTest(){
 	assert(init_x == 0);
 	assert(init_y == 0);
 	assert(end_x == 1);
-	assert(iend_y == 1);
+	assert(end_y == 1);
 
 	std::cout<<" Pass find_proc_neighbors test "<<std::endl;
 
