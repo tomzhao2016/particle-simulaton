@@ -359,7 +359,7 @@ int main( int argc, char **argv )
         MPI_Request request;
         for (int offset_x = init_x; offset_x <= end_x; offset_x++){
             for(int offset_y = init_y; offset_y <= end_y; offset_y++){
-                int send_to_idx = (proc_y_current + offset_y) * num_proc_x + prox_x_current + offset_x;
+                int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
                 if (offset_x == 0 && offset_y == 0) continue;
                 else MPI_Isend(&end, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
             }
