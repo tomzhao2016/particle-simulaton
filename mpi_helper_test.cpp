@@ -326,7 +326,7 @@ void initLocalBins23Test(){
 		}
 	}
 
-	bin_t* local_bins = new bin_t[25*17];
+	local_bins = new bin_t[25*17];
 	local_size = 0;
 	local_bin_size[0] = 25;
 	local_bin_size[1] = 17;
@@ -393,7 +393,7 @@ void initLocalBins22Test(){
 		}
 	}
 
-	bin_t* local_bins = new bin_t[26*26];
+	local_bins = new bin_t[26*26];
 	local_size = 0;
 	local_bin_size[0] = 26;
 	local_bin_size[1] = 26;
