@@ -378,19 +378,49 @@ int main( int argc, char **argv )
             addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
         }
 
+        MPI_Barrier(MPI_COMM_WORLD);
+        // send neighbors 
+        for (int offset_x = init_x; offset_x <= end_x; offset_x++){
+            for(int offset_y = init_y; offset_y <= end_y; offset_y++){
+                int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
+                if (offset_x == 0 && offset_y == 0) continue;
+                else {
+                    std::set<int> neighbor_idx = find_idx(offset_x, offset_y, local_bin_size);
+                    for (std::set<int> iterator:: p= neighbor_idx.begin(); p != neighbor_idx.end(); ++p){
+                        std::map<double, particle_t> p1_map = local_bins[*p].native_particle;
+                        for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1)
+                            MPI_Isend(&end, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
+                        }
+                    } 
+                }
+            }
+        }
 
+        // end 
+        for (int offset_x = init_x; offset_x <= end_x; offset_x++){
+            for(int offset_y = init_y; offset_y <= end_y; offset_y++){
+                int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
+                if (offset_x == 0 && offset_y == 0) continue;
+                else MPI_Isend(&end, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
+            }
+        }
+
+        rec_cnt = 0;
+        while(rec_cnt < num_neighbors){
+            MPI_Status stat;
+            MPI_Recv(&new_particle, 1, PARTICLE,MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &stat);
+            if(new_particle.id == -1){
+                rec_cnt++;
+                continue;
+            }
+            addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+        }
 
         
 
 
 
-       // 3.1 send and receive particles to/from other processor
-       // for processor_id,particle_t in M:
-       //   MPI_send(particle_t to native/edge)
-       //
-       /*
-        convert a map to an array, assuming I receive a map named local_particles_native_map
-        */
+
     }
 
     simulation_time = read_timer( ) - simulation_time;

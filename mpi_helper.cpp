@@ -639,6 +639,53 @@ int find_proc_neighbors(int rank, int num_proc_x, int num_proc_y, int *init_x, i
 	return num_neighbors;
 }
 
+std::set<int> find_idx(int offset_x, int offset_y,int *local_bin_size){
+
+	int local_col_size = local_bin_size[1];
+	int local_row_size = local_bin_size[0];
+	std::set<int> neighbor_idx;
+	if (offset_x == -1 && offset_y == -1){
+		neighbor_idx.insert(0);
+	}
+	else if(offset_x == -1 && offset_y == 0){
+		for(int i =0; i< local_col_size; i++){
+			neighbor_idx.insert(i*local_row_size);
+		}
+	}
+	else if(offset_x == -1 && offset_y == 1){
+		neighbor_idx.insert(local_row_size*(local_col_size-1));
+	}
+	else if(offset_x == 0 && offset_y == -1){
+		for(int i =0; i< local_row_size; i++){
+			neighbor_idx.insert(i);
+		}
+	}
+	else if(offset_x == 0 && offset_y == 1){
+		for(int i =0; i< local_row_size; i++){
+			neighbor_idx.insert(i+local_row_size*(local_col_size-1));
+		}
+	}
+	else if(offset_x == 1 && offset_y == -1){
+		neighbor_idx.insert(local_row_size-1);
+	}
+	else if(offset_x == 1 && offset_y == 0){
+		for(int i =0; i< local_col_size; i++){
+			neighbor_idx.insert(i*local_row_size + local_row_size - 1);
+		}
+	}
+	else if(offset_x == 1 && offset_y == 1){
+		neighbor_idx.insert(local_row_size*local_col_size - 1);
+	}
+
+
+	//
+	// local col and row bin num,
+	//
+
+
+
+	return neighbor_idx;
+}
 
 
 
