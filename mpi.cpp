@@ -218,7 +218,12 @@ int main( int argc, char **argv )
         navg = 0;
         dmin = 1.0;
         davg = 0.0;
-
+        particle_t end;
+        end.id = -1;
+        int init_x, init_y;
+        int end_x, end_y;
+        int num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
+        MPI_Request request;
 
         if (rank < num_proc_x*num_proc_y){
            //
@@ -348,12 +353,7 @@ int main( int argc, char **argv )
             }
 
             // Tell neighbors finish sending
-            particle_t end;
-            end.id = -1;
-            int init_x, init_y;
-            int end_x, end_y;
-            int num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
-            MPI_Request request;
+ 
             for (int offset_x = init_x; offset_x <= end_x; offset_x++){
                 for(int offset_y = init_y; offset_y <= end_y; offset_y++){
                     int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
@@ -379,7 +379,7 @@ int main( int argc, char **argv )
 
         MPI_Barrier(MPI_COMM_WORLD);
 
-        if (rank < num_proc_x*numproc_y){
+        if (rank < num_proc_x*num_proc_y){
 
             for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
                 if (local_bins[idx].flag == 2) {
