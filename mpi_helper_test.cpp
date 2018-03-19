@@ -275,16 +275,16 @@ void glob2locTest(){
 
 	int global_row = 35;
 	int global_col = 23;
-	int idx_row = 1;
+	int idx_row = 0;
 	int idx_col = 1;
-	int num_proc_x = 2;
+	int num_proc_x = 1;
 	int num_proc_y = 3;
 	int num_bin_row = 24;
 	int num_bin_col = 16;
 	int loc_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin_row);
 	int loc_col = glob2loc_col(global_col, idx_col, num_proc_y, num_bin_col);
 	//std::cout<<"number of bins in y axis is: "<<num_bin[1]<<std::endl;
-	assert(loc_row == 12);
+	assert(loc_row == 35);
 	// std::cout<<"number of bins in y axis is: "<<num_bin[1]<<std::endl;
 	assert(loc_col == 8);
 	std::cout<<" Pass glob2loc Test! "<<std::endl;
