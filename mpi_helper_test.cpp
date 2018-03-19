@@ -496,6 +496,47 @@ void findProcNeighborsTest(){
 	assert(end_x == 1);
 	assert(end_y == 1);
 
+	rank = 1;
+	num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
+	assert(num_neighbors == 3);	
+	assert(init_x == -1);
+	assert(init_y == 0);
+	assert(end_x == 0);
+	assert(end_y == 1);
+
+	rank = 2;
+	num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
+	assert(num_neighbors == 5);
+	assert(init_x == 0);
+	assert(init_y == -1);
+	assert(end_x == 1);
+	assert(end_y == 1);
+
+	num_proc_x = 1;
+	num_proc_y = 3;
+	rank = 0;
+	num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
+	assert(num_neighbors == 1);
+	assert(init_x == 0);
+	assert(init_y == 0);
+	assert(end_x == 0);
+	assert(end_y == 1);
+
+	rank = 1;
+	num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
+	assert(num_neighbors == 2);
+	assert(init_x == 0);
+	assert(init_y == -1);
+	assert(end_x == 0);
+	assert(end_y == 1);
+
+	rank = 2;
+	num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
+	assert(num_neighbors == 1);
+	assert(init_x == 0);
+	assert(init_y == -1);
+	assert(end_x == 0);
+	assert(end_y == 0);
 	std::cout<<" Pass find_proc_neighbors test "<<std::endl;
 
 }
