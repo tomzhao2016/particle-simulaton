@@ -224,6 +224,8 @@ int main( int argc, char **argv )
         int end_x, end_y;
         int num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
         MPI_Request request;
+        int rec_cnt = 0;
+        particle_t new_particle;
 
         if (rank < num_proc_x*num_proc_y){
            //
@@ -363,8 +365,7 @@ int main( int argc, char **argv )
             }
 
             // receive new particles from neighbors
-            int rec_cnt = 0;
-            particle_t new_particle;
+
             while(rec_cnt < num_neighbors){
                 MPI_Status stat;
                 MPI_Recv(&new_particle, 1, PARTICLE,MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &stat);
