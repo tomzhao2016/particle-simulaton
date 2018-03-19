@@ -511,5 +511,6 @@ void main(){
 	initLocalBins23Test();
 	initLocalBins22Test();
 	initLocalBins12Test();
+	findProcNeighborsTest();
 
 }
