@@ -386,9 +386,9 @@ int main( int argc, char **argv )
                 if (offset_x == 0 && offset_y == 0) continue;
                 else {
                     std::set<int> neighbor_idx = find_idx(offset_x, offset_y, local_bin_size);
-                    for (std::set<int> iterator:: p= neighbor_idx.begin(); p != neighbor_idx.end(); ++p){
+                    for (std::set<int>::iterator p= neighbor_idx.begin(); p != neighbor_idx.end(); ++p){
                         std::map<double, particle_t> p1_map = local_bins[*p].native_particle;
-                        for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1)
+                        for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1){
                             MPI_Isend(&end, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
                         }
                     } 
