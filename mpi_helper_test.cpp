@@ -287,6 +287,7 @@ void glob2locTest(){
 	assert(loc_row == 12);
 	// std::cout<<"number of bins in y axis is: "<<num_bin[1]<<std::endl;
 	assert(loc_col == 8);
+	std::cout<<" Pass glob2loc Test! "<<std::endl;
 }
 
 void main(){
@@ -297,5 +298,6 @@ void main(){
 	findLocalNeighborsEdgeTest();
 	findLocalNeighborsEdge2Test();
 	getBinSizeTest();
+	glob2locTest();
 
 }
