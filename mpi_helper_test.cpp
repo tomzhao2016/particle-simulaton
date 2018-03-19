@@ -227,6 +227,22 @@ void findLocalNeighborsGeneralTest(){
 
 }
 
+void getBinSizeTest(){
+
+	int n = 500;
+	set_size(n);
+	int* num_bin;
+	int num_proc_x = 2;
+	int num_proc_y = 3;
+	int rank = 3;
+	int bin_len = bin_length(num_proc_x, num_proc_y);
+	std::cout<<"bin length is: "<<bin_len<<std::endl;
+	num_bin = get_bin_size(num_proc_x, num_proc_y, rank, bin_len);
+	assert(num_bin[0] == 25);
+	assert(num_bin[1] == 17);
+
+}
+
 void main(){
 
 	findLocalNeighborsTest();
@@ -234,5 +250,6 @@ void main(){
 	findLocalNeighborsSimpleTest();
 	findLocalNeighborsEdgeTest();
 	findLocalNeighborsEdge2Test();
+	getBinSizeTest();
 
 }
