@@ -290,6 +290,44 @@ void glob2locTest(){
 	std::cout<<" Pass glob2loc Test! "<<std::endl;
 }
 
+void initLocalBinsTest(){
+	// rank = 3 proc_x = 2 proc_y = 3
+	bin_t* local_bins = new bin_t[25*18];
+	particle_t* local_particles;
+	int local_size = 0;
+	int *local_bin_size;
+	local_bin_size[0] = 25;
+	local_bin_size[1] = 18;
+	int num_proc_x = 2;
+	int num_proc_y = 3;
+	int rank = 3;
+	int bin_len = 48;
+
+	init_local_bins(local_bins, local_particles, local_size, 
+ *local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+	for (int x = 0; x< 25; i++){
+		for (int y = 0; y < 18; y++){
+			if(x == 0 || y == 0 || y = local_bin_size[1] - 1){
+				assert(local_bins[y*25+x].glag==2);
+			}
+			else if(x == 1 && y > 0 && y< 17){
+				assert(local_bins[y*25+x].glag==1);
+			}
+			else if(y == 1 && x > 0){
+				assert(local_bins[y*25+x].glag==1);
+			}
+			else if(y == 16 && x > 0){
+				assert(local_bins[y*25+x].glag==1);
+			}
+			else{
+				assert(local_bins[y*25+x].glag==0);
+			}
+		}
+
+
+	}
+}
+
 void main(){
 
 	findLocalNeighborsTest();
