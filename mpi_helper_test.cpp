@@ -443,13 +443,13 @@ void initLocalBins12Test(){
 	for (int x = 0; x< 50; x++){
 		for (int y = 0; y < 26; y++){
 			if(y == 25){
-				assert(local_bins[y*26+x].flag==2);
+				assert(local_bins[y*50+x].flag==2);
 			}
 			else if(y == 24){
-				assert(local_bins[y*26+x].flag==1);
+				assert(local_bins[y*50+x].flag==1);
 			}
 			else{
-				assert(local_bins[y*26+x].flag==0);
+				assert(local_bins[y*50+x].flag==0);
 			}
 		}
 	}
@@ -466,13 +466,13 @@ void initLocalBins12Test(){
 	for (int x = 0; x< 50; x++){
 		for (int y = 0; y < 26; y++){
 			if(y == 0){
-				assert(local_bins[y*26+x].flag==2);
+				assert(local_bins[y*50+x].flag==2);
 			}
 			else if(y == 1){
-				assert(local_bins[y*26+x].flag==1);
+				assert(local_bins[y*50+x].flag==1);
 			}
 			else{
-				assert(local_bins[y*26+x].flag==0);
+				assert(local_bins[y*50+x].flag==0);
 			}
 		}
 	}
