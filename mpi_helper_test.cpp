@@ -281,8 +281,8 @@ void glob2locTest(){
 	int num_proc_y = 3;
 	int num_bin_row = 24;
 	int num_bin_col = 16;
-	loc_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin_row);
-	loc_col = glob2loc_col(global_col, idx_col, num_proc_y, num_bin_col);
+	int loc_row = glob2loc_row(global_row, idx_row, num_proc_x, num_bin_row);
+	int loc_col = glob2loc_col(global_col, idx_col, num_proc_y, num_bin_col);
 	//std::cout<<"number of bins in y axis is: "<<num_bin[1]<<std::endl;
 	assert(loc_row == 12);
 	// std::cout<<"number of bins in y axis is: "<<num_bin[1]<<std::endl;
