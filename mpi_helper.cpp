@@ -205,7 +205,7 @@ int glob2loc_col(int global_col, int idx_col, int num_proc_y, int num_bin_col){
 
 
 
-void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
+void find_local_neighbors(bin_t *bins, int cur_bin, int len_col, int len_row)
 {
 	//
 	// this method has same function as find_neighbors in serial code
@@ -214,6 +214,10 @@ void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col)
 	// len_row: number of bins in row
 	// len_col: number of bins in col
 	//
+
+
+
+
     int init_x, init_y, end_x, end_y;
     int bin_x = cur_bin%len_col;
     int bin_y = cur_bin/len_col;  
