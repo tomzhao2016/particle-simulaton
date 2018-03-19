@@ -684,8 +684,8 @@ void addto_local_bins(bin_t *local_bins, particle_t new_particle,
 	double bin_width = get_size()/bin_len;
 
 
-	int global_row = (int)floor(it_p->second.x/bin_width);
-	int global_col = (int)floor(it_p->second.y/bin_width);
+	int global_row = (int)floor(new_particle.x/bin_width);
+	int global_col = (int)floor(new_particle.y/bin_width);
 
 
 	//
