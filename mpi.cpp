@@ -379,6 +379,13 @@ int main( int argc, char **argv )
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
+
+        for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
+            if (local_bins[idx].flag == 2) {
+                local_bins[idx].native_particle.clear();
+            }
+        }
+
         // send neighbors 
         for (int offset_x = init_x; offset_x <= end_x; offset_x++){
             for(int offset_y = init_y; offset_y <= end_y; offset_y++){
