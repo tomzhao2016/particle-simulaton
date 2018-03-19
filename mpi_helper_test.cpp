@@ -388,7 +388,7 @@ void initLocalBins22Test(){
 				assert(local_bins[y*26+x].flag==1);
 			}
 			else{
-				assert(local_bins[y*2+x].flag==0);
+				assert(local_bins[y*26+x].flag==0);
 			}
 		}
 	}
