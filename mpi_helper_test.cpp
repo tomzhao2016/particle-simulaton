@@ -324,9 +324,31 @@ void initLocalBinsTest(){
 				assert(local_bins[y*25+x].flag==0);
 			}
 		}
-
-
 	}
+
+	init_local_bins(local_bins, local_particles, local_size, 
+ local_bin_size, num_proc_x, num_proc_y, 0, bin_len);
+	//std::cout<<" I am at 308! "<<std::endl;
+	for (int x = 0; x< 25; x++){
+		for (int y = 0; y < 18; y++){
+			if(x == 24 || y == 17){
+				assert(local_bins[y*25+x].flag==2);
+			}
+			else if(x == 23){
+				assert(local_bins[y*25+x].flag==1);
+			}
+			else if(y == 16){
+				assert(local_bins[y*25+x].flag==1);
+			}
+			else{
+				assert(local_bins[y*25+x].flag==0);
+			}
+		}
+	}
+
+
+
+	std::cout<<" Pass init_local_bins flag test "<<std::endl;
 }
 
 void main(){

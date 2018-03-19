@@ -341,7 +341,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	//
 	int idx_col = rank/num_proc_x;
 	int idx_row = rank%num_proc_x;
-	std::cout<<" I am at 344! "<<std::endl;
+
 	//
 	// num of bins in each proc which has not added neighbors yet
 	// num_bin :the number of native bins + edge bins
@@ -395,7 +395,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	}
 
 
-	std::cout<<" I am at 398! "<<std::endl;
+
 	//
 	// local col and row bin num,
 	//
