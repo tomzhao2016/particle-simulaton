@@ -212,6 +212,9 @@ int main( int argc, char **argv )
      */
     double simulation_time = read_timer();
     for( int step = 0; step < NSTEPS; step++ ) {
+
+
+        MPI_Barrier(MPI_COMM_WORLD);
         navg = 0;
         dmin = 1.0;
         davg = 0.0;
@@ -335,11 +338,12 @@ int main( int argc, char **argv )
                     if(proc_x_next != proc_x_current || proc_y_next != proc_y_current){
 
                         int target = num_proc_x * proc_y_next + proc_x_next;
-
-                        
-                        MPI_Request request;
-                        MPI_Isend(p1->second ,1 , PARTICLE, target, target, MPI_COMM_WORLD, &request);
-                        continue;
+                        // assume all go to neighbors
+                        if(abs(proc_x_next - proc_x_current)<=1 &&abs(proc_y_next-proc_y_current)<=1){
+                            MPI_Request request;
+                            MPI_Isend(p1->second ,1 , PARTICLE, target, target, MPI_COMM_WORLD, &request);
+                        }
+                        continue;             
                     }
 
                     update_local_bins(local_bins, p1, 1, num_proc_x, num_proc_y, rank, bin_len);
@@ -347,8 +351,36 @@ int main( int argc, char **argv )
             }
         }
 
-        // send edges to neigbours
+        // Tell neighbors finish sending
+        particle_t end;
+        end.id = -1;
+        int init_x, init_y;
+        int end_x, end_y;
+        int num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
         MPI_Request request;
+        for (int offset_x = init_x; offset_x <= end_x; offset_x++){
+            for(int offset_y = init_y; offset_y <= end_y; offset_y++){
+                send_to_idx = (prox_y + offset_y) * num_proc_x + prox_x + offset_x;
+                if (offset_x == 0 && offset_y = 0) continue;
+                else MPI_Isend(&end, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
+            }
+        }
+
+        // receive new particles from neighbors
+        int rec_cnt = 0;
+        particle_t new_particle;
+        while(rec_cnt < num_neighbors){
+            MPI_status stat;
+            MPI_Recv(&new_particle, 1, PARTICLE,MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &stat);
+            if(new_particle.id == -1){
+                rec_cnt++;
+                continue;
+            }
+            update_local_bins(local_bins, {new_particle.id, new_particle}, 1, num_proc_x, num_proc_y, rank, bin_len);
+        }
+
+
+
         
 
 

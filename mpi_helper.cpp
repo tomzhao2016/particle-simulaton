@@ -546,7 +546,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 }
 
 
-
+// pass tests
 int find_proc_neighbors(int rank, int num_proc_x, int num_proc_y, int *init_x, int *init_y, int *end_x, int *end_y){
 
 	int num_neighbors;
