@@ -243,6 +243,8 @@ void getBinSizeTest(){
 	int bin_len = bin_length(num_proc_x, num_proc_y);
 	// std::cout<<"bin length is: "<<bin_len<<std::endl;
 	num_bin = get_bin_size(num_proc_x, num_proc_y, rank, bin_len);
+	std::cout<<"number of bins in y axis is: "<<num_bin[0]<<std::endl;
+	std::cout<<"number of bins in y axis is: "<<num_bin[1]<<std::endl;
 	assert(num_bin[0] == 48);
 	// std::cout<<"number of bins in y axis is: "<<num_bin[1]<<std::endl;
 	assert(num_bin[1] == 25);
