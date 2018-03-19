@@ -545,6 +545,104 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	
 }
 
+
+
+int find_proc_neighbors(int rank, int num_proc_x, int num_proc_y, int *init_x, int *init_y, int *end_x, int *end_y){
+
+	int num_neighbors;
+	int current_y = rank/num_proc_x;
+	int current_x = rank%num_proc_x;
+
+    if (num_proc_y == 1 && num_proc_x == 1){
+    	init_x = 0;
+    	init_y = 0
+    	end_x = 0;
+    	end_y = 0;
+    }
+    else if(num_proc_x == 1){
+    	init_x = 0;
+	    end_x = 0;
+	    if (current_y == 0) {
+	        init_y = 0;
+	        end_y = 1;
+	    }
+	    // y bottom only -1:1
+	    else if(current_y == num_proc_y - 1) {
+	        init_y = -1;
+	        end_y = 0;
+	    }
+	    // x most right only -1:2
+	    else{
+	        init_y = -1;
+	        end_y = 1;
+	    }
+    }
+    else if(num_proc_y == 1){
+    	init_y = 0;
+	    end_y = 0;
+	    if (current_x == 0) {
+	        init_x = 0;
+	        end_x = 1;
+	    }
+	    // x most right only -1:1
+	    else if(current_x == num_proc_x - 1) {
+	        init_x = -1;
+	        end_x = 0;
+	    }
+	    // x most right only -1:2
+	    else {
+	        init_x = -1;
+	        end_x = 1;
+	    }
+    }
+    //
+    // set offset for three cases top/bottom/middle
+    // for both x and y 
+    // (given cur_bin we just need to know the offsets from this cur_bin)
+    // offset -1:2
+    // neighbor_idx = cur_bin + offset
+    //
+    // x most left only 0:2
+    else{
+	    if (current_x == 0) {
+	        init_x = 0;
+	        end_x = 1;
+	    }
+	    // x most right only -1:1
+	    else if(current_x == num_proc_x - 1) {
+	        init_x = -1;
+	        end_x = 0;
+	    }
+	    // x most right only -1:2
+	    else {
+	        init_x = -1;
+	        end_x = 1;
+	    }
+	    // y top only 0:2
+	    if (current_y == 0) {
+	        init_y = 0;
+	        end_y = 1;
+	    }
+	    // y bottom only -1:1
+	    else if(current_y == num_proc_y - 1) {
+	        end_y = 0;
+	        init_y = -1;
+	    }
+	    // x most right only -1:2
+	    else{
+	        init_y = -1;
+	        end_y = 1;
+	    }
+
+    }
+    num_neighbors = (end_y - init_y + 1)*(end_x - init_x + 1) - 1
+	return num_neighbors;
+}
+
+
+
+
+
 void clean_local_bins(bin_t *local_bins, int local_bin_size){
 	//
 	// This method cleans the particles in all local_bins

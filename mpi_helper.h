@@ -23,7 +23,7 @@ int glob2loc_col(int global_col, int idx_col, int num_proc_y, int num_bin_col);
 void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_size, int *local_bin_size, 
 	int num_proc_x, int num_proc_y, int rank, int bin_len);
 void find_local_neighbors(bin_t *bins, int cur_bin, int len_row, int len_col);
-
+int find_proc_neighbors(int rank, int num_proc_x, int num_proc_y, int *init_x, int *init_y, int *end_x, int *end_y);
 void clean_local_bins(bin_t *local_bins, int local_bin_size);
 void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_particles_native_map,
 	int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len);

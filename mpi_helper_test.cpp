@@ -481,6 +481,24 @@ void initLocalBins12Test(){
 
 	std::cout<<" Pass init_local_bins flag 12test "<<std::endl;
 }
+
+
+void findProcNeighborsTest(){
+	
+	int rank = 0;
+	int num_proc_x = 2;
+	int num_proc_y = 3;
+	int init_x, init_y, end_x, end_y;
+	int num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
+	assert(num_neighbors == 3);
+	assert(init_x == 0);
+	assert(init_y == 0);
+	assert(end_x == 1);
+	assert(iend_y == 1);
+
+	std::cout<<" Pass find_proc_neighbors test "<<std::endl;
+
+}
 void main(){
 
 	findLocalNeighborsTest();
