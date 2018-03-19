@@ -39,11 +39,6 @@ int main( int argc, char **argv )
      * Set up MPI
      ********************************************/
     int number_of_processors, rank;
-    MPI_Request send_request0,send_request1,
-    send_request2, send_request3, send_request4, 
-    send_request5, send_request6, send_request7,
-    recv_request0, recv_request1, recv_request2, recv_request3,
-    recv_request4, recv_request5, recv_request6, recv_request7;
     MPI_Init( &argc, &argv );
     MPI_Comm_size( MPI_COMM_WORLD, &number_of_processors );
     MPI_Comm_rank( MPI_COMM_WORLD, &rank );
@@ -71,7 +66,7 @@ int main( int argc, char **argv )
     MPI_Type_contiguous( 7, MPI_DOUBLE, &PARTICLE );
     MPI_Type_commit( &PARTICLE );
 
-    MPI::COMM_WORLD.Set_errhandler ( MPI::ERRORS_THROW_EXCEPTIONS );
+    //MPI::COMM_WORLD.Set_errhandler ( MPI::ERRORS_THROW_EXCEPTIONS );
 
     set_size( n );
     if( rank == 0 )
@@ -312,31 +307,25 @@ int main( int argc, char **argv )
              * Statistical data
              *************************/
             // NOT SURE how to change avg and min
-            // if (find_option(argc, argv, "-no") == -1) {
+            MPI_Barrier(MPI_COMM_WORLD);
+            if (find_option(argc, argv, "-no") == -1) {
 
-            //     MPI_Reduce(&davg, &rdavg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-            //     MPI_Reduce(&navg, &rnavg, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-            //     MPI_Reduce(&dmin, &rdmin, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+                MPI_Reduce(&davg, &rdavg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+                MPI_Reduce(&navg, &rnavg, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+                MPI_Reduce(&dmin, &rdmin, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
 
 
-            //     if (rank == 0) {
-            //         //
-            //         // Computing statistical data
-            //         //
-            //         if (rnavg) {
-            //             absavg += rdavg / rnavg;
-            //             nabsavg++;
-            //         }
-            //         if (rdmin < absmin) absmin = rdmin;
-            //     }
-            // }
-
-            //
-            // 2.move particles and save all the native particles to a map
-            // for b in native_bin & edge_bin:
-            //   for p in b:
-            //      move(p);
-            //
+                if (rank == 0) {
+                    //
+                    // Computing statistical data
+                    //
+                    if (rnavg) {
+                        absavg += rdavg / rnavg;
+                        nabsavg++;
+                    }
+                    if (rdmin < absmin) absmin = rdmin;
+                }
+            }
 
             /******************************
              * Move particles **********
