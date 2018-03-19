@@ -335,7 +335,8 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	// rank: is the id of current processor
 	// bin_len is the total number of bins before scattering particles
 	//
-
+	if(rank >= num_proc_x*num_proc_y)
+		return;
 	//
 	// col and row index of processor
 	//

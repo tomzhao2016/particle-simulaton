@@ -220,213 +220,211 @@ int main( int argc, char **argv )
         davg = 0.0;
 
 
-        // std::cout<<"I am beginning of step: "<<step<<std::endl;
+        if (rank < num_proc_x*num_proc_y){
+           //
+            //  save current step if necessary (slightly different semantics than in other codes)
+            //
+            if (find_option(argc, argv, "-no") == -1)
+                if (fsave && (step % SAVEFREQ) == 0)
+                    save(fsave, n, particles);
 
-        //std::cout << "I am beginning of step, in rank " << step << " " << rank << std::endl;
-
-        //
-        //  save current step if necessary (slightly different semantics than in other codes)
-        //
-        if (find_option(argc, argv, "-no") == -1)
-            if (fsave && (step % SAVEFREQ) == 0)
-                save(fsave, n, particles);
-
-        //
-        //  1.Update forces 
-        //  iterate over each native bins
-        //
-        /*********************************************************************
-         * Update forces
-         ****************************************************************/
-        for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
-            // if flag !=2 it is a native/edge bin
-            if (local_bins[idx].flag != 2) {
-                //  
-                // store map of particles in this bin
-                //
-                std::map<double, particle_t> p1_map = local_bins[idx].native_particle;
-                //
-                // iterate over all the particles in this map
-
-                for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1) {
+            //
+            //  1.Update forces 
+            //  iterate over each native bins
+            //
+            /*********************************************************************
+             * Update forces
+             ****************************************************************/
+            for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
+                // if flag !=2 it is a native/edge bin
+                if (local_bins[idx].flag != 2) {
                     //  
-                    // store set of neighbor index of this bin
+                    // store map of particles in this bin
                     //
-                    p1->second.ax = p1->second.ay = 0;
-                    std::set<int> neighbor_idx = local_bins[idx].neighbor_idx;
+                    std::map<double, particle_t> p1_map = local_bins[idx].native_particle;
+                    //
+                    // iterate over all the particles in this map
 
-                    //
-                    // iterate over all the neighbor bins
-                    //
-                    for (std::set<int>::iterator j = neighbor_idx.begin(); j != neighbor_idx.end(); ++j) {
+                    for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1) {
                         //  
-                        // store map of particles in this neighbor bin
+                        // store set of neighbor index of this bin
                         //
-                        std::map<double, particle_t> p2_map = local_bins[*j].native_particle;
+                        p1->second.ax = p1->second.ay = 0;
+                        std::set<int> neighbor_idx = local_bins[idx].neighbor_idx;
 
                         //
-                        // iterate over particles in this bin
+                        // iterate over all the neighbor bins
                         //
-                        for (std::map<double, particle_t>::iterator p2 = p2_map.begin(); p2 != p2_map.end(); ++p2) {
-                            if (p1->first != p2->first) {
-                                apply_force(p1->second, p2->second, &dmin, &davg, &navg);
+                        for (std::set<int>::iterator j = neighbor_idx.begin(); j != neighbor_idx.end(); ++j) {
+                            //  
+                            // store map of particles in this neighbor bin
+                            //
+                            std::map<double, particle_t> p2_map = local_bins[*j].native_particle;
+
+                            //
+                            // iterate over particles in this bin
+                            //
+                            for (std::map<double, particle_t>::iterator p2 = p2_map.begin(); p2 != p2_map.end(); ++p2) {
+                                if (p1->first != p2->first) {
+                                    apply_force(p1->second, p2->second, &dmin, &davg, &navg);
+                                }
                             }
                         }
                     }
                 }
             }
-        }
 
-        /****************************
-         * Statistical data
-         *************************/
-        // NOT SURE how to change avg and min
-        if (find_option(argc, argv, "-no") == -1) {
+            /****************************
+             * Statistical data
+             *************************/
+            // NOT SURE how to change avg and min
+            // if (find_option(argc, argv, "-no") == -1) {
 
-            MPI_Reduce(&davg, &rdavg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-            MPI_Reduce(&navg, &rnavg, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-            MPI_Reduce(&dmin, &rdmin, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+            //     MPI_Reduce(&davg, &rdavg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+            //     MPI_Reduce(&navg, &rnavg, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+            //     MPI_Reduce(&dmin, &rdmin, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
 
 
-            if (rank == 0) {
-                //
-                // Computing statistical data
-                //
-                if (rnavg) {
-                    absavg += rdavg / rnavg;
-                    nabsavg++;
-                }
-                if (rdmin < absmin) absmin = rdmin;
-            }
-        }
-
-        //
-        // 2.move particles and save all the native particles to a map
-        // for b in native_bin & edge_bin:
-        //   for p in b:
-        //      move(p);
-        //
-
-        /******************************
-         * Move particles **********
-         ******************************/
-
-        std::map<double, particle_t> local_particles_native_map;
-        // Move the particles.
-        for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
+            //     if (rank == 0) {
+            //         //
+            //         // Computing statistical data
+            //         //
+            //         if (rnavg) {
+            //             absavg += rdavg / rnavg;
+            //             nabsavg++;
+            //         }
+            //         if (rdmin < absmin) absmin = rdmin;
+            //     }
+            // }
 
             //
-            // if flag !=2 it is a native/edge bin
+            // 2.move particles and save all the native particles to a map
+            // for b in native_bin & edge_bin:
+            //   for p in b:
+            //      move(p);
             //
-            if (local_bins[idx].flag != 2) {
 
-                // store map of particles in this bin
+            /******************************
+             * Move particles **********
+             ******************************/
+
+            std::map<double, particle_t> local_particles_native_map;
+            // Move the particles.
+            for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
+
                 //
-                std::map<double, particle_t> p1_map = local_bins[idx].native_particle;
+                // if flag !=2 it is a native/edge bin
                 //
-                // iterate over all the particles in this map
-                //
-                for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1) {
-                    // move particles
-                    // std::cout<<"Old Info, Step, ID, X, Y "<<step<<" "<<p1->second.id<<" "<<p1->second.x<<" "<<p1->second.y<<std::endl;
-                    move(p1->second);
-                    local_bins[idx].native_particle.erase(p1->first);
+                if (local_bins[idx].flag != 2) {
 
-                    int proc_x_next = get_proc_x(p1->second.x, num_proc_x);
-                    int proc_y_next = get_proc_y(p1->second.y, num_proc_y);
+                    // store map of particles in this bin
+                    //
+                    std::map<double, particle_t> p1_map = local_bins[idx].native_particle;
+                    //
+                    // iterate over all the particles in this map
+                    //
+                    for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1) {
+                        // move particles
+                        // std::cout<<"Old Info, Step, ID, X, Y "<<step<<" "<<p1->second.id<<" "<<p1->second.x<<" "<<p1->second.y<<std::endl;
+                        move(p1->second);
+                        local_bins[idx].native_particle.erase(p1->first);
 
-                    if(proc_x_next != proc_x_current || proc_y_next != proc_y_current){
+                        int proc_x_next = get_proc_x(p1->second.x, num_proc_x);
+                        int proc_y_next = get_proc_y(p1->second.y, num_proc_y);
 
-                        int target = num_proc_x * proc_y_next + proc_x_next;
-                        // assume all go to neighbors
-                        if(abs(proc_x_next - proc_x_current)<=1 &&abs(proc_y_next-proc_y_current)<=1){
-                            MPI_Request request;
-                            MPI_Isend(&p1->second ,1 , PARTICLE, target, target, MPI_COMM_WORLD, &request);
+                        if(proc_x_next != proc_x_current || proc_y_next != proc_y_current){
+
+                            int target = num_proc_x * proc_y_next + proc_x_next;
+                            // assume all go to neighbors
+                            if(abs(proc_x_next - proc_x_current)<=1 &&abs(proc_y_next-proc_y_current)<=1){
+                                MPI_Request request;
+                                MPI_Isend(&p1->second ,1 , PARTICLE, target, target, MPI_COMM_WORLD, &request);
+                            }
+                            continue;             
                         }
-                        continue;             
+                        addto_local_bins(local_bins, p1->second, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
                     }
-                    addto_local_bins(local_bins, p1->second, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
                 }
             }
-        }
 
-        // Tell neighbors finish sending
-        particle_t end;
-        end.id = -1;
-        int init_x, init_y;
-        int end_x, end_y;
-        int num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
-        MPI_Request request;
-        for (int offset_x = init_x; offset_x <= end_x; offset_x++){
-            for(int offset_y = init_y; offset_y <= end_y; offset_y++){
-                int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
-                if (offset_x == 0 && offset_y == 0) continue;
-                else MPI_Isend(&end, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
+            // Tell neighbors finish sending
+            particle_t end;
+            end.id = -1;
+            int init_x, init_y;
+            int end_x, end_y;
+            int num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
+            MPI_Request request;
+            for (int offset_x = init_x; offset_x <= end_x; offset_x++){
+                for(int offset_y = init_y; offset_y <= end_y; offset_y++){
+                    int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
+                    if (offset_x == 0 && offset_y == 0) continue;
+                    else MPI_Isend(&end, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
+                }
             }
-        }
 
-        // receive new particles from neighbors
-        int rec_cnt = 0;
-        particle_t new_particle;
-        while(rec_cnt < num_neighbors){
-            MPI_Status stat;
-            MPI_Recv(&new_particle, 1, PARTICLE,MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &stat);
-            if(new_particle.id == -1){
-                rec_cnt++;
-                continue;
+            // receive new particles from neighbors
+            int rec_cnt = 0;
+            particle_t new_particle;
+            while(rec_cnt < num_neighbors){
+                MPI_Status stat;
+                MPI_Recv(&new_particle, 1, PARTICLE,MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &stat);
+                if(new_particle.id == -1){
+                    rec_cnt++;
+                    continue;
+                }
+                addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
             }
-            addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
 
-        for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
-            if (local_bins[idx].flag == 2) {
-                local_bins[idx].native_particle.clear();
-            }
-        }
+        if (rank < num_proc_x*numproc_y){
 
-        // send neighbors 
-        for (int offset_x = init_x; offset_x <= end_x; offset_x++){
-            for(int offset_y = init_y; offset_y <= end_y; offset_y++){
-                int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
-                if (offset_x == 0 && offset_y == 0) continue;
-                else {
-                    std::set<int> neighbor_idx = find_idx(offset_x, offset_y, local_bin_size);
-                    for (std::set<int>::iterator p= neighbor_idx.begin(); p != neighbor_idx.end(); ++p){
-                        std::map<double, particle_t> p1_map = local_bins[*p].native_particle;
-                        for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1){
-                            MPI_Isend(&p1->second, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
-                        }
-                    } 
+            for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
+                if (local_bins[idx].flag == 2) {
+                    local_bins[idx].native_particle.clear();
                 }
             }
-        }
 
-        // end 
-        for (int offset_x = init_x; offset_x <= end_x; offset_x++){
-            for(int offset_y = init_y; offset_y <= end_y; offset_y++){
-                int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
-                if (offset_x == 0 && offset_y == 0) continue;
-                else MPI_Isend(&end, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
+            // send neighbors 
+            for (int offset_x = init_x; offset_x <= end_x; offset_x++){
+                for(int offset_y = init_y; offset_y <= end_y; offset_y++){
+                    int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
+                    if (offset_x == 0 && offset_y == 0) continue;
+                    else {
+                        std::set<int> neighbor_idx = find_idx(offset_x, offset_y, local_bin_size);
+                        for (std::set<int>::iterator p= neighbor_idx.begin(); p != neighbor_idx.end(); ++p){
+                            std::map<double, particle_t> p1_map = local_bins[*p].native_particle;
+                            for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1){
+                                MPI_Isend(&p1->second, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
+                            }
+                        } 
+                    }
+                }
             }
-        }
 
-        rec_cnt = 0;
-        while(rec_cnt < num_neighbors){
-            MPI_Status stat;
-            MPI_Recv(&new_particle, 1, PARTICLE,MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &stat);
-            if(new_particle.id == -1){
-                rec_cnt++;
-                continue;
+            // end 
+            for (int offset_x = init_x; offset_x <= end_x; offset_x++){
+                for(int offset_y = init_y; offset_y <= end_y; offset_y++){
+                    int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
+                    if (offset_x == 0 && offset_y == 0) continue;
+                    else MPI_Isend(&end, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
+                }
             }
-            addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+
+            rec_cnt = 0;
+            while(rec_cnt < num_neighbors){
+                MPI_Status stat;
+                MPI_Recv(&new_particle, 1, PARTICLE,MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &stat);
+                if(new_particle.id == -1){
+                    rec_cnt++;
+                    continue;
+                }
+                addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+            }
+
         }
-
-        
-
-
-
 
     }
 
