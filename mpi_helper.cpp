@@ -25,6 +25,7 @@ int get_proc_y(double pos_y, int num_proc_y)
 	return (int) floor(pos_y / len);
 }
 
+// pass test
 int* get_bin_size(int num_proc_x, int num_proc_y, int rank, int bin_len){
 	//
 	// col and row for each processor
@@ -172,6 +173,7 @@ int* get_procs(double pos_x, double pos_y, int num_proc_x, int num_proc_y)
 	return process_ids;
 }
 
+// pass test
 int glob2loc_row(int global_row, int idx_row, int num_proc_x, int num_bin_row){
 	//
 	// This method map a global bin index into a local index inside the proc
@@ -188,6 +190,7 @@ int glob2loc_row(int global_row, int idx_row, int num_proc_x, int num_bin_row){
 	return local_row;
 }
 
+// pass test
 int glob2loc_col(int global_col, int idx_col, int num_proc_y, int num_bin_col){
 	//
 	// This method map a global bin index into a local index inside the proc
@@ -204,7 +207,7 @@ int glob2loc_col(int global_col, int idx_col, int num_proc_y, int num_bin_col){
 }
 
 
-
+// pass test
 void find_local_neighbors(bin_t *bins, int cur_bin, int len_col, int len_row)
 {
 	//
@@ -338,7 +341,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	//
 	int idx_col = rank/num_proc_x;
 	int idx_row = rank%num_proc_x;
-	
+	std::cout<<" I am at 344! "<<std::endl;
 	//
 	// num of bins in each proc which has not added neighbors yet
 	// num_bin :the number of native bins + edge bins
@@ -392,7 +395,7 @@ void init_local_bins(bin_t* local_bins, particle_t* local_particles,int local_si
 	}
 
 
-
+	std::cout<<" I am at 398! "<<std::endl;
 	//
 	// local col and row bin num,
 	//
