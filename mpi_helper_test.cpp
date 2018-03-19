@@ -305,7 +305,7 @@ void initLocalBinsTest(){
 
 	init_local_bins(local_bins, local_particles, local_size, 
  *local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
-	for (int x = 0; x< 25; i++){
+	for (int x = 0; x< 25; x++){
 		for (int y = 0; y < 18; y++){
 			if(x == 0 || y == 0 || y = local_bin_size[1] - 1){
 				assert(local_bins[y*25+x].flag==2);
