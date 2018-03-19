@@ -295,7 +295,7 @@ void initLocalBinsTest(){
 	bin_t* local_bins = new bin_t[25*18];
 	particle_t* local_particles = new particle_t[1];
 	int local_size = 0;
-	int *local_bin_size;
+	int *local_bin_size = new int[2];
 	local_bin_size[0] = 25;
 	local_bin_size[1] = 18;
 	int num_proc_x = 2;
