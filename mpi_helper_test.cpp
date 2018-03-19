@@ -290,7 +290,7 @@ void glob2locTest(){
 	std::cout<<" Pass glob2loc Test! "<<std::endl;
 }
 
-void initLocalBinsTest(){
+void initLocalBins23Test(){
 	// rank = 3 proc_x = 2 proc_y = 3
 	bin_t* local_bins = new bin_t[25*18];
 	particle_t* local_particles = new particle_t[1];
@@ -305,7 +305,7 @@ void initLocalBinsTest(){
 
 	init_local_bins(local_bins, local_particles, local_size, 
  local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
-	std::cout<<" I am at 308! "<<std::endl;
+	// std::cout<<" I am at 308! "<<std::endl;
 	for (int x = 0; x< 25; x++){
 		for (int y = 0; y < 18; y++){
 			if(x == 0 || y == 0 || y == local_bin_size[1] - 1){
@@ -326,18 +326,27 @@ void initLocalBinsTest(){
 		}
 	}
 
+	bin_t* local_bins = new bin_t[25*17];
+	local_size = 0;
+	local_bin_size[0] = 25;
+	local_bin_size[1] = 17;
+	num_proc_x = 2;
+	num_proc_y = 3;
+	rank = 0;
+	bin_len = 48;
+
 	init_local_bins(local_bins, local_particles, local_size, 
- local_bin_size, num_proc_x, num_proc_y, 0, bin_len);
+ local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
 	//std::cout<<" I am at 308! "<<std::endl;
 	for (int x = 0; x< 25; x++){
-		for (int y = 0; y < 18; y++){
-			if(x == 24 || y == 17){
+		for (int y = 0; y < 17; y++){
+			if(x == 24 || y == 16){
 				assert(local_bins[y*25+x].flag==2);
 			}
 			else if(x == 23){
 				assert(local_bins[y*25+x].flag==1);
 			}
-			else if(y == 16){
+			else if(y == 15){
 				assert(local_bins[y*25+x].flag==1);
 			}
 			else{
@@ -348,7 +357,71 @@ void initLocalBinsTest(){
 
 
 
-	std::cout<<" Pass init_local_bins flag test "<<std::endl;
+	std::cout<<" Pass init_local_bins flag 23test "<<std::endl;
+}
+
+void initLocalBins22Test(){
+	// rank = 3 proc_x = 2 proc_y = 3
+	bin_t* local_bins = new bin_t[26*26];
+	particle_t* local_particles = new particle_t[1];
+	int local_size = 0;
+	int *local_bin_size = new int[2];
+	local_bin_size[0] = 26;
+	local_bin_size[1] = 26;
+	int num_proc_x = 2;
+	int num_proc_y = 2;
+	int rank = 3;
+	int bin_len = 50;
+
+	init_local_bins(local_bins, local_particles, local_size, 
+ local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+	// std::cout<<" I am at 308! "<<std::endl;
+	for (int x = 0; x< 26; x++){
+		for (int y = 0; y < 26; y++){
+			if(x == 0 || y == 0){
+				assert(local_bins[y*26+x].flag==2);
+			}
+			else if(x == 1){
+				assert(local_bins[y*26+x].flag==1);
+			}
+			else if(y == 1){
+				assert(local_bins[y*26+x].flag==1);
+			}
+			else{
+				assert(local_bins[y*2+x].flag==0);
+			}
+		}
+	}
+
+	bin_t* local_bins = new bin_t[26*26];
+	local_size = 0;
+	local_bin_size[0] = 26;
+	local_bin_size[1] = 26;
+	rank = 0;
+
+	init_local_bins(local_bins, local_particles, local_size, 
+ local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+	//std::cout<<" I am at 308! "<<std::endl;
+	for (int x = 0; x< 26; x++){
+		for (int y = 0; y < 26; y++){
+			if(x == 25 || y == 25){
+				assert(local_bins[y*26+x].flag==2);
+			}
+			else if(x == 24){
+				assert(local_bins[y*26+x].flag==1);
+			}
+			else if(y == 24){
+				assert(local_bins[y*26+x].flag==1);
+			}
+			else{
+				assert(local_bins[y*26+x].flag==0);
+			}
+		}
+	}
+
+
+
+	std::cout<<" Pass init_local_bins flag 23test "<<std::endl;
 }
 
 void main(){
@@ -360,6 +433,7 @@ void main(){
 	findLocalNeighborsEdge2Test();
 	getBinSizeTest();
 	glob2locTest();
-	initLocalBinsTest();
+	initLocalBins23Test();
+	initLocalBins22Test();
 
 }
