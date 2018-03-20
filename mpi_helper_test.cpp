@@ -540,6 +540,54 @@ void findProcNeighborsTest(){
 	std::cout<<" Pass find_proc_neighbors test "<<std::endl;
 
 }
+
+
+void findIdxTest(){
+ 	// n = 500;
+	// int num_proc_x = 2;
+	// int num_proc_y = 3;
+	int offset_x = -1;
+	int offset_y = 0;
+	int *local_bin_size;
+	local_bin_size[0] = 24;
+	local_bin_size[1] = 16;
+	std::set<int> send_idx = find_idx(offset_x, offset_y, local_bin_size);
+	std::set<int> true_set;
+	// if proc_x_current = 1, proc_y_current = 0
+	for (int i  = 0; i<local_bin_size[1]; i++){
+		for(int j = 0; j<local_bin_size[0]; j++){
+			if(j == 1&&i<local_bin_size[1]-1)
+				true_set.insert(i*local_bin_size[0]+j);
+		}
+
+	}
+	assert(send_idx == true_set);
+
+	true_set.clear();
+	send_idx = find_idx(offset_x, offset_y, local_bin_size);
+	// if proc_x_current = 1, proc_y_current = 1
+	for (int i  = 0; i<local_bin_size[1]; i++){
+		for(int j = 0; j<local_bin_size[0]; j++){
+			if(j == 1&&i<local_bin_size[1]-1&&i>0)
+				true_set.insert(i*local_bin_size[0]+j);
+		}
+	}
+	assert(send_idx == true_set);
+
+
+	true_set.clear();
+	send_idx = find_idx(offset_x, offset_y, local_bin_size);
+	// if proc_x_current = 1, proc_y_current = 2
+	for (int i  = 0; i<local_bin_size[1]; i++){
+		for(int j = 0; j<local_bin_size[0]; j++){
+			if(j == 1&&i > 0)
+				true_set.insert(i*local_bin_size[0]+j);
+		}
+	}
+	assert(send_idx == true_set);
+	std::cout<<" Pass find_idx tests "<<std::endl;
+
+}
 void main(){
 
 	findLocalNeighborsTest();
@@ -553,5 +601,6 @@ void main(){
 	initLocalBins22Test();
 	initLocalBins12Test();
 	findProcNeighborsTest();
+	findIdxTest()
 
 }
