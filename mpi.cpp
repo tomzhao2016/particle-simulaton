@@ -312,7 +312,7 @@ int main( int argc, char **argv )
              * Statistical data
              *************************/
             // NOT SURE how to change avg and min
-            // MPI_Barrier(MPI_COMM_WORLD);
+            MPI_Barrier(MPI_COMM_WORLD);
             if (find_option(argc, argv, "-no") == -1) {
 
                 MPI_Reduce(&davg, &rdavg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
