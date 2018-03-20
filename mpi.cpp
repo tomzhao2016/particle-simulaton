@@ -312,7 +312,7 @@ int main( int argc, char **argv )
              * Statistical data
              *************************/
             // NOT SURE how to change avg and min
-            MPI_Barrier(MPI_COMM_WORLD);
+            // MPI_Barrier(MPI_COMM_WORLD);
             if (find_option(argc, argv, "-no") == -1) {
 
                 MPI_Reduce(&davg, &rdavg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -336,7 +336,7 @@ int main( int argc, char **argv )
              * Move particles **********
              ******************************/
 
-            std::map<double, particle_t> local_particles_native_map;
+            // std::map<double, particle_t> local_particles_native_map;
             // Move the particles.
             for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
 
@@ -355,6 +355,27 @@ int main( int argc, char **argv )
                         // move particles
                         // std::cout<<"Old Info, Step, ID, X, Y "<<step<<" "<<p1->second.id<<" "<<p1->second.x<<" "<<p1->second.y<<std::endl;
                         move(p1->second);
+                    }
+                }
+            }
+
+            // send each particle to target
+            for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
+
+                //
+                // if flag !=2 it is a native/edge bin
+                //
+                if (local_bins[idx].flag != 2) {
+
+                    // store map of particles in this bin
+                    //
+                    std::map<double, particle_t> p1_map = local_bins[idx].native_particle;
+                    //
+                    // iterate over all the particles in this map
+                    //
+                    for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1) {
+  
+                        // std::cout<<"Old Info, Step, ID, X, Y "<<step<<" "<<p1->second.id<<" "<<p1->second.x<<" "<<p1->second.y<<std::endl;
                         local_bins[idx].native_particle.erase(p1->first);
 
                         int proc_x_next = get_proc_x(p1->second.x, num_proc_x);
