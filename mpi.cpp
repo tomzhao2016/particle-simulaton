@@ -200,12 +200,12 @@ int main( int argc, char **argv )
     //
     init_local_bins(local_bins, local_particles, *local_size,
         local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
-    if(rank == 0){
-        std::set<int> temp_set = local_bins[0].neighbor_idx;
-        //for(std::set<int>::iterator p = temp_set.begin(); p != temp_set.end(); ++p )
-        std::cout<<"local_bins neighbors"<<temp_set.size()<<std::endl;
+    // if(rank == 0){
+    //     std::set<int> temp_set = local_bins[0].neighbor_idx;
+    //     //for(std::set<int>::iterator p = temp_set.begin(); p != temp_set.end(); ++p )
+    //     std::cout<<"local_bins neighbors"<<temp_set.size()<<std::endl;
 
-    }
+    // }
     /**********************************************************************
      * Simulation begins
      * ******************************************************************
