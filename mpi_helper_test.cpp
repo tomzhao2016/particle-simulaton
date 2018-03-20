@@ -548,7 +548,7 @@ void findIdxTest(){
 	// int num_proc_y = 3;
 	int offset_x = -1;
 	int offset_y = 0;
-	int *local_bin_size;
+	int *local_bin_size = new int[2];
 	local_bin_size[0] = 24;
 	local_bin_size[1] = 16;
 	std::set<int> send_idx = find_idx(offset_x, offset_y, local_bin_size);
