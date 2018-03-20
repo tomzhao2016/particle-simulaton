@@ -561,7 +561,7 @@ void findIdxTest(){
 		}
 
 	}
-	assert(send_idx == true_set);
+	//assert(send_idx == true_set);
 
 	true_set.clear();
 	send_idx = find_idx(offset_x, offset_y, local_bin_size);
