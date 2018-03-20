@@ -601,6 +601,6 @@ void main(){
 	initLocalBins22Test();
 	initLocalBins12Test();
 	findProcNeighborsTest();
-	findIdxTest()
+	findIdxTest();
 
 }
