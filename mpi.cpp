@@ -275,11 +275,11 @@ int main( int argc, char **argv )
                     //  
                     // store map of particles in this bin
                     //
-                    std::map<double, particle_t> p1_map = local_bins[idx].native_particle;
+                    // std::map<double, particle_t> p1_map = local_bins[idx].native_particle;
                     //
                     // iterate over all the particles in this map
 
-                    for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1) {
+                    for (std::map<double, particle_t>::iterator p1 = local_bins[idx].native_particle.begin(); p1 != local_bins[idx].native_particle.end(); ++p1) {
                         //  
                         // store set of neighbor index of this bin
                         //
@@ -347,11 +347,11 @@ int main( int argc, char **argv )
 
                     // store map of particles in this bin
                     //
-                    std::map<double, particle_t> p1_map = local_bins[idx].native_particle;
+                    // std::map<double, particle_t> p1_map = local_bins[idx].native_particle;
                     //
                     // iterate over all the particles in this map
                     //
-                    for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1) {
+                    for (std::map<double, particle_t>::iterator p1 = local_bins[idx].native_particle.begin(); p1 != local_bins[idx].native_particle.end(); ++p1) {
                         // move particles
                         // std::cout<<"Old Info, Step, ID, X, Y "<<step<<" "<<p1->second.id<<" "<<p1->second.x<<" "<<p1->second.y<<std::endl;
                         move(p1->second);
