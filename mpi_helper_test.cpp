@@ -546,12 +546,25 @@ void findIdxTest(){
  	// n = 500;
 	// int num_proc_x = 2;
 	// int num_proc_y = 3;
-	int offset_x = -1;
-	int offset_y = 0;
+
+	bin_t* local_bins = new bin_t[25*17];
+	particle_t* local_particles = new particle_t[1];
+	int local_size = 0;
 	int *local_bin_size = new int[2];
 	local_bin_size[0] = 25;
 	local_bin_size[1] = 17;
-	std::set<int> send_idx = find_idx(offset_x, offset_y, local_bin_size);
+	int num_proc_x = 2;
+	int num_proc_y = 3;
+	int rank = 1;
+	int bin_len = 50;
+
+	init_local_bins(local_bins, local_particles, local_size, 
+ local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+
+	int offset_x = -1;
+	int offset_y = 0;
+
+	std::set<int> send_idx = find_idx(offset_x, offset_y, local_bin_size, local_bins);
 	std::set<int> true_set;
 	// if proc_x_current = 1, proc_y_current = 0
 	for (int i  = 0; i<local_bin_size[1]; i++){
@@ -563,10 +576,15 @@ void findIdxTest(){
 	}
 	assert(send_idx == true_set);
 
+	local_bins = new bin_t[25*18];
+	rank = 3;
 	local_bin_size[0] = 25;
 	local_bin_size[1] = 18;
+
+	init_local_bins(local_bins, local_particles, local_size, 
+ local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
 	true_set.clear();
-	send_idx = find_idx(offset_x, offset_y, local_bin_size);
+	send_idx = find_idx(offset_x, offset_y, local_bin_size, local_bins);
 	// if proc_x_current = 1, proc_y_current = 1
 	for (int i  = 0; i<local_bin_size[1]; i++){
 		for(int j = 0; j<local_bin_size[0]; j++){
@@ -576,11 +594,14 @@ void findIdxTest(){
 	}
 	assert(send_idx == true_set);
 
-
+	local_bins = new bin_t[25*17];
+	rank = 5;
 	local_bin_size[0] = 25;
 	local_bin_size[1] = 17;
+	init_local_bins(local_bins, local_particles, local_size, 
+ local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
 	true_set.clear();
-	send_idx = find_idx(offset_x, offset_y, local_bin_size);
+	send_idx = find_idx(offset_x, offset_y, local_bin_size, local_bins);
 	// if proc_x_current = 1, proc_y_current = 2
 	for (int i  = 0; i<local_bin_size[1]; i++){
 		for(int j = 0; j<local_bin_size[0]; j++){
@@ -591,21 +612,21 @@ void findIdxTest(){
 	assert(send_idx == true_set);
 
 
-	offset_x = -1;
-	offset_y = 1;
-	local_bin_size[0] = 25;
-	local_bin_size[1] = 18;
-	// if proc_x_current = 1, proc_y_current = 1
-	true_set.clear();
-	send_idx = find_idx(offset_x, offset_y, local_bin_size);
-	true_set.insert(25*16+1);
+	// offset_x = -1;
+	// offset_y = 1;
+	// local_bin_size[0] = 25;
+	// local_bin_size[1] = 18;
+	// // if proc_x_current = 1, proc_y_current = 1
+	// true_set.clear();
+	// send_idx = find_idx(offset_x, offset_y, local_bin_size, local_bins);
+	// true_set.insert(25*16+1);
 
-	// if proc_x_current = 1, proc_y_current = 0
-	true_set.clear();
-	local_bin_size[0] = 25;
-	local_bin_size[1] = 17;
-	send_idx = find_idx(offset_x, offset_y, local_bin_size);
-	true_set.insert(25*15+1);
+	// // if proc_x_current = 1, proc_y_current = 0
+	// true_set.clear();
+	// local_bin_size[0] = 25;
+	// local_bin_size[1] = 17;
+	// send_idx = find_idx(offset_x, offset_y, local_bin_size, local_bins);
+	// true_set.insert(25*15+1);
 	std::cout<<" Pass find_idx tests "<<std::endl;
 
 }
