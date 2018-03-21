@@ -657,7 +657,7 @@ void findIdxTest(){
 	// if proc_x_current = 1, proc_y_current = 2
 	for (int i  = 0; i<local_bin_size[1]; i++){
 		for(int j = 0; j<local_bin_size[0]; j++){
-			if(i == 1&&i < local_bin_size[0]-1)
+			if(i == 1&&j < local_bin_size[0]-1)
 				true_set.insert(i*local_bin_size[0]+j);
 		}
 	}
@@ -678,7 +678,7 @@ void findIdxTest(){
 	// if proc_x_current = 1, proc_y_current = 2
 	for (int i  = 0; i<local_bin_size[1]; i++){
 		for(int j = 0; j<local_bin_size[0]; j++){
-			if(i == local_bin_size[1] - 2 &&i > 0)
+			if(i == local_bin_size[1] - 2 &&j > 0)
 				true_set.insert(i*local_bin_size[0]+j);
 		}
 	}
