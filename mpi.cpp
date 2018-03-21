@@ -242,14 +242,14 @@ int main( int argc, char **argv )
         // initialize init)_x, init_y, end_x, end_y
         // and number of neighbors of this proc
         //
-        if(rank == 9)
-            std::cout<<" I reach line 246"<<std::endl;
+        // if(rank == 9)
+        //     std::cout<<" I reach line 246"<<std::endl;
 
         int num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
 
         // testing when rank = 10
-        if(rank == 9)
-            std::cout<<" I reach line 249"<<std::endl;
+        // if(rank == 9)
+        //     std::cout<<" I reach line 249"<<std::endl;
         //
         // rec_cnt counts how many processors have been done received from
         //
@@ -313,37 +313,40 @@ int main( int argc, char **argv )
                     }
                 }
             }
+        }
 
-            /****************************
-             * Statistical data
-             *************************/
-            // NOT SURE how to change avg and min
-            MPI_Barrier(MPI_COMM_WORLD);
-            if (find_option(argc, argv, "-no") == -1) {
+        /****************************
+         * Statistical data
+         *************************/
+        // NOT SURE how to change avg and min
+        MPI_Barrier(MPI_COMM_WORLD);
+        if (find_option(argc, argv, "-no") == -1) {
 
-                MPI_Reduce(&davg, &rdavg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-                MPI_Reduce(&navg, &rnavg, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-                MPI_Reduce(&dmin, &rdmin, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+            MPI_Reduce(&davg, &rdavg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+            MPI_Reduce(&navg, &rnavg, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+            MPI_Reduce(&dmin, &rdmin, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
 
 
-                if (rank == 0) {
-                    //
-                    // Computing statistical data
-                    //
-                    if (rnavg) {
-                        absavg += rdavg / rnavg;
-                        nabsavg++;
-                    }
-                    if (rdmin < absmin) absmin = rdmin;
+            if (rank == 0) {
+                //
+                // Computing statistical data
+                //
+                if (rnavg) {
+                    absavg += rdavg / rnavg;
+                    nabsavg++;
                 }
+                if (rdmin < absmin) absmin = rdmin;
             }
+        }
 
+        if (rank < num_proc_x*num_proc_y){
             /******************************
              * Move particles **********
              ******************************/
 
             // std::map<double, particle_t> local_particles_native_map;
             // Move the particles.
+
             for (int idx = 0; idx < local_bin_row * local_bin_col; idx++) {
 
                 //
