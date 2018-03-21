@@ -24,6 +24,9 @@ mpi: mpi.o common2.o mpi_helper.o
 	$(MPCC) -o $@ $(LIBS) $(MPILIBS) mpi.o common2.o mpi_helper.o
 mpi_helper_test: mpi_helper_test.o common2.o mpi_helper.o
 	$(MPCC) -o $@ $(LIBS) $(MPILIBS) mpi_helper_test.o common2.o mpi_helper.o
+mpi_helper: common2.o
+	$(CC) -o $@ $(LIBS) mpi_helper.o common2.o
+
 
 autograder.o: autograder.cpp common.h
 	$(CC) -c $(CFLAGS) autograder.cpp
