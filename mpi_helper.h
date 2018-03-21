@@ -29,4 +29,4 @@ void update_local_bins(bin_t *local_bins, std::map<double,particle_t>local_parti
 	int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len);
 void addto_local_bins(bin_t *local_bins, particle_t new_particle,
 	int *local_bin_size, int num_proc_x, int num_proc_y, int rank, int bin_len);
-std::set<int> find_idx(int offset_x, int offset_y,int *local_bin_size);
+std::set<int> find_idx(int offset_x, int offset_y,int *local_bin_size, bin_t *local_bins);

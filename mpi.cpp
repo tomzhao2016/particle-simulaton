@@ -451,7 +451,7 @@ int main( int argc, char **argv )
                     else {
 
                         // find the index set of edge bins in local_bins 
-                        std::set<int> neighbor_idx = find_idx(offset_x, offset_y, local_bin_size);
+                        std::set<int> neighbor_idx = find_idx(offset_x, offset_y, local_bin_size, local_bins);
                         for (std::set<int>::iterator p= neighbor_idx.begin(); p != neighbor_idx.end(); ++p){
                             std::map<double, particle_t> p1_map = local_bins[*p].native_particle;
                             for (std::map<double, particle_t>::iterator p1 = p1_map.begin(); p1 != p1_map.end(); ++p1){
