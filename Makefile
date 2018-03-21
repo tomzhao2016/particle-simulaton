@@ -44,4 +44,4 @@ mpi_helper.o: mpi_helper.cpp mpi_helper.h common2.h
 mpi_helper_test.o: mpi_helper_test.cpp mpi_helper.h common2.h
 	$(MPCC) -c $(CFLAGS) mpi_helper_test.cpp
 clean:
-	rm -f *.o $(TARGETS) *.stdout *.txt
+	rm -f *.o $(TARGETS) *.stdout *.txt *.error
