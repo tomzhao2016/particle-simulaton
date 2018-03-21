@@ -10,7 +10,7 @@ CFLAGS = -O3
 LIBS =
 
 
-TARGETS = serial openmp mpi autograder common2 mpi_helper_test
+TARGETS = serial openmp mpi autograder mpi_helper_test
 
 all:	$(TARGETS)
 
@@ -39,6 +39,8 @@ common.o: common.cpp common.h
 	$(CC) -c $(CFLAGS) common.cpp
 common2.o: common2.cpp common2.h
 	$(CC) -c $(CFLAGS) common2.cpp
+mpi_helper.o: mpi_helper.cpp mpi_helper.h common2.h
+	$(CC) -c $(CFLAGS) mpi_helper.cpp
 mpi_helper_test.o: mpi_helper_test.cpp mpi_helper.h common2.h
 	$(MPCC) -c $(CFLAGS) mpi_helper_test.cpp
 clean:
