@@ -256,6 +256,16 @@ void findLocalNeighbors12Test(){
 	}
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
+	cur_bin = 2337;
+	nidxSet.clear();
+	nidxSet.insert(2280);
+	nidxSet.insert(2281);
+	nidxSet.insert(2337);
+	nidxSet.insert(2338);
+	//std::cout << " I am here Line 105 " << std::endl;
+	find_local_neighbors(bins, cur_bin, len_row, len_col);
+
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	std::cout<<" find_local_neighbors pass 3*4 tests "<<std::endl;
 
