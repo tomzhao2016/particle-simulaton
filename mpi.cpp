@@ -242,13 +242,13 @@ int main( int argc, char **argv )
         // initialize init)_x, init_y, end_x, end_y
         // and number of neighbors of this proc
         //
-        if(rank == 0)
+        if(rank == 10)
             std::cout<<" I reach line 246"<<std::endl;
 
         int num_neighbors = find_proc_neighbors(rank, num_proc_x, num_proc_y, &init_x, &init_y, &end_x, &end_y);
 
         // testing when rank = 10
-        if(rank == 0)
+        if(rank == 10)
             std::cout<<" I reach line 249"<<std::endl;
         //
         // rec_cnt counts how many processors have been done received from
