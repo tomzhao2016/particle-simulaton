@@ -264,7 +264,9 @@ void findLocalNeighbors12Test(){
 	nidxSet.insert(2338);
 	//std::cout << " I am here Line 105 " << std::endl;
 	find_local_neighbors(bins, cur_bin, len_row, len_col);
-
+	for (std::set<int>::iterator s = evalSet.begin();s != evalSet.end(); ++s){
+		std::cout<<"current neighbor is: "<<*s<<std::endl;
+	}
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 	std::cout<<" find_local_neighbors pass 3*4 tests "<<std::endl;
