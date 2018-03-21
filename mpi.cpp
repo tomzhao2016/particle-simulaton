@@ -522,7 +522,7 @@ int main( int argc, char **argv )
         fprintf(fsum,"%d %d %g\n",n,number_of_processors,simulation_time);
     }
   
-
+    delete[] local_bins;
     if ( fsum )
         fclose( fsum );
     if (partition_offsets)

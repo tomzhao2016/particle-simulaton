@@ -262,6 +262,8 @@ void findLocalNeighbors12Test(){
 	nidxSet.insert(2281);
 	nidxSet.insert(2337);
 	nidxSet.insert(2338);
+	nidxSet.insert(2394);
+	nidxSet.insert(2395);
 	//std::cout << " I am here Line 105 " << std::endl;
 	find_local_neighbors(bins, cur_bin, len_row, len_col);
 	evalSet = bins[cur_bin].neighbor_idx;
@@ -641,8 +643,32 @@ void findIdxTest(){
 	}
 	assert(send_idx == true_set);
 
+	offset_x = 0;
+	offset_y = -1;
+
+	local_bins = new bin_t[25*18];
+	rank = 2;
+	local_bin_size[0] = 25;
+	local_bin_size[1] = 18;
+	init_local_bins(local_bins, local_particles, local_size, 
+ local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
+	true_set.clear();
+	send_idx = find_idx(offset_x, offset_y, local_bin_size, local_bins);
+	// if proc_x_current = 1, proc_y_current = 2
+	for (int i  = 0; i<local_bin_size[1]; i++){
+		for(int j = 0; j<local_bin_size[0]; j++){
+			if(i == 1&&i < local_bin_size[0]-1)
+				true_set.insert(i*local_bin_size[0]+j);
+		}
+	}
+	assert(send_idx == true_set);
+
+
+	offset_x = 0;
+	offset_y = 1;
+
 	local_bins = new bin_t[25*17];
-	rank = 5;
+	rank = 1;
 	local_bin_size[0] = 25;
 	local_bin_size[1] = 17;
 	init_local_bins(local_bins, local_particles, local_size, 
@@ -652,7 +678,7 @@ void findIdxTest(){
 	// if proc_x_current = 1, proc_y_current = 2
 	for (int i  = 0; i<local_bin_size[1]; i++){
 		for(int j = 0; j<local_bin_size[0]; j++){
-			if(j == 1&&i > 0)
+			if(i == local_bin_size[1] - 2 &&i > 0)
 				true_set.insert(i*local_bin_size[0]+j);
 		}
 	}

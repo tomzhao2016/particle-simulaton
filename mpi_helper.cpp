@@ -64,6 +64,7 @@ int* get_bin_size(int num_proc_x, int num_proc_y, int rank, int bin_len){
 		num_bin[0] += 1;
 	else if (idx_row > 0 && idx_row < num_proc_x - 1)
 		num_bin[0] += 2;
+	
 	return num_bin;
 
 }
