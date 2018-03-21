@@ -227,6 +227,36 @@ void findLocalNeighborsGeneralTest(){
 
 }
 
+
+void findLocalNeighbors12Test(){
+
+	bin_t *bins = new bin_t[43*57];
+
+	int cur_bin;
+	int len_row = 57;
+	int len_col = 43;
+	std::set<int> nidxSet; 
+
+	cur_bin = 58;
+	nidxSet.clear();
+	nidxSet.insert(0);
+	nidxSet.insert(1);
+	nidxSet.insert(2);
+	nidxSet.insert(57);
+	nidxSet.insert(58);
+	nidxSet.insert(59);
+	nidxSet.insert(114);
+	nidxSet.insert(115);
+	nidxSet.insert(116);
+	//std::cout << " I am here Line 105 " << std::endl;
+	find_local_neighbors(bins, 0, len_row, len_col);
+	assert(bins[cur_bin].neighbor_idx  == nidxSet);
+
+
+	std::cout<<" find_local_neighbors pass 3*4 tests "<<std::endl;
+
+}
+
 void getBinSizeTest(){
 
 	int n = 500;
@@ -612,6 +642,9 @@ void findIdxTest(){
 	assert(send_idx == true_set);
 
 
+
+
+	// when 
 	// offset_x = -1;
 	// offset_y = 1;
 	// local_bin_size[0] = 25;
@@ -644,5 +677,8 @@ void main(){
 	initLocalBins12Test();
 	findProcNeighborsTest();
 	findIdxTest();
+
+	// test when n = 6000 num_proc = 12
+	findLocalNeighbors12Test();
 
 }
