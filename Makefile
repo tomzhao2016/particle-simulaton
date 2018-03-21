@@ -10,7 +10,7 @@ CFLAGS = -O3
 LIBS =
 
 
-TARGETS = serial openmp mpi autograder mpi_helper common2 mpi_helper_test
+TARGETS = serial openmp mpi autograder common2 mpi_helper_test
 
 all:	$(TARGETS)
 
