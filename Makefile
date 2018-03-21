@@ -39,7 +39,7 @@ common.o: common.cpp common.h
 	$(CC) -c $(CFLAGS) common.cpp
 common2.o: common2.cpp common2.h
 	$(CC) -c $(CFLAGS) common2.cpp
-mpi_helper.o: mpi_helper.cpp mpi_helper.h common2.h
+mpi_helper.o: mpi_helper.cpp common2.cpp mpi_helper.h common2.h
 	$(CC) -c $(CFLAGS) mpi_helper.cpp
 mpi_helper_test.o: mpi_helper_test.cpp mpi_helper.h common2.h
 	$(MPCC) -c $(CFLAGS) mpi_helper_test.cpp
