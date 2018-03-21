@@ -642,10 +642,10 @@ int find_proc_neighbors(int rank, int num_proc_x, int num_proc_y, int *init_x, i
 }
 
 
-std::set<int> find_idx(int offset_x, int offset_y,int *local_bin_size){
+std::set<int> find_idx(int offset_x, int offset_y,int *local_bin_size, bin_t *local_bins){
 	/*
 	offset_x: offset from current proc_x_current
-	offset_y: offset from current proc_y_current
+	offset_y: offset from current proc_y_currents
 	local_bin_size: number of bins in row/col
 
 	return: a set of indices need to send
@@ -661,7 +661,7 @@ std::set<int> find_idx(int offset_x, int offset_y,int *local_bin_size){
 	}
 	else if(offset_x == -1 && offset_y == 0){
 		for(int i =0; i< local_col_size; i++){
-			if(i > 0 && i<local_col_size-1)
+			if(local_bins[i*local_row_size+1].flag == 1)
 				neighbor_idx.insert(i*local_row_size+1);
 		}
 	}
@@ -670,13 +670,13 @@ std::set<int> find_idx(int offset_x, int offset_y,int *local_bin_size){
 	}
 	else if(offset_x == 0 && offset_y == -1){
 		for(int i =0; i< local_row_size; i++){
-			if(i>0 && i<local_row_size-1)
+			if(local_bins[i+local_row_size].flag == 1)
 				neighbor_idx.insert(i+local_row_size);
 		}
 	}
 	else if(offset_x == 0 && offset_y == 1){
 		for(int i =0; i< local_row_size; i++){
-			if(i>0 && i<local_row_size-1)
+			if(local_bins[i+local_row_size*(local_col_size-2)].flag == 1)
 				neighbor_idx.insert(i+local_row_size*(local_col_size-2));
 		}
 	}
@@ -685,7 +685,7 @@ std::set<int> find_idx(int offset_x, int offset_y,int *local_bin_size){
 	}
 	else if(offset_x == 1 && offset_y == 0){
 		for(int i =0; i< local_col_size; i++){
-			if(i > 0 && i<local_col_size-1)
+			if(local_bins[i*local_row_size + local_row_size - 2].flag == 1)
 				neighbor_idx.insert(i*local_row_size + local_row_size - 2);
 		}
 	}

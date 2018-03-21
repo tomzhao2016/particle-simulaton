@@ -255,7 +255,7 @@ int main( int argc, char **argv )
         // only runs on a valid rank
         //
         if (rank < num_proc_x*num_proc_y){
-           //
+            //
             //  save current step if necessary (slightly different semantics than in other codes)
             //
             if (find_option(argc, argv, "-no") == -1)
@@ -399,7 +399,7 @@ int main( int argc, char **argv )
             }
 
             //
-            // Tell neighbors finish sending bby sending particel 'end'
+            // Tell neighbors finish sending by sending particle 'end'
             //
             for (int offset_x = init_x; offset_x <= end_x; offset_x++){
                 for(int offset_y = init_y; offset_y <= end_y; offset_y++){
@@ -445,7 +445,7 @@ int main( int argc, char **argv )
             for (int offset_x = init_x; offset_x <= end_x; offset_x++){
                 for(int offset_y = init_y; offset_y <= end_y; offset_y++){
                     
-                    // the te=a=rget processor
+                    // the target processor
                     int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
                     if (offset_x == 0 && offset_y == 0) continue;
                     else {
@@ -462,7 +462,7 @@ int main( int argc, char **argv )
                 }
             }
 
-            // sendnig end particles
+            // sending end particles
             for (int offset_x = init_x; offset_x <= end_x; offset_x++){
                 for(int offset_y = init_y; offset_y <= end_y; offset_y++){
                     int send_to_idx = (proc_y_current + offset_y) * num_proc_x + proc_x_current + offset_x;
@@ -482,9 +482,7 @@ int main( int argc, char **argv )
                 }
                 addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
             }
-
         }
-
     }
 
     simulation_time = read_timer( ) - simulation_time;
