@@ -250,6 +250,10 @@ void findLocalNeighbors12Test(){
 	nidxSet.insert(116);
 	//std::cout << " I am here Line 105 " << std::endl;
 	find_local_neighbors(bins, 0, len_row, len_col);
+	std::set<int> evalSet = bins[cur_bin].neighbor_idx;
+	for (std::set<int>::iterator s = evalSet.begin();s != evalSet.end(); ++s){
+		std::cout<<"current neighbor is: "<<*s<<std::endl;
+	}
 	assert(bins[cur_bin].neighbor_idx  == nidxSet);
 
 
