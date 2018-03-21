@@ -6,7 +6,7 @@
 #include <math.h>
 #include <time.h>
 #include <sys/time.h>
-#include "common2.cpp"
+#include "common2.h"
 #include <iostream>
 
 
@@ -20,7 +20,7 @@ int get_proc_x(double pos_x, int num_proc_x)
 
 int get_proc_y(double pos_y, int num_proc_y)
 {
-	// Returns the position of the particle processor along the y-direction
+	// Returns the position of the particle procecssor along the y-direction
 	double len = get_size() / num_proc_y;
 	return (int) floor(pos_y / len);
 }
