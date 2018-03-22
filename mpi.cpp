@@ -417,8 +417,7 @@ int main( int argc, char **argv )
                     else MPI_Isend(&end, 1, PARTICLE, send_to_idx, rank, MPI_COMM_WORLD, &request);
                 }
             }
-            if(rank == 3)
-                std::cout<<" I reach line 421"<<std::endl;
+ 
             //
             // receive new particles from neighbors until there is an end
             // and after receive from 'num_neighbors' processors stop receiving
@@ -430,6 +429,8 @@ int main( int argc, char **argv )
                     rec_cnt++;
                     continue;
                 }
+                if(rank == 3)
+                    std::cout<<" I reach line 421"<<std::endl;
                 addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
             }
         }
