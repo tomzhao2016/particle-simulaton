@@ -751,7 +751,8 @@ void addto_local_bins(bin_t *local_bins, particle_t new_particle,
 	int local_col = glob2loc_col(global_col, idx_col, num_proc_y, num_bin_col);
 	
 	int cur_bin = local_col * local_row_size + local_row;
-	local_bins[cur_bin].native_particle.insert({new_particle.id, new_particle});
+	if(cur_bin >= 0 && cur_bin<local_col_size*local_row_size)
+		local_bins[cur_bin].native_particle.insert({new_particle.id, new_particle});
 	
 
 }
