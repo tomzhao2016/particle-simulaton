@@ -396,6 +396,12 @@ int main( int argc, char **argv )
                             int target = num_proc_x * proc_y_next + proc_x_next;
                             // assume all go to neighbors
                             if(abs(proc_x_next - proc_x_current)<=1 &&abs(proc_y_next-proc_y_current)<=1){
+                                if(target == 3){
+                                    std::cout<<"particle id:"<<p1->first<<std::endl;  
+                                    std::cout<<"particle x: "<<new_particle.x<<std::endl;
+                                    std::cout<<"particle y: "<<new_particle.y<<std::endl;
+                                    std::cout<<"rank:"<<rank<<std::endl;     
+                                }
                                 MPI_Request request;
                                 MPI_Isend(&p1->second ,1 , PARTICLE, target, target, MPI_COMM_WORLD, &request);
                             }
