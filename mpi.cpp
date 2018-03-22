@@ -389,6 +389,14 @@ int main( int argc, char **argv )
 
                         int proc_x_next = get_proc_x(p1->second.x, num_proc_x);
                         int proc_y_next = get_proc_y(p1->second.y, num_proc_y);
+                        if(rank == 6){
+                            std::cout<<"particle id:"<<p1->first<<std::endl;  
+                            std::cout<<"particle x: "<<p1->second.x<<std::endl;
+                            std::cout<<"particle y: "<<p1->second.y<<std::endl;
+                            std::cout<<"proc_x_next: "<<proc_x_next<<std::endl;
+                            std::cout<<"proc_y_next: "<<proc_y_next<<std::endl;
+                            std::cout<<"rank:"<<rank<<std::endl;     
+                        }
 
                         // if it is not in this proc send to where it belongs
                         if(proc_x_next != proc_x_current || proc_y_next != proc_y_current){
@@ -396,14 +404,7 @@ int main( int argc, char **argv )
                             int target = num_proc_x * proc_y_next + proc_x_next;
                             // assume all go to neighbors
                             if(abs(proc_x_next - proc_x_current)<=1 &&abs(proc_y_next-proc_y_current)<=1){
-                                if(target == 6){
-                                    std::cout<<"particle id:"<<p1->first<<std::endl;  
-                                    std::cout<<"particle x: "<<p1->second.x<<std::endl;
-                                    std::cout<<"particle y: "<<p1->second.y<<std::endl;
-                                    std::cout<<"proc_x_next: "<<proc_x_next<<std::endl;
-                                    std::cout<<"proc_y_next: "<<proc_y_next<<std::endl;
-                                    std::cout<<"rank:"<<rank<<std::endl;     
-                                }
+
                                 MPI_Request request;
                                 MPI_Isend(&p1->second ,1 , PARTICLE, target, target, MPI_COMM_WORLD, &request);
                             }
