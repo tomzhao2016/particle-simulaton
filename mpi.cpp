@@ -398,8 +398,10 @@ int main( int argc, char **argv )
                             if(abs(proc_x_next - proc_x_current)<=1 &&abs(proc_y_next-proc_y_current)<=1){
                                 if(target == 3){
                                     std::cout<<"particle id:"<<p1->first<<std::endl;  
-                                    std::cout<<"particle x: "<<new_particle.x<<std::endl;
-                                    std::cout<<"particle y: "<<new_particle.y<<std::endl;
+                                    std::cout<<"particle x: "<<p1->second.x<<std::endl;
+                                    std::cout<<"particle y: "<<p1->second.y<<std::endl;
+                                    std::cout<<"proc_x_next: "<<proc_x_next<<std::endl;
+                                    std::cout<<"proc_y_next: "<<proc_y_next<<std::endl;
                                     std::cout<<"rank:"<<rank<<std::endl;     
                                 }
                                 MPI_Request request;
