@@ -406,7 +406,8 @@ int main( int argc, char **argv )
                     }
                 }
             }
-
+            if(rank == 3)
+                std::cout<<" I reach line 436"<<std::endl;
             //
             // Tell neighbors finish sending by sending particle 'end'
             //
@@ -432,8 +433,7 @@ int main( int argc, char **argv )
                 addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
             }
         }
-        if(rank == 3)
-             std::cout<<" I reach line 436"<<std::endl;
+
         //
         // Make sure every proc finish updating native bins 
         //
