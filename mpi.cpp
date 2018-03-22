@@ -314,7 +314,8 @@ int main( int argc, char **argv )
                 }
             }
         }
-
+        if(rank == 3)
+             std::cout<<" I reach line 318"<<std::endl;
         /****************************
          * Statistical data
          *************************/
