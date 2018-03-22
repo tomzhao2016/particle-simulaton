@@ -433,6 +433,7 @@ int main( int argc, char **argv )
                     std::cout<<" I reach line 421"<<std::endl;
                     std::cout<<"particle x: "<<new_particle.x<<std::endl;
                     std::cout<<"particle y: "<<new_particle.y<<std::endl;
+                    std::cout<<"size: "<<get_size()<<std::endl;
                 }
                    
                 addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
