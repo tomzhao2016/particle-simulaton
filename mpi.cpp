@@ -389,14 +389,14 @@ int main( int argc, char **argv )
 
                         int proc_x_next = get_proc_x(p1->second.x, num_proc_x);
                         int proc_y_next = get_proc_y(p1->second.y, num_proc_y);
-                        if(rank == 6){
-                            std::cout<<"particle id:"<<p1->first<<std::endl;  
-                            std::cout<<"particle x: "<<p1->second.x<<std::endl;
-                            std::cout<<"particle y: "<<p1->second.y<<std::endl;
-                            std::cout<<"proc_x_next: "<<proc_x_next<<std::endl;
-                            std::cout<<"proc_y_next: "<<proc_y_next<<std::endl;
-                            std::cout<<"rank:"<<rank<<std::endl;     
-                        }
+                        // if(rank == 6){
+                        //     std::cout<<"particle id:"<<p1->first<<std::endl;  
+                        //     std::cout<<"particle x: "<<p1->second.x<<std::endl;
+                        //     std::cout<<"particle y: "<<p1->second.y<<std::endl;
+                        //     std::cout<<"proc_x_next: "<<proc_x_next<<std::endl;
+                        //     std::cout<<"proc_y_next: "<<proc_y_next<<std::endl;
+                        //     std::cout<<"rank:"<<rank<<std::endl;     
+                        // }
 
                         // if it is not in this proc send to where it belongs
                         if(proc_x_next != proc_x_current || proc_y_next != proc_y_current){
@@ -438,12 +438,12 @@ int main( int argc, char **argv )
                     rec_cnt++;
                     continue;
                 }
-                if(rank == 3){
-                    std::cout<<"I am            particle x: "<<new_particle.x<<std::endl;
-                    std::cout<<"I am             particle y: "<<new_particle.y<<std::endl;
-                    std::cout<<"I am             size: "<<get_size()<<std::endl;
-                    std::cout<<"I am             particle id: "<<new_particle.id<<std::endl;
-                }
+                // if(rank == 3){
+                //     std::cout<<"I am            particle x: "<<new_particle.x<<std::endl;
+                //     std::cout<<"I am             particle y: "<<new_particle.y<<std::endl;
+                //     std::cout<<"I am             size: "<<get_size()<<std::endl;
+                //     std::cout<<"I am             particle id: "<<new_particle.id<<std::endl;
+                // }
                    
                 addto_local_bins(local_bins, new_particle, local_bin_size, num_proc_x, num_proc_y, rank, bin_len);
             }
