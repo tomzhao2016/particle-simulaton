@@ -396,7 +396,7 @@ int main( int argc, char **argv )
                             int target = num_proc_x * proc_y_next + proc_x_next;
                             // assume all go to neighbors
                             if(abs(proc_x_next - proc_x_current)<=1 &&abs(proc_y_next-proc_y_current)<=1){
-                                if(target == 3){
+                                if(target == 6){
                                     std::cout<<"particle id:"<<p1->first<<std::endl;  
                                     std::cout<<"particle x: "<<p1->second.x<<std::endl;
                                     std::cout<<"particle y: "<<p1->second.y<<std::endl;
